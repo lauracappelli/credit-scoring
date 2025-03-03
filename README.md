@@ -2,7 +2,7 @@
 
 Repository del progetto di Credit Scoring in collaborazione con Banca Intesa San Paolo per ICSC - Centro Nazionale in HPC, Big Data e Quantum Computing, Spoke 10 - Quantum Computing.
 
-Per girare il codice di test, creare un ambiente conda con python dentro al quale installare dwave-hybrid:
+Per girare il codice di test, creare un ambiente conda con python e installare [dwave-hybrid](https://docs.ocean.dwavesys.com/en/stable/docs_hybrid/sdk_index.html):
 
 ```
 conda create -n <nome-env> python=3.13.2
