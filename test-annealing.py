@@ -1,5 +1,6 @@
 import numpy as np
 import itertools
+import time
 
 import dimod
 import hybrid
@@ -9,6 +10,9 @@ import hybrid
 # counterparts & classes
 n = 6
 m = 3
+
+# Avvia il timer
+start_time = time.perf_counter_ns()
 
 # Iniatilize Q and c
 Q = np.zeros([n*m, n*m])
@@ -108,14 +112,14 @@ print()
 # ANNEALING APPROACH
 # -------------------
 
-# Create the BinaryQuadraticModel 
-Q_dict = {(i, j): Q[i, j] for i in range(Q.shape[0]) for j in range(i, Q.shape[1]) if Q[i, j] != 0}
+# Create the BinaryQuadraticModel
+Q_dict = {(i, j): Q[i, j] for i in range(Q.shape[0]) for j in range(Q.shape[1]) if Q[i, j] != 0}
 bqm = dimod.BinaryQuadraticModel.from_qubo(Q_dict, c)
-# bqm = dimod.BinaryQuadraticModel.from_numpy_matrix(Q, c)
+# print(bqm)
 
 # Set up the sampler with an initial state
-sampler = hybrid.samplers.SimulatedAnnealingProblemSampler(num_sweeps=5000)
-state = hybrid.core.State.from_sample({i: 0 for i in range(18)}, bqm)
+sampler = hybrid.samplers.SimulatedAnnealingProblemSampler(num_sweeps=10000)
+state = hybrid.core.State.from_sample({i: 0 for i in range(n*m)}, bqm)
 
 # Sample the problem
 new_state = sampler.run(state).result()
@@ -123,16 +127,23 @@ new_state = sampler.run(state).result()
 # Estrarre il primo (e spesso unico) campione come lista
 result_list = [int(x) for x in new_state.samples.first.sample.values()]
 
+# Ferma il timer
+end_time = time.perf_counter_ns()
+
 print("------------------")
 print("ANNEALING APPROACH")
 print("------------------")
-print()
-print(new_state)
-print()
-# print(new_state.samples)
 # print()
-# print(result_list)
+# print(new_state)
+# print()
+# print(new_state.samples)
+print(f"\nAnnealer state:\n\t{result_list}")
 print("\nThe matrix is:")
 annealing_matrix = np.array(result_list).reshape(n, m)
 print(annealing_matrix)
 print()
+
+# Print size problem & time
+elapsed_time_ns = end_time - start_time
+print(f"Matrix size:{n*m}*{n*m}")
+print(f"Time of emulation: {elapsed_time_ns/10e9} s")
