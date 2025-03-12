@@ -139,6 +139,7 @@ def check_result(G, solution, N, K):
         if(colors[i]==colors[j]):
           print("KO!")
           exit(1)
+  print("The solution is correct!")
 
 # define: the problem where
 # N: n. of node, K: n. of color, G: adjacency matrix
