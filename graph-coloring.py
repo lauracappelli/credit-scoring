@@ -130,6 +130,16 @@ def getColors(solution,N,K):
       colors[inode] = icolor
   return colors
 
+def check_result(G, solution, N, K):
+  colors = getColors(solution, N, K)
+
+  for i in range(N):
+    for j in range(N):
+      if G[i][j] != 0:
+        if(colors[i]==colors[j]):
+          print("KO!")
+          exit(1)
+
 # define: the problem where
 # N: n. of node, K: n. of color, G: adjacency matrix
 testid = 7
@@ -256,3 +266,5 @@ draw_graph(nx.from_numpy_array(G), getColors(result_list, N, K), "ch2.png")
 elapsed_time_ns = end_time - start_time
 print(f"Matrix size:{N*K}*{N*K}")
 print(f"Time of emulation: {elapsed_time_ns/10e9} s")
+
+check_result(G, result_list, N, K)
