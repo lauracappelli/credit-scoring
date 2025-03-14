@@ -85,15 +85,15 @@ def generate_random_graph(num_nodes, edge_percentage, K):
     G = nx.Graph()
     G.add_nodes_from(range(num_nodes))
 
-    # Numero massimo di archi in un grafo non orientato senza loop
+    # Max number of edges
     max_edges = num_nodes * (num_nodes - 1) // 2  
     num_edges = int((edge_percentage / 100) * max_edges) 
 
-    # Genera tutte le possibili coppie di nodi e le mescola casualmente
+    # try all edges combinations
     possible_edges = list(itertools.combinations(range(num_nodes), 2))
     random.shuffle(possible_edges)
 
-    # Aggiunta controllata degli archi rispettando il vincolo di grado < K
+    # Add adges
     selected_edges = []
     node_degrees = {node: 0 for node in range(num_nodes)}
 
@@ -103,14 +103,11 @@ def generate_random_graph(num_nodes, edge_percentage, K):
             node_degrees[u] += 1
             node_degrees[v] += 1
             if len(selected_edges) >= num_edges:
-                break  # Fermati quando hai raggiunto il numero richiesto di archi
+                break
 
     G.add_edges_from(selected_edges)
 
-    # Convertiamo la matrice di adiacenza in un array NumPy
-    adjacency_matrix = nx.to_numpy_array(G, dtype=int)
-    
-    return adjacency_matrix, num_nodes, K
+    return nx.to_numpy_array(G, dtype=int), num_nodes, K
 
 def draw_graph(G, color_list,filename):
   fig, ax = plt.subplots(figsize=(20, 12))
@@ -137,15 +134,15 @@ def check_result(G, solution, N, K):
     for j in range(N):
       if G[i][j] != 0:
         if(colors[i]==colors[j]):
-          print("KO!")
+          print("KO! The solution is NOT correcti!")
           exit(1)
   print("The solution is correct!")
 
 # define: the problem where
 # N: n. of node, K: n. of color, G: adjacency matrix
-testid = 7
-#G, N, K = test_selector(testid)
-G, N, K = generate_random_graph(32, 30, 4)
+testid = 1
+G, N, K = test_selector(testid)
+# G, N, K = generate_random_graph(5, 30, 2)
 print("------ INPUT -------")
 print("N: ", N)
 print("K: ", K)
@@ -199,28 +196,28 @@ print("\nc: ", c, "\n")
 # BRUTE FORCE APPROACH
 # ---------------------
 
-# # compute C(Y) = YQY + gY + c for every Y
-# Ylist = list(itertools.product([0, 1], repeat=(N*K)))
-# Cmin = float('inf')
-# for ii in range(len(Ylist)):
-#   Y = np.array(Ylist[ii])
-#   Cy=(Y.dot(Q).dot(Y.transpose()))+g.dot(Y.transpose())+c
-#   if ( Cy < Cmin ):
-#     Cmin = Cy
-#     Ymin = Y.copy()
+# compute C(Y) = YQY + gY + c for every Y
+Ylist = list(itertools.product([0, 1], repeat=(N*K)))
+Cmin = float('inf')
+for ii in range(len(Ylist)):
+  Y = np.array(Ylist[ii])
+  Cy=(Y.dot(Q).dot(Y.transpose()))+g.dot(Y.transpose())+c
+  if ( Cy < Cmin ):
+    Cmin = Cy
+    Ymin = Y.copy()
 
-# print("--------------------")
-# print("BRUTE FORCE APPROACH")
-# print("--------------------")
-# print("\ncomputing: C(Y) = YQY + c")
-# print("    C(Y) min: ", Cmin)
-# print("    Y min: ", Ymin)
-# print("\nGraph coloring solution with QUBO:")
-# for ii in range(len(Ymin)):
-#   if Ymin[ii] == 1:
-#     print("y_%02d = x_%d%d = true --> N%d C%d" % (ii, (ii//K), (ii%K), (ii//K), (ii%K)))
-# print()
-# draw_graph(nx.from_numpy_array(G), getColors(Ymin, N, K), "ch1.png")
+print("--------------------")
+print("BRUTE FORCE APPROACH")
+print("--------------------")
+print("\ncomputing: C(Y) = YQY + c")
+print("    C(Y) min: ", Cmin)
+print("    Y min: ", Ymin)
+print("\nGraph coloring solution with QUBO:")
+for ii in range(len(Ymin)):
+  if Ymin[ii] == 1:
+    print("y_%02d = x_%d%d = true --> N%d C%d" % (ii, (ii//K), (ii%K), (ii//K), (ii%K)))
+print()
+draw_graph(nx.from_numpy_array(G), getColors(Ymin, N, K), "ch1.png")
 
 # -------------------
 # ANNEALING APPROACH
