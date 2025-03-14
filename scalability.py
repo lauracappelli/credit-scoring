@@ -1,8 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import networkx as nx
 import random
-import itertools
 import dimod
 import hybrid
 import time
@@ -41,7 +38,7 @@ def solveWithAnnealer(m, bqm, shots):
     return new_state
 
 def main():
-    m = 100000
+    m = 100
     shots = 10000
 
     start_time = time.perf_counter_ns()
