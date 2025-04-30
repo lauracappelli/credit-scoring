@@ -9,5 +9,5 @@ conda create -n <nome-env> python=3.13.2
 conda activate <nome-env>
 pip install dwave-hybrid==0.6.13
 ```
-
+test git
 <img src="ICSC-logo.png" width="1000">
