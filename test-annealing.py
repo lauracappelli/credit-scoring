@@ -1,6 +1,7 @@
 import numpy as np
 import itertools
 import time
+import math
 
 import dimod
 import hybrid
@@ -10,6 +11,7 @@ import hybrid
 # counterparts & classes
 n = 6
 m = 3
+alpha_conc = 0.05
 
 # Avvia il timer
 start_time = time.perf_counter_ns()
@@ -147,3 +149,19 @@ print()
 elapsed_time_ns = end_time - start_time
 print(f"Matrix size:{n*m}*{n*m}")
 print(f"Time of emulation: {elapsed_time_ns/10e9} s")
+
+
+
+
+def check_conc(n,m,tt,alpha_conc):
+  J = n*n*(alpha_conc + (1-alpha_conc)/m)
+  Jfloor=math.floor(J)
+  s = 0
+  for i1 in range(n):
+    for i2 in range(n):
+      for j in range(m):
+        s = s + tt[i1,j] * tt[i2,j]
+  return s <= Jfloor
+
+
+print(check_conc(n,m,annealing_matrix,alpha_conc))
