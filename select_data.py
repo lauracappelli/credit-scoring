@@ -1,5 +1,6 @@
 import sys, yaml
 import pandas as pd
+import numpy as np
 
 def read_config():
 
@@ -21,10 +22,8 @@ def read_config():
     # return the config dictionary
     return config
 
-def load_data():
-    
-    config = read_config()
-    
+def load_data(config):
+        
     # read dataset
     dataset = pd.read_csv(open(config['data_path']), delimiter=';', usecols=['ID_Fittizio', 'DEFAULT_FLAG_rett_fact', 'score_quant_integrato'])
     dataset = dataset.rename(columns={'ID_Fittizio':'counterpart_id', 'DEFAULT_FLAG_rett_fact':'default', 'score_quant_integrato':'score'})
@@ -57,12 +56,28 @@ def load_data():
 
     return dataset
 
+def generate_data(config):
+    
+    # np.random.seed(42)
+    dataset = pd.DataFrame({
+        'counterpart_id': np.arange(1, config['n_counterpart']+1),
+        'default': np.random.uniform(-10, 2, size=config['n_counterpart']),
+        'score': np.random.choice([0, 1], size=config['n_counterpart'], p=[1-config['default_perc'], config['default_perc']])
+    })
+
+    return dataset
+    
 if __name__ == '__main__':
 
-    dataset = load_data()
-    
-    dataset_size = dataset.shape[0]
-    attributes = list(dataset.columns.values)
+    config = read_config()
 
+    if config['random_data'] == 'yes':
+        # random generator
+        dataset = generate_data(config)
+    else:
+        # read from database
+        dataset = load_data(config)
+
+    attributes = list(dataset.columns.values)
     print("The dataset has {} entries with {} attributes:\n{}".format(dataset.shape[0], len(attributes), attributes))
     print(dataset)
