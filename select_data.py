@@ -71,12 +71,7 @@ if __name__ == '__main__':
 
     config = read_config()
 
-    if config['random_data'] == 'yes':
-        # random generator
-        dataset = generate_data(config)
-    else:
-        # read from database
-        dataset = load_data(config)
+    dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)
 
     attributes = list(dataset.columns.values)
     print("The dataset has {} entries with {} attributes:\n{}".format(dataset.shape[0], len(attributes), attributes))
