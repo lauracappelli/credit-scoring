@@ -54,6 +54,8 @@ def load_data(config):
     if config['n_counterpart'] != 'all':
         dataset = dataset.sample(n=int(config['n_counterpart']))
 
+# sort dataset by score
+    dataset = dataset.sort_values(by='score')
     return dataset
 
 def generate_data(config):
@@ -61,10 +63,11 @@ def generate_data(config):
     # np.random.seed(42)
     dataset = pd.DataFrame({
         'counterpart_id': np.arange(1, config['n_counterpart']+1),
-        'default': np.random.uniform(-10, 2, size=config['n_counterpart']),
-        'score': np.random.choice([0, 1], size=config['n_counterpart'], p=[1-config['default_perc'], config['default_perc']])
+        'default': np.random.choice([0, 1], size=config['n_counterpart'], p=[1-config['default_perc'], config['default_perc']]),
+        'score': np.random.uniform(-10, 2, size=config['n_counterpart'])
     })
 
+    dataset = dataset.sort_values(by='score')
     return dataset
     
 if __name__ == '__main__':
