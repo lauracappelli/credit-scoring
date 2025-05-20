@@ -10,5 +10,4 @@ conda activate <nome-env>
 pip install dwave-hybrid==0.6.13
 pip install pyyaml pandas
 ```
-test git
 <img src="ICSC-logo.png" width="1000">
