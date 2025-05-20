@@ -27,24 +27,29 @@ def load_data():
     
     # read dataset
     dataset = pd.read_csv(open(config['data_path']), delimiter=';', usecols=['ID_Fittizio', 'DEFAULT_FLAG_rett_fact', 'score_quant_integrato'])
+    dataset = dataset.rename(columns={'ID_Fittizio':'counterpart_id', 'DEFAULT_FLAG_rett_fact':'default', 'score_quant_integrato':'score'})
    
     # select optional attributes
     if config['attributes']['sector'] == 'yes':
         opt_attr = pd.read_csv(open(config['data_path']), delimiter=';', usecols=['SETTORE_INT'])
-        dataset['SETTORE_INT'] = opt_attr['SETTORE_INT'].values
+        opt_attr = opt_attr.rename(columns={'SETTORE_INT':'sector'})
+        dataset['sector'] = opt_attr['sector'].values
 
     if config['attributes']['revenue'] == 'yes':
         opt_attr = pd.read_csv(open(config['data_path']), delimiter=';', usecols=['classe_indic_dim'])
-        dataset['classe_indic_dim'] = opt_attr['classe_indic_dim'].values
+        opt_attr = opt_attr.rename(columns={'classe_indic_dim':'revenue'})
+        dataset['revenue'] = opt_attr['revenue'].values
 
     if config['attributes']['geo_area'] == 'yes':
         opt_attr = pd.read_csv(open(config['data_path']), delimiter=';', usecols=['MACRO_AREA_2b'])
-        dataset['MACRO_AREA_2b'] = opt_attr['MACRO_AREA_2b'].values
+        opt_attr = opt_attr.rename(columns={'MACRO_AREA_2b':'geo_area'})
+        dataset['geo_area'] = opt_attr['geo_area'].values
 
     if config['attributes']['years']:
         opt_attr = pd.read_csv(open(config['data_path']), delimiter=';', usecols=['perf_year'])
-        dataset['perf_year'] = opt_attr['perf_year'].values
-        dataset = dataset[dataset['perf_year'].isin(config['attributes']['years'])]
+        opt_attr = opt_attr.rename(columns={'perf_year':'year'})
+        dataset['year'] = opt_attr['year'].values
+        dataset = dataset[dataset['year'].isin(config['attributes']['years'])]
 
     # select a specific number of counterparts
     if config['n_counterpart'] != 'all':
