@@ -63,7 +63,7 @@ def generate_data(config):
     # np.random.seed(42)
     dataset = pd.DataFrame({
         'counterpart_id': np.arange(1, config['n_counterpart']+1),
-        'default': np.random.choice([0, 1], size=config['n_counterpart'], p=[1-config['default_perc'], config['default_perc']]),
+        'default': np.random.choice([0, 1], size=config['n_counterpart'], p=[1-config['default_prob'], config['default_prob']]),
         'score': np.random.uniform(-10, 2, size=config['n_counterpart'])
     })
 
