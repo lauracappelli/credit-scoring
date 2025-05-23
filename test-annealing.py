@@ -20,18 +20,18 @@ start_time = time.perf_counter_ns()
 Q = np.zeros([n*m, n*m])
 c = 0
 
-# add penalty: "first counterpart in first class"
+#add penalty: "first counterpart in first class"
 for jj in range(1, m):
   Q[jj][jj] += 1
   Q[0][jj] -= 0.5
   Q[jj][0] -= 0.5
 
-# add penalty: "last counterpart in the last class"
-for jj in range(m-1):
-  tt = (n-1)*m+jj
-  Q[tt][tt] += 1
-  Q[(n*m)-1][tt] -= 0.5
-  Q[tt][(n*m)-1] -= 0.5
+#add penalty: "last counterpart in the last class"
+# for jj in range(m-1):
+#  tt = (n-1)*m+jj
+#  Q[tt][tt] += 1
+#  Q[(n*m)-1][tt] -= 0.5
+#  Q[tt][(n*m)-1] -= 0.5
 
 # add penalty: "one counterpart per class"
 for ii in range(n):
@@ -78,7 +78,7 @@ for ii in range(n-1):
     Q[dd][cc] += 0.5
 
 # amplify penalties
-penality = 4
+penality = n*n*n*m*m*m
 Q = penality*Q
 c = penality*c
 print("\nQ:\n", Q)
@@ -88,8 +88,8 @@ print("\nc: ", c, "\n")
 # BRUTE FORCE APPROACH
 # ---------------------
 
-# compute C(Y) = YQY + gY + c for every Y
-Ylist = list(itertools.product([0, 1], repeat=(n*m)))
+# compute C(Y) = (Y^T)QY + gY + c for every Y
+Ylist = list(itertools.product([0, 1], repeat=n*m))
 Cmin = float('inf')
 for ii in range(len(Ylist)):
   Y = np.array(Ylist[ii])
@@ -101,7 +101,7 @@ for ii in range(len(Ylist)):
 print("--------------------")
 print("BRUTE FORCE APPROACH")
 print("--------------------")
-print("\ncomputing: C(Y) = YQY + c")
+print("\ncomputing: C(Y) = (Y^T)QY + c")
 print("    C(Y) min: ", Cmin)
 print("    Y min: ", Ymin)
 
@@ -120,7 +120,7 @@ bqm = dimod.BinaryQuadraticModel.from_qubo(Q_dict, c)
 # print(bqm)
 
 # Set up the sampler with an initial state
-sampler = hybrid.samplers.SimulatedAnnealingProblemSampler(num_sweeps=10000)
+sampler = hybrid.samplers.SimulatedAnnealingProblemSampler(num_sweeps=100000)
 state = hybrid.core.State.from_sample({i: 0 for i in range(n*m)}, bqm)
 
 # Sample the problem

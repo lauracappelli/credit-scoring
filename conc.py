@@ -53,6 +53,7 @@ offset2 = n*m + n*n*n*n*m*m
 offset3 = n*m + n*n*n*n*m*m + n*n*m*m
 
 Q = np.zeros([len(y),len(y)])
+
 #Q = np.full([len(y), len(y)], float('nan'))
 
 for u in u4:
