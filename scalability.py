@@ -14,16 +14,20 @@ def gen_random_Q(m, c):
             matrix[i][j] = random.randint(0,9)
 
     # define binary quadratic problem
-    Q_dict = {(i, j): matrix[i, j] for i in range(matrix.shape[0]) for j in range(matrix.shape[1]) if matrix[i, j] != 0}
-    bqm = dimod.BinaryQuadraticModel.from_qubo(Q_dict, c)
-
-    return bqm
+    return from_matrix_to_bqm(matrix, c)
 
 # bqm random generation
 def gen_random_Q_opt(m, c):
 
     # define binary quadratic problem
     Q_dict = {(i, j): random.randint(0,9) for i in range(m) for j in range(m)}
+    bqm = dimod.BinaryQuadraticModel.from_qubo(Q_dict, c)
+
+    return bqm
+
+def from_matrix_to_bqm(matrix, c):
+    
+    Q_dict = {(i, j): matrix[i, j] for i in range(matrix.shape[0]) for j in range(matrix.shape[1]) if matrix[i, j] != 0}
     bqm = dimod.BinaryQuadraticModel.from_qubo(Q_dict, c)
 
     return bqm
@@ -93,8 +97,7 @@ def gen_Q_staircase(m,n):
             Q[dd][cc] += 0.5
 
     # Create the BinaryQuadraticModel
-    Q_dict = {(i, j): Q[i, j] for i in range(Q.shape[0]) for j in range(Q.shape[1]) if Q[i, j] != 0}
-    return dimod.BinaryQuadraticModel.from_qubo(Q_dict, c)
+    return from_matrix_to_bqm(Q, c)
     
 def solveWithAnnealer(m, bqm, shots):
 
@@ -114,8 +117,8 @@ def exactSolver(bqm):
     return sampleset
 
 def main():
-    m = 2
-    n = 3
+    m = 3
+    n = 7
     shots = 1000
 
     # BQM generation
@@ -147,6 +150,10 @@ def main():
     # print first result
     matrix = df_result.iloc[:, :m*n].to_numpy()
     print(f"First solution:\n{matrix[0].reshape(n, m)}")
+
+    # Print all the solutions
+    for sol in matrix[:]:
+        print(f"solution:\n{sol.reshape(n, m)}")
 
 if __name__ == "__main__":
     main()
