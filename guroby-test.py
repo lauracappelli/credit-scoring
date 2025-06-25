@@ -111,20 +111,39 @@ def gurobi_solver(m, n, matrix, c):
     qubo_model.setParam("Seed", 0)  # fix seed
     # qubo_model.setParam("TimeLimit", timelimit)
     
+    # Search more than 1 solution
+    num_max_solutions = 10
+    if num_max_solutions > 1:
+        qubo_model.setParam("PoolSolutions", num_max_solutions)
+        qubo_model.setParam("PoolSearchMode", 2)
+        # qubo_model.setParam("PoolGap", 0.1) # 10% fidelity
+
     # Run the Gurobi QUBO optimization
     qubo_model.optimize()
 
     # Print result
-    if qubo_model.status == GRB.OPTIMAL:
-        solution = [int(qubo_vars[i].X) for i in range(size)]
-        print("\nBest solution:\n", np.array(solution).reshape(n, m))
-        print("Cost of the function:", qubo_model.ObjVal)
+    if qubo_model.Status in {GRB.OPTIMAL, GRB.SUBOPTIMAL}:
+        if num_max_solutions == 1:
+            solution = [int(qubo_vars[i].X) for i in range(size)]
+            print("\nBest solution:\n", np.array(solution).reshape(n, m))
+            print("Cost of the function:", qubo_model.ObjVal)
+        else:
+            # select all the solutions or num_max_solutions solutions
+            nfound = min(qubo_model.SolCount, num_max_solutions)
+
+            for sol_idx in range(nfound):
+                qubo_model.setParam(GRB.Param.SolutionNumber, sol_idx)
+                qubo_bitstring = np.array(
+                    [int(qubo_vars[jj].Xn) for jj in range(size)]
+                )
+                print(f"solution {sol_idx+1}:\n{qubo_bitstring.reshape(n,m)}")
+                print("Cost of the function:", qubo_model.PoolObjVal)
     else:
         print("No solutions found")
 
 def main():
-    m = 9
-    n = 100
+    m = 3
+    n = 8
 
     matrix, c = gen_Q_staircase(m, n)
     gurobi_solver(m, n, matrix, c)
