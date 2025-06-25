@@ -69,6 +69,24 @@ def gen_Q_staircase(m,n):
             Q[cc][dd] += 0.5
             Q[dd][cc] += 0.5
 
+    # add penalty: "penalize restarting from class 0"
+    for ii in range(n-1):
+        aa = ii*m # x_{i,j}=x1
+        bb = aa+1   # x_{i,j+1}=x2
+        cc = (ii+1)*m # x_{i+1,j}=x3
+        dd = cc+1 # x_{i+q,j+1}=x4
+
+        Q[cc][cc] += 1
+
+        Q[aa][cc] -= 0.5
+        Q[cc][aa] -= 0.5
+
+        Q[bb][cc] -= 0.5
+        Q[cc][bb] -= 0.5
+
+        Q[aa][bb] += 0.5
+        Q[bb][aa] += 0.5
+
     return (Q, c)
 
 def gurobi_solver(size, matrix, c):
