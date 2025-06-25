@@ -4,6 +4,7 @@ import dimod
 import hybrid
 import time
 import gurobipy as gpy
+from gurobipy import GRB
 
 # staircase generation as numpy matrix
 def gen_Q_staircase(m,n):
@@ -89,61 +90,44 @@ def gen_Q_staircase(m,n):
 
     return (Q, c)
 
-def gurobi_solver(size, matrix, c):
+def gurobi_solver(m, n, matrix, c):
+    size = n * m
     # model definition
     qubo_model = gpy.Model("QCS")
-    qubo_vars = qubo_model.addVars(size, vtype=gpy.GRB.BINARY, name="x")
+    qubo_vars = qubo_model.addVars(size, vtype=GRB.BINARY, name="x")
 
     # cost function definition
-    qubo_obj = gpy.QuadExpr()
+    qubo_expr = gpy.QuadExpr()
     row_idxs, col_idxs = np.nonzero(matrix)
-    for jj, kk in zip(row_idxs, col_idxs):
-        coeff = matrix[jj, kk]
-        qubo_obj.add(coeff * qubo_vars[jj] * qubo_vars[kk])
-    qubo_model.setObjective(qubo_obj, gpy.GRB.MINIMIZE)
-    
-    
+    for ii, jj in zip(row_idxs, col_idxs):
+        qubo_expr.add(matrix[ii, jj] * qubo_vars[ii] * qubo_vars[jj])
+    qubo_expr.addConstant(c)
+
+    # add const function to the model
+    qubo_model.setObjective(qubo_expr, GRB.MINIMIZE)
+
     # Setting solver parameters
-    qubo_model.setParam("OutputFlag", 1)
-    qubo_model.setParam("Seed", 0)  
+    qubo_model.setParam("OutputFlag", 1) # verbosity
+    qubo_model.setParam("Seed", 0)  # fix seed
     # qubo_model.setParam("TimeLimit", timelimit)
-    num_solutions = 2   
-    if num_solutions > 1:
-        qubo_model.setParam("PoolSolutions", num_solutions)
-        qubo_model.setParam("PoolSearchMode", 2)  
-        qubo_model.setParam("PoolGap", 0.1) # 10%
     
     # Run the Gurobi QUBO optimization
     qubo_model.optimize()
 
-    # Get the optimizer solution
-    qubo_cost = np.inf
-    if qubo_model.Status in {gpy.GRB.OPTIMAL, gpy.GRB.SUBOPTIMAL}:
-        status = "SUCCESS"
+    # Print result
+    if qubo_model.status == GRB.OPTIMAL:
+        solution = [int(qubo_vars[i].X) for i in range(size)]
+        print("\nBest solution:\n", np.array(solution).reshape(n, m))
+        print("Cost of the function:", qubo_model.ObjVal)
     else:
-        status = "FAILURE"
+        print("No solutions found")
 
-    if status == "FAILURE":
-        solutions = [np.zeros(size)]
-    else:
-        nfound = min(qubo_model.SolCount, num_solutions)
-        qubo_costs = []
-
-        for sol_idx in range(nfound):
-            qubo_model.setParam(gpy.GRB.Param.SolutionNumber, sol_idx)
-            qubo_bitstring = np.array(
-                [qubo_vars[jj].getAttr("Xn") for jj in range(size)]
-            )
-            qubo_costs.append(
-                qubo_model.PoolObjVal + c
-            )
-                                                    
 def main():
-    m = 2
-    n = 3
+    m = 9
+    n = 100
 
     matrix, c = gen_Q_staircase(m, n)
-    gurobi_solver(m*n, matrix, c)
+    gurobi_solver(m, n, matrix, c)
 
 if __name__ == "__main__":
     main()
