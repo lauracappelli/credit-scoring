@@ -134,6 +134,37 @@ def exactSolver(bqm):
 
     return sampleset
 
+def check_staircase(matrix):
+
+    # check if each counterpart is in one class
+    ones_per_row = np.sum(matrix == 1, axis=1)
+    if not np.all(ones_per_row == 1):
+        print("Error: more than one class per counterpart")
+        return False
+
+    # retreive all the 1's indexes
+    index_1 = np.argmax(matrix == 1, axis=1)
+    # print(index_1)
+
+    # check the first and the last counterpart
+    if index_1[0] != 0:
+        print("Error in the first counterpart")
+        return False
+    if index_1[-1] != matrix.shape[1]-1:
+        print("Error in the last counterpart")
+        return False
+
+    # check if the matrix is a staircase matrix
+    for i, el in enumerate(index_1[1:]):
+        # i = indice del vettore index_1 (da 0 a m-1 compresi)
+        # el = elemento index_1[i+1]
+        # print(f"indice: {i+1} del vettore contiene {el}")
+        if el != index_1[i] and el != index_1[i]+1:
+            print(f"Error in the counterpart {i+2}")
+            return False
+
+    return True
+
 def main():
     m = 3
     n = 7
@@ -156,6 +187,8 @@ def main():
     annealing_matrix = np.array(result_list).reshape(n, m)
     print(f"\nAnnealing result:\n{annealing_matrix}")    
     print(f"Time of annealing solution: {(end_time - start_time)/10e9} s")
+
+    check_staircase(annealing_matrix)
 
     # solving exactly
     start_time = time.perf_counter_ns()
