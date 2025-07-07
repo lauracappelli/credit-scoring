@@ -92,7 +92,7 @@ def staircase_constr(Q, m, n):
 
     return Q
 
-def concentration_constr(Q, c, m, n):
+def concentration_constr(Q, m, n, c):
     i2j1 = [] #(i_1,i_2,j)
     u2 = [] #(u_1,u_2)
     for i1 in range(n):
@@ -189,7 +189,7 @@ def main():
     # BQM generation
     start_time = time.perf_counter_ns()
     (Q,c) = one_class_const(Q,m,n,c)
-    Q = staircase_constr(Q,m,n)
+    # Q = staircase_constr(Q,m,n)
     # (Q,c) = concentration_constr(Q,m,n,c)
     bqm = from_matrix_to_bqm(Q, c)
     end_time = time.perf_counter_ns()
