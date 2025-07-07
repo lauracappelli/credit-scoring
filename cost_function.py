@@ -153,7 +153,8 @@ def check_concentration(matrix):
 
 def from_matrix_to_bqm(matrix, c):
     
-    Q_dict = {(i, j): matrix[i, j] for i in range(matrix.shape[0]) for j in range(matrix.shape[1]) if matrix[i, j] != 0}
+    Q_dict = {(i, j): matrix[i, j] for i in range(matrix.shape[0]) for j in range(matrix.shape[1])}# if matrix[i, j] != 0}
+    #print(Q_dict)
     bqm = dimod.BinaryQuadraticModel.from_qubo(Q_dict, c)
 
     return bqm

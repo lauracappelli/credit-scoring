@@ -10,7 +10,7 @@ u4 = [] #(u_1,u_2,u_3,u_4)
 i2j1 = [] #(i_1,i_2,j,j)
 u2 = [] #(u_1,u_2,u_3,u_4)
 
-n=6; m=3; alpha_conc = 0.05
+n=3; m=2; alpha_conc = 0.05
 J = n*n*(alpha_conc + (1-alpha_conc)/m)
 Jfloor=math.floor(J)
 N_S = math.floor(1+math.log2(Jfloor))
@@ -42,36 +42,75 @@ for l in i2j1:
 	u2.append([u_1,u_2])
 
 ##############  x   #       w19        #    w'19      #    s
-##############  nm  #   (n^4)(m^2)     #  (n^2)(m^2)  #   N_S
-##############  6   #       324        #     36       #    3
-y = np.zeros( n*m   +   n*n*n*n*m*m    +  n*n*m*m     +  N_S    )
+##############  nm  #   (n^4)(m^2)     #  (n^2)m      #   N_S
+##############  6   #       324        #     18       #    3
+y = np.zeros( n*m   +   n*n*n*n*m*m    +  n*n*m     +    N_S    )
 print(len(y))   #  369
 
 
 offset1 = n*m
 offset2 = n*m + n*n*n*n*m*m
-offset3 = n*m + n*n*n*n*m*m + n*n*m*m
+offset3 = n*m + n*n*n*n*m*m + n*n*m
 
 Q = np.zeros([len(y),len(y)])
 
 #Q = np.full([len(y), len(y)], float('nan'))
 
 for u in u4:
-	Q[u[0]-1][u[3]-1] += 0.5
-	Q[u[3]-1][u[0]-1] += 0.5
-	Q[u[1]-1][u[3]-1] += 0.5
-	Q[u[3]-1][u[1]-1] += 0.5
-	Q[u[2]-1][u[3]-1] += 0.5
-	Q[u[3]-1][u[2]-1] += 0.5
-	Q[u[0]-1][u[2]-1] += 0.5
-	Q[u[2]-1][u[0]-1] += 0.5
-	Q[u[1]-1][u[2]-1] += 0.5
-	Q[u[2]-1][u[1]-1] += 0.5
-	Q[u[0]-1][u[1]-1] += 0.5*(1-2 * Jfloor)
-	Q[u[1]-1][u[0]-1] += 0.5*(1-2 * Jfloor)
+	if u[0]==u[3]:
+		Q[u[0]-1][u[3]-1] += 1
+	else:
+		Q[u[0]-1][u[3]-1] += 0.5
+		Q[u[3]-1][u[0]-1] += 0.5
+	if u[1]==u[3]:
+		Q[u[1]-1][u[3]-1] += 1
+	else:
+		Q[u[1]-1][u[3]-1] += 0.5
+		Q[u[3]-1][u[1]-1] += 0.5
+	if u[2]==u[3]:
+		Q[u[2]-1][u[3]-1] += 1
+	else:
+		Q[u[2]-1][u[3]-1] += 0.5
+		Q[u[3]-1][u[2]-1] += 0.5
+	if u[0]==u[2]:
+		Q[u[0]-1][u[2]-1] += 1
+	else:
+		Q[u[0]-1][u[2]-1] += 0.5
+		Q[u[2]-1][u[0]-1] += 0.5
+	if u[1]==u[2]:
+		Q[u[1]-1][u[2]-1] += 1
+	else:
+		Q[u[1]-1][u[2]-1] += 0.5
+		Q[u[2]-1][u[1]-1] += 0.5
+	if u[0]==u[1]:
+		Q[u[0]-1][u[1]-1] += 1
+	else:
+		Q[u[0]-1][u[1]-1] += 0.5
+		Q[u[1]-1][u[0]-1] += 0.5
+
+for i in range(n*m,n*m+n*n*n*n*m*m):
+	Q[i][i] += 3
+print(Q)
+input()
+
+for ind, u in enumerate(u4):
+	Q[u[0]][ind+offset1] -=1
+	Q[ind+offset1][u[0]] -=1
+	Q[u[1]][ind+offset1] -=1
+	Q[ind+offset1][u[1]] -=1
+	Q[u[2]][ind+offset1] -=1
+	Q[ind+offset1][u[2]] -=1
+	Q[u[3]][ind+offset1] -=1
+	Q[ind+offset1][u[3]] -=1
+
+for ind in range(N_S):
+	for l_1 in range(N_S):
+		for l_2 in range(N_S):
+			Q[ind+offset3-1][ind+offset3-1] += 0.5*pow(2,l_1 + l_2)
+
+for ind in range(n*n*n*n*m*m):
 	for l in range(N_S):
-		Q[u[0]-1][u[1]-1] += 0.5*pow(2,l)
-		Q[u[1]-1][u[0]-1] += 0.5*pow(2,l)
+		Q[ind+offset1-1][ind+offset1-1] += 3*pow(2,l+1)
 
 for ind in range(n*n*n*n*m*m):
 	for l in range(N_S):
@@ -85,15 +124,7 @@ for ind in range(N_S):
 		for l_2 in range(N_S):
 			Q[ind+offset3-1][ind+offset3-1] += 0.5*pow(2,l_1 + l_2)
 
-for ind, u in enumerate(u4):
-	Q[u[0]][ind+offset1] -=1
-	Q[ind+offset1][u[0]] -=1
-	Q[u[1]][ind+offset1] -=1
-	Q[ind+offset1][u[1]] -=1
-	Q[u[2]][ind+offset1] -=1
-	Q[ind+offset1][u[2]] -=1
-	Q[u[3]][ind+offset1] -=1
-	Q[ind+offset1][u[3]] -=1
+
 
 for ind, u in enumerate(u2):
 	Q[u[0]][ind+offset2] -= 0.5

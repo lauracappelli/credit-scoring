@@ -8,30 +8,21 @@ import hybrid
 # from hybrid.samplers import TabuProblemSampler
 # from hybrid.core import State
 
-# counterparts & classes
-n = 6
-m = 3
+# initialization of the parameters
+n = 6; m = 3
 alpha_conc = 0.05
+mu = 1
 
-# Avvia il timer
+# start the timer
 start_time = time.perf_counter_ns()
 
-# Iniatilize Q and c
+# initialization of Q and c
 Q = np.zeros([n*m, n*m])
 c = 0
 
-#add penalty: "first counterpart in first class"
-for jj in range(1, m):
-  Q[jj][jj] += 1
-  Q[0][jj] -= 0.5
-  Q[jj][0] -= 0.5
-
-#add penalty: "last counterpart in the last class"
-# for jj in range(m-1):
-#  tt = (n-1)*m+jj
-#  Q[tt][tt] += 1
-#  Q[(n*m)-1][tt] -= 0.5
-#  Q[tt][(n*m)-1] -= 0.5
+# add penalty: "first counterpart in first class"
+Q[0,0]=-1
+c += 1
 
 # add penalty: "one counterpart per class"
 for ii in range(n):
@@ -44,43 +35,33 @@ for ii in range(n):
       rr = ii*m+kk
       Q[tt][rr] += 1
       Q[rr][tt] += 1
-  c += 1
+c += n
 
-# add penalty: "penalize not permitted submatrix"
-for ii in range(n-1):
-  for jj in range(m-1):
-    aa = ii*m+jj # x_{i,j}=x1
-    bb = aa+1   # x_{i,j+1}=x2
-    cc = (ii+1)*m+jj # x_{i+1,j}=x3
-    dd = cc+1 # x_{i+q,j+1}=x4
+# # add penalty: "penalize not permitted submatrix"
+# for ii in range(n-1):
+#   for jj in range(m-1):
+#     aa = ii*m+jj # x_{i,j}=x1
+#     bb = aa+1   # x_{i,j+1}=x2
+#     cc = (ii+1)*m+jj # x_{i+1,j}=x3
+#     dd = cc+1 # x_{i+q,j+1}=x4
+#     Q[aa][aa] += 1 # add linear terms
+#     Q[dd][dd] += 1
+#     Q[aa][bb] += 0.5 # add quadratic terms
+#     Q[bb][aa] += 0.5
+#     Q[aa][cc] -= 0.5
+#     Q[cc][aa] -= 0.5
+#     Q[aa][dd] -= 1
+#     Q[dd][aa] -= 1
+#     Q[bb][cc] += 0.5
+#     Q[cc][bb] += 0.5
+#     Q[bb][dd] -= 0.5
+#     Q[dd][bb] -= 0.5
+#     Q[cc][dd] += 0.5
+#     Q[dd][cc] += 0.5
 
-    # add linear terms
-    Q[aa][aa] += 1
-    Q[dd][dd] += 1
-
-    # add quadratic terms
-    Q[aa][bb] += 0.5
-    Q[bb][aa] += 0.5
-
-    Q[aa][cc] -= 0.5
-    Q[cc][aa] -= 0.5
-
-    Q[aa][dd] -= 1
-    Q[dd][aa] -= 1
-
-    Q[bb][cc] += 0.5
-    Q[cc][bb] += 0.5
-
-    Q[bb][dd] -= 0.5
-    Q[dd][bb] -= 0.5
-
-    Q[cc][dd] += 0.5
-    Q[dd][cc] += 0.5
-
-# amplify penalties
-penality = n*n*n*m*m*m
-Q = penality*Q
-c = penality*c
+# amplify Q and c
+Q = mu*Q
+c = mu*c
 print("\nQ:\n", Q)
 print("\nc: ", c, "\n")
 
@@ -88,10 +69,10 @@ print("\nc: ", c, "\n")
 # BRUTE FORCE APPROACH
 # ---------------------
 
-# compute C(Y) = (Y^T)QY + gY + c for every Y
+# compute C(Y) = (Y^T)QY + (G^T)Y + c for every Y
 Ylist = list(itertools.product([0, 1], repeat=n*m))
 Cmin = float('inf')
-for ii in range(len(Ylist)):
+for ii in range(2**(n*m)):
   Y = np.array(Ylist[ii])
   Cy=(Y.dot(Q).dot(Y.transpose()))+c
   if ( Cy < Cmin ):
@@ -109,7 +90,7 @@ print("\nThe matrix is:")
 matrix = np.array(Ymin).reshape(n, m)
 print(matrix)
 print()
-
+input()
 # -------------------
 # ANNEALING APPROACH
 # -------------------

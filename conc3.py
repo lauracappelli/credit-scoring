@@ -2,12 +2,14 @@ import numpy as np
 import itertools
 import math
 
+from cost_function import *
+
 import dimod
 import hybrid
 
 
 # initialization of the parameters
-n = 6; m = 3
+n = 5; m = 3
 alpha_conc = 0.05
 mu_conc = 10
 mu_uniq = 100
@@ -61,24 +63,65 @@ Q=mu_conc*Q
 # BRUTE FORCE APPROACH
 # ---------------------
 
-# compute C(Y) = (Y^T)QY + (G^T)Y + c for every Y
-Ylist = list(itertools.product([0, 1], repeat=n*m))
-Cmin = float('inf')
-for ii in range(2**(n*m)):
-  Y = np.array(Ylist[ii])
-  Cy=(Y.dot(Q).dot(Y.transpose()))+c
-  if ( Cy < Cmin ):
-    Cmin = Cy
-    Ymin = Y.copy()
+# # compute C(Y) = (Y^T)QY + (G^T)Y + c for every Y
+# Ylist = list(itertools.product([0, 1], repeat=n*m))
+# Cmin = float('inf')
+# for ii in range(2**(n*m)):
+#   Y = np.array(Ylist[ii])
+#   Cy=(Y.dot(Q).dot(Y.transpose()))+c
+#   if ( Cy < Cmin ):
+#     Cmin = Cy
+#     Ymin = Y.copy()
 
-print("--------------------")
-print("BRUTE FORCE APPROACH")
-print("--------------------")
-print("\ncomputing: C(Y) = (Y^T)QY + c")
-print("    C(Y) min: ", Cmin)
-print("    Y min: ", Ymin)
+# print("--------------------")
+# print("BRUTE FORCE APPROACH")
+# print("--------------------")
+# print("\ncomputing: C(Y) = (Y^T)QY + c")
+# print("    C(Y) min: ", Cmin)
+# print("    Y min: ", Ymin)
 
-print("\nThe matrix is:")
-matrix = np.array(Ymin).reshape(n, m)
-print(matrix)
-print()
+# print("\nThe matrix is:")
+# matrix = np.array(Ymin).reshape(n, m)
+# print(matrix)
+# print()
+
+
+
+
+
+# BQM generation
+start_time = time.perf_counter_ns()
+
+bqm = from_matrix_to_bqm(Q, c)
+print(len(bqm))
+end_time = time.perf_counter_ns()
+#print(f"Matrix size:{m*n}*{m*n}")
+print(f"Time of generation: {(end_time - start_time)/10e9} s")
+
+# # Solving with annealing 
+# start_time = time.perf_counter_ns()  
+# result = solveWithAnnealer(m*n, bqm, shots)
+# end_time = time.perf_counter_ns()
+# result_list = [int(x) for x in result.samples.first.sample.values()]
+# annealing_matrix = np.array(result_list).reshape(n, m)
+# print(f"\nAnnealing result:\n{annealing_matrix}")    
+# print(f"Time of annealing solution: {(end_time - start_time)/10e9} s\n")
+
+# check_staircase(annealing_matrix)
+# # check_concentration(annealing_matrix)
+
+# solving exactly
+start_time = time.perf_counter_ns()
+e_result = exactSolver(bqm)
+df_result = e_result.lowest().to_pandas_dataframe()
+end_time = time.perf_counter_ns()
+elapsed_time_ns = end_time - start_time
+#print(f"\nALL Exact solutions:\n{df_result}")
+# print first result
+matrix = df_result.iloc[:, :m*n].to_numpy()
+# # print(f"First solution:\n{matrix[0].reshape(n, m)}")
+# # Print all the solutions
+print(f"Exact solutions: {int(matrix.size/(m*n))}")
+for sol in matrix[:]:
+    print(f"solution:\n{sol.reshape(n, m)}")
+print(f"Time of all exact solutions: {elapsed_time_ns/10e9} s")
