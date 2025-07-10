@@ -56,7 +56,7 @@ def load_data(config):
     if config['n_counterpart'] != 'all':
         dataset = dataset.sample(n=int(config['n_counterpart']))
 
-# sort dataset by score
+    # sort dataset by score
     dataset = dataset.sort_values(by='score')
     return dataset
 
