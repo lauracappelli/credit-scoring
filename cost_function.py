@@ -164,7 +164,7 @@ def check_concentration(matrix, m, n, alpha_conc = 0.05):
         return True
     else:
         print("Error: concentration constraint not respected")
-        return True
+        return False
 
 def check_concentration_approx(matrix):
     ones_per_column = np.sum(matrix == 1, axis=0)
@@ -175,7 +175,7 @@ def check_concentration_approx(matrix):
         return True
     else:
         print("Error: concentration (approx) constraint not respected")
-        return True
+        return False
 
 def from_matrix_to_bqm(matrix, c):
     
