@@ -1,4 +1,4 @@
-from select_data import *
+from src.select_data import *
 import dimod
 import hybrid
 import math
