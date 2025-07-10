@@ -1,6 +1,8 @@
 import sys, yaml
 import pandas as pd
 import numpy as np
+import random
+from dimod import BinaryQuadraticModel
 
 def read_config():
 
@@ -69,7 +71,14 @@ def generate_data(config):
 
     dataset = dataset.sort_values(by='score')
     return dataset
-    
+
+def gen_random_Q(size, c):
+    # define binary quadratic problem
+    Q_dict = {(i, j): random.randint(0,9) for i in range(size) for j in range(size)}
+    bqm = BinaryQuadraticModel.from_qubo(Q_dict, c)
+
+    return bqm
+
 if __name__ == '__main__':
 
     config = read_config()
