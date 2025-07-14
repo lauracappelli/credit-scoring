@@ -66,3 +66,27 @@ def check_concentration_approx(matrix, verbose=False):
         if verbose:
             print("Error: concentration (approx) constraint not respected")
         return False
+
+def check_upper_thrs(matrix, max_thrs, verbose=False):
+
+    for ii in np.sum(matrix, axis=0):
+        if ii > max_thrs:
+            if verbose:
+                print("Error: upper threshold limit constraint not respected")
+            return False
+    
+    if verbose:
+        print("Upper threshold limit constraint checked")
+    return True
+
+def check_lower_thrs(matrix, min_thrs, verbose=False):
+    
+    for ii in np.sum(matrix, axis=0):
+        if ii < min_thrs:
+            if verbose:
+                print("Error: lower threshold limit constraint not respected")
+            return False
+    
+    if verbose:
+        print("Lower threshold limit constraint checked")
+    return True
