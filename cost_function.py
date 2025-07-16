@@ -270,29 +270,29 @@ def main():
 
     #-------------------------------
 
-    # Solving with brute force
-    start_time = time.perf_counter_ns()
-    (result_bf, cost) = brute_force_solver(Q,c,Q.shape[0])
-    end_time = time.perf_counter_ns()
-    if config['constraints']['min_thr'] == True:
-        result_bf = result_bf[:m*n]
-    print(f"\nBrute Force result:\n{result_bf.reshape(n,m)}")
-    print(f"Time of brute force solution: {(end_time - start_time)/10e9} s\n")
+    # # Solving with brute force
+    # start_time = time.perf_counter_ns()
+    # (result_bf, cost) = brute_force_solver(Q,c,Q.shape[0])
+    # end_time = time.perf_counter_ns()
+    # if config['constraints']['min_thr'] == True:
+    #     result_bf = result_bf[:m*n]
+    # print(f"\nBrute Force result:\n{result_bf.reshape(n,m)}")
+    # print(f"Time of brute force solution: {(end_time - start_time)/10e9} s\n")
 
-    # Solving exactly with dwave
-    start_time = time.perf_counter_ns()
-    e_result = exact_solver(bqm)
-    df_result = e_result.lowest().to_pandas_dataframe()
-    end_time = time.perf_counter_ns()
-    elapsed_time_ns = end_time - start_time
-    # Print all the solutions
-    result_exact_solver = df_result.iloc[:, :m*n].to_numpy()
-    # print(f"All exact solutions:\n{df_result}")
-    print(f"Exact solutions with dwave: {int(result_exact_solver.size/(m*n))}")
-    for sol in result_exact_solver[:]:
-        print(f"solution:\n{sol.reshape(n, m)}")
-    print(f"Time of all exact solutions: {elapsed_time_ns/10e9} s")
-    # print(f"First solution:\n{result_exact_solver[0].reshape(n, m)}")
+    # # Solving exactly with dwave
+    # start_time = time.perf_counter_ns()
+    # e_result = exact_solver(bqm)
+    # df_result = e_result.lowest().to_pandas_dataframe()
+    # end_time = time.perf_counter_ns()
+    # elapsed_time_ns = end_time - start_time
+    # # Print all the solutions
+    # result_exact_solver = df_result.iloc[:, :m*n].to_numpy()
+    # # print(f"All exact solutions:\n{df_result}")
+    # print(f"Exact solutions with dwave: {int(result_exact_solver.size/(m*n))}")
+    # for sol in result_exact_solver[:]:
+    #     print(f"solution:\n{sol.reshape(n, m)}")
+    # print(f"Time of all exact solutions: {elapsed_time_ns/10e9} s")
+    # # print(f"First solution:\n{result_exact_solver[0].reshape(n, m)}")
 
     # Solving with annealing 
     start_time = time.perf_counter_ns()
