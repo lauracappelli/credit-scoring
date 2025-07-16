@@ -9,13 +9,23 @@ attributes:             # select optional attributes
     revenue: 'no'
     geo_area: 'no'
 
-n_counterpart: 8      # could be a number or 'all'
-m_company: 3
+n_counterpart: 3      # could be a number or 'all'
+m_company: 2
 
 alpha_concentration: 0.05
 
 shots: 100000
 
-mu_one_calss_constr: 100
-mu_staircase_constr: 50
-mu_concentration_constr: 10
+constraints:
+    one_class: True
+    logic: True
+    conentration: True
+    min_thr: False
+    max_thr: True
+
+mu: 
+    one_calss: 100
+    logic: 100
+    concentration: 20
+    min_thr: 10
+    max_thr: 10

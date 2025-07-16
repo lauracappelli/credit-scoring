@@ -108,7 +108,7 @@ def concentration_constr(m, n, mu=1):
     for i1 in range(n):
         for i2 in range(n):
             for j in range(m):
-                u[index] = [(i1)*m+j, (i2)*m+j]
+                u[index] = [i1*m+j, i2*m+j]
                 index += 1
 
     # penalty: "concentration"
@@ -203,10 +203,10 @@ def exact_solver(bqm):
 
     return sampleset
 
-def brute_force_solver(Q, c, m, n):
+def brute_force_solver(Q, c, dim):
 
     # compute C(Y) = (Y^T)QY + (G^T)Y + c for every Y
-    Ylist = list(itertools.product([0, 1], repeat=n*m))
+    Ylist = list(itertools.product([0, 1], repeat=dim))
     Cmin = float('inf')
 
     for ii in range(len(Ylist)):
@@ -235,61 +235,82 @@ def main():
     alpha_conc = config['alpha_concentration']
     shots = config['shots']
 
-    mu_one_calss_constr = config['mu_one_calss_constr']
-    mu_staircase_constr = config['mu_staircase_constr']
-    mu_concentration_constr = config['mu_concentration_constr']
+    mu_one_calss_constr = config['mu']['one_calss']
+    mu_staircase_constr = config['mu']['logic']
+    mu_concentration_constr = config['mu']['concentration']
+    mu_min_thr_constr = config['mu']['min_thr']
+
+    #-------------------------------
 
     # Gen Q matrix
     start_time = time.perf_counter_ns()
-    (Q_one_class,c_one_class) = one_class_const(m,n,mu_one_calss_constr)
-    Q_staircase = staircase_constr(m,n,mu_staircase_constr)
-    (Q_conc,c_conc) = concentration_constr(m, n, mu_concentration_constr)
-
-    Q = Q_one_class + Q_staircase + Q_conc
-    c = c_one_class + c_conc
+    Q = np.zeros([m*n, m*n])
+    c = 0
+    if config['constraints']['one_class'] == True:
+        (Q_one_class,c_one_class) = one_class_const(m,n,mu_one_calss_constr)
+        Q = Q + Q_one_class
+        c = c + c_one_class
+    if config['constraints']['logic'] == True:
+        Q = Q + staircase_constr(m,n,mu_staircase_constr)
+    if config['constraints']['conentration'] == True:
+        (Q_conc,c_conc) = concentration_constr(m, n, mu_concentration_constr)
+        Q = Q + Q_conc
+        c = c + c_conc
+    if config['constraints']['min_thr'] == True:
+        (Q_min_thr, c_min_thr) = lower_thrs_constr(m, n, mu_min_thr_constr)
+        pad = Q_min_thr.shape[0] - Q.shape[0]
+        Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_min_thr
+        c = c + c_min_thr
 
     # BQM generation
     bqm = from_matrix_to_bqm(Q, c)
     end_time = time.perf_counter_ns()
-    print(f"Matrix size:{m*n}*{m*n}")
+    print(f"Matrix size:{Q.shape}")
     print(f"Time of generation: {(end_time - start_time)/10e9} s")
+
+    #-------------------------------
 
     # Solving with brute force
     start_time = time.perf_counter_ns()
-    (matrix, cost) = brute_force_solver(Q,c,m,n)
+    (matrix, cost) = brute_force_solver(Q,c,Q.shape[0])
     end_time = time.perf_counter_ns()
     print(f"\nBrute Force result:\n{matrix.reshape(n,m)}")
     print(f"Time of brute force solution: {(end_time - start_time)/10e9} s\n")
 
-    # Solving exactly with dwave
-    start_time = time.perf_counter_ns()
-    e_result = exact_solver(bqm)
-    df_result = e_result.lowest().to_pandas_dataframe()
-    end_time = time.perf_counter_ns()
-    elapsed_time_ns = end_time - start_time
-    # Print all the solutions
-    matrix = df_result.iloc[:, :m*n].to_numpy()
-    # print(f"\All exact solutions:\n{df_result}")
-    print(f"Exact solutions with dwave: {int(matrix.size/(m*n))}")
-    for sol in matrix[:]:
-        print(f"solution:\n{sol.reshape(n, m)}")
-    print(f"Time of all exact solutions: {elapsed_time_ns/10e9} s")
-    #print(f"First solution:\n{matrix[0].reshape(n, m)}")
+    # # Solving exactly with dwave
+    # start_time = time.perf_counter_ns()
+    # e_result = exact_solver(bqm)
+    # df_result = e_result.lowest().to_pandas_dataframe()
+    # end_time = time.perf_counter_ns()
+    # elapsed_time_ns = end_time - start_time
+    # # Print all the solutions
+    # matrix = df_result.iloc[:, :m*n].to_numpy()
+    # # print(f"\All exact solutions:\n{df_result}")
+    # print(f"Exact solutions with dwave: {int(matrix.size/(m*n))}")
+    # for sol in matrix[:]:
+    #     print(f"solution:\n{sol.reshape(n, m)}")
+    # print(f"Time of all exact solutions: {elapsed_time_ns/10e9} s")
+    # #print(f"First solution:\n{matrix[0].reshape(n, m)}")
 
-    # Solving with annealing 
-    start_time = time.perf_counter_ns()  
-    result = annealer_solver(m*n, bqm, shots)
-    end_time = time.perf_counter_ns()
-    result_list = [int(x) for x in result.samples.first.sample.values()]
-    annealing_matrix = np.array(result_list).reshape(n, m)
-    print(f"\nAnnealing result:\n{annealing_matrix}")    
-    print(f"Time of annealing solution: {(end_time - start_time)/10e9} s\n")
+    # # Solving with annealing 
+    # start_time = time.perf_counter_ns()  
+    # result = annealer_solver(m*n, bqm, shots)
+    # end_time = time.perf_counter_ns()
+    # result_list = [int(x) for x in result.samples.first.sample.values()]
 
-    print("Result validation:")
-    verbose = True
-    check_staircase(annealing_matrix, verbose)
-    check_concentration(annealing_matrix, m, n, alpha_conc, verbose)
-    check_concentration_approx(annealing_matrix, verbose)
+    # Tagliare x righe e y colonne
+    # Q = Q[:-x, :-y]
+
+    # annealing_matrix = np.array(result_list).reshape(n, m)
+    # print(f"\nAnnealing result:\n{annealing_matrix}")    
+    # print(f"Time of annealing solution: {(end_time - start_time)/10e9} s\n")
+
+    # print("Result validation:")
+    # verbose = True
+    # check_staircase(annealing_matrix, verbose)
+    # check_concentration(annealing_matrix, m, n, alpha_conc, verbose)
+    # # check_concentration_approx(annealing_matrix, verbose)
+    # check_lower_thrs(annealing_matrix, 1, verbose)
 
 if __name__ == '__main__':
     main()
