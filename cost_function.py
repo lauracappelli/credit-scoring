@@ -122,9 +122,12 @@ def concentration_constr(m, n, mu=1):
 
     return (mu*Q, mu*c)
 
+def compute_lower_thrs(n):
+    return math.floor(n*0.01) if math.floor(n*0.01) != 0 else 1
+
 def lower_thrs_constr(m, n, mu=1):
 
-    min_thr = math.floor(n*0.01) if math.floor(n*0.01) != 0 else 1
+    min_thr = compute_lower_thrs(n)
 
     # find the number of slack variables per constraint
     N_S1 = math.floor(1+math.log2(n-min_thr))
@@ -308,7 +311,7 @@ def main():
     check_staircase(annealing_matrix, verbose)
     check_concentration(annealing_matrix, m, n, alpha_conc, verbose)
     # check_concentration_approx(annealing_matrix, verbose)
-    check_lower_thrs(annealing_matrix, 1, verbose)
+    check_lower_thrs(annealing_matrix, compute_lower_thrs(n), verbose)
 
 if __name__ == '__main__':
     main()
