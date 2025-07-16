@@ -160,6 +160,14 @@ def brute_force_solver(Q, c, m, n):
             Cmin = Cy
             Ymin = Y.copy()
 
+    # alternative approach:
+    # for ii, item in enumerate(itertools.product([0, 1], repeat=n*m)):
+    #     Y = np.array(item)
+    #     Cy=np.einsum('i,ij,j->', Y, Q, Y)+c
+    #     if ( Cy < Cmin ):
+    #         Cmin = Cy
+    #         Ymin = Y.copy()
+
     return (np.array(Ymin), Cmin)
  
     # Cy_vect = []
