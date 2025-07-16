@@ -186,11 +186,11 @@ def from_matrix_to_bqm(matrix, c):
 
     return bqm
 
-def annealer_solver(m, bqm, shots):
+def annealer_solver(dim, bqm, shots):
 
     # Set up the sampler with an initial state
     sampler = hybrid.samplers.SimulatedAnnealingProblemSampler(num_sweeps=shots)
-    state = hybrid.core.State.from_sample({i: 0 for i in range(m)}, bqm)
+    state = hybrid.core.State.from_sample({i: 0 for i in range(dim)}, bqm)
  
     # Sample the problem
     new_state = sampler.run(state).result()
@@ -272,45 +272,43 @@ def main():
 
     # Solving with brute force
     start_time = time.perf_counter_ns()
-    (matrix, cost) = brute_force_solver(Q,c,Q.shape[0])
+    (result_bf, cost) = brute_force_solver(Q,c,Q.shape[0])
     end_time = time.perf_counter_ns()
-    print(f"\nBrute Force result:\n{matrix.reshape(n,m)}")
+    if config['constraints']['min_thr'] == True:
+        result_bf = result_bf[:m*n]
+    print(f"\nBrute Force result:\n{result_bf.reshape(n,m)}")
     print(f"Time of brute force solution: {(end_time - start_time)/10e9} s\n")
 
-    # # Solving exactly with dwave
-    # start_time = time.perf_counter_ns()
-    # e_result = exact_solver(bqm)
-    # df_result = e_result.lowest().to_pandas_dataframe()
-    # end_time = time.perf_counter_ns()
-    # elapsed_time_ns = end_time - start_time
-    # # Print all the solutions
-    # matrix = df_result.iloc[:, :m*n].to_numpy()
-    # # print(f"\All exact solutions:\n{df_result}")
-    # print(f"Exact solutions with dwave: {int(matrix.size/(m*n))}")
-    # for sol in matrix[:]:
-    #     print(f"solution:\n{sol.reshape(n, m)}")
-    # print(f"Time of all exact solutions: {elapsed_time_ns/10e9} s")
-    # #print(f"First solution:\n{matrix[0].reshape(n, m)}")
+    # Solving exactly with dwave
+    start_time = time.perf_counter_ns()
+    e_result = exact_solver(bqm)
+    df_result = e_result.lowest().to_pandas_dataframe()
+    end_time = time.perf_counter_ns()
+    elapsed_time_ns = end_time - start_time
+    # Print all the solutions
+    result_exact_solver = df_result.iloc[:, :m*n].to_numpy()
+    # print(f"All exact solutions:\n{df_result}")
+    print(f"Exact solutions with dwave: {int(result_exact_solver.size/(m*n))}")
+    for sol in result_exact_solver[:]:
+        print(f"solution:\n{sol.reshape(n, m)}")
+    print(f"Time of all exact solutions: {elapsed_time_ns/10e9} s")
+    # print(f"First solution:\n{result_exact_solver[0].reshape(n, m)}")
 
-    # # Solving with annealing 
-    # start_time = time.perf_counter_ns()  
-    # result = annealer_solver(m*n, bqm, shots)
-    # end_time = time.perf_counter_ns()
-    # result_list = [int(x) for x in result.samples.first.sample.values()]
+    # Solving with annealing 
+    start_time = time.perf_counter_ns()
+    result = annealer_solver(Q.shape[0], bqm, shots)
+    end_time = time.perf_counter_ns()
+    result_ann = np.array([int(x) for x in result.samples.first.sample.values()])[:m*n]
+    annealing_matrix = result_ann.reshape(n, m)
+    print(f"\nAnnealing result:\n{annealing_matrix}")    
+    print(f"Time of annealing solution: {(end_time - start_time)/10e9} s\n")
 
-    # Tagliare x righe e y colonne
-    # Q = Q[:-x, :-y]
-
-    # annealing_matrix = np.array(result_list).reshape(n, m)
-    # print(f"\nAnnealing result:\n{annealing_matrix}")    
-    # print(f"Time of annealing solution: {(end_time - start_time)/10e9} s\n")
-
-    # print("Result validation:")
-    # verbose = True
-    # check_staircase(annealing_matrix, verbose)
-    # check_concentration(annealing_matrix, m, n, alpha_conc, verbose)
-    # # check_concentration_approx(annealing_matrix, verbose)
-    # check_lower_thrs(annealing_matrix, 1, verbose)
+    print("Result validation:")
+    verbose = True
+    check_staircase(annealing_matrix, verbose)
+    check_concentration(annealing_matrix, m, n, alpha_conc, verbose)
+    # check_concentration_approx(annealing_matrix, verbose)
+    check_lower_thrs(annealing_matrix, 1, verbose)
 
 if __name__ == '__main__':
     main()
