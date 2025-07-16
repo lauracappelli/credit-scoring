@@ -125,13 +125,16 @@ def concentration_constr(m, n, mu=1):
 def compute_lower_thrs(n):
     return math.floor(n*0.01) if math.floor(n*0.01) != 0 else 1
 
+def compute_upper_thrs(n, grades):
+    return math.floor(n*0.15) if grades > 7 and math.floor(n*0.15) != 0 else (n-grades+1)
+
 def lower_thrs_constr(m, n, mu=1):
 
     min_thr = compute_lower_thrs(n)
 
     # find the number of slack variables per constraint
-    N_S1 = math.floor(1+math.log2(n-min_thr))
-    dim = n*m+N_S1*m
+    slack_vars = math.floor(1+math.log2(n-min_thr))
+    dim = n*m+slack_vars*m
 
     # initialize Q and c
     Q = np.zeros([dim, dim])
@@ -148,8 +151,8 @@ def lower_thrs_constr(m, n, mu=1):
                     Q[u2[0]][u2[1]] += 0.5
                     Q[u2[1]][u2[0]] += 0.5
 
-    for l1 in range(N_S1):
-        for l2 in range(N_S1):
+    for l1 in range(slack_vars):
+        for l2 in range(slack_vars):
             for j in range(m):
                 v2 = [l1*m+j, l2*m+j]
                 tmp = math.pow(2,math.floor((v2[0]+1)/m)+math.floor((v2[1]+1)/m))
@@ -166,13 +169,69 @@ def lower_thrs_constr(m, n, mu=1):
             Q[u,u] -= 2*min_thr
 
     index = 0
-    for l in range(N_S1):
+    for l in range(slack_vars):
         for j in range(m):
             Q[offset+index][offset+index] += min_thr*math.pow(2,1+math.floor((l*m+j+1)/m))
             index += 1
 
     for i in range(n):
-        for l in range(N_S1):
+        for l in range(slack_vars):
+            for j in range(m):
+                w2 = [i*m+j, l*m+j]
+                tmp = math.pow(2,1+math.floor((w2[1]+1)/m))
+                Q[w2[0]][offset+w2[1]] -= -0.5*tmp
+                Q[offset+w2[1]][w2[0]] -= -0.5*tmp
+
+    return (mu*Q, mu*c)
+
+def upper_thrs_constr(m, n, mu=1):
+
+    max_thr = compute_upper_thrs(n, m)
+
+    # find the number of slack variables per constraint
+    slack_vars = math.floor(1+math.log2(max_thr))
+    dim = n*m+slack_vars*m
+
+    # initialize Q and c
+    Q = np.zeros([dim, dim])
+    c = m * max_thr * max_thr
+    offset = n*m
+
+    for i1 in range(n):
+        for i2 in range(n):
+            for j in range(m):
+                u2 = [i1*m+j, i2*m+j]
+                if u2[0]==u2[1]: # questo l'ho modificato, forse c'era un typo
+                    Q[u2[0]][u2[1]] += 1
+                else:
+                    Q[u2[0]][u2[1]] += 0.5
+                    Q[u2[1]][u2[0]] += 0.5
+
+    for l1 in range(slack_vars):
+        for l2 in range(slack_vars):
+            for j in range(m):
+                v2 = [l1*m+j, l2*m+j]
+                tmp = math.pow(2,math.floor((v2[0]+1)/m)+math.floor((v2[1]+1)/m))
+                if v2[0]==v2[1]:
+                    Q[offset+v2[0]][offset+v2[1]] += tmp
+                else:
+                    Q[offset+v2[0]][offset+v2[1]] += 0.5*tmp
+                    Q[offset+v2[1]][offset+v2[0]] += 0.5*tmp
+
+
+    for i in range(n):
+        for j in range(m):
+            u = i*m+j
+            Q[u,u] -= 2*max_thr
+
+    index = 0
+    for l in range(slack_vars):
+        for j in range(m):
+            Q[offset+index][offset+index] += max_thr*math.pow(2,1+math.floor((l*m+j+1)/m))
+            index += 1
+
+    for i in range(n):
+        for l in range(slack_vars):
             for j in range(m):
                 w2 = [i*m+j, l*m+j]
                 tmp = math.pow(2,1+math.floor((w2[1]+1)/m))
@@ -242,6 +301,7 @@ def main():
     mu_staircase_constr = config['mu']['logic']
     mu_concentration_constr = config['mu']['concentration']
     mu_min_thr_constr = config['mu']['min_thr']
+    mu_max_thr_constr = config['mu']['max_thr']
 
     #-------------------------------
 
@@ -264,6 +324,9 @@ def main():
         pad = Q_min_thr.shape[0] - Q.shape[0]
         Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_min_thr
         c = c + c_min_thr
+    if config['constraints']['max_thr'] == True:
+        (Q_max_thr, c_max_thr) = upper_thrs_constr(m, n, mu_max_thr_constr)
+        # SOMETHING TO DO HERE
 
     # BQM generation
     bqm = from_matrix_to_bqm(Q, c)
@@ -312,6 +375,7 @@ def main():
     check_concentration(annealing_matrix, m, n, alpha_conc, verbose)
     # check_concentration_approx(annealing_matrix, verbose)
     check_lower_thrs(annealing_matrix, compute_lower_thrs(n), verbose)
+    check_upper_thrs(annealing_matrix, compute_upper_thrs(n,m), verbose)
 
 if __name__ == '__main__':
     main()
