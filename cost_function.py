@@ -128,18 +128,17 @@ def compute_lower_thrs(n):
 def compute_upper_thrs(n, grades):
     return math.floor(n*0.15) if grades > 7 and math.floor(n*0.15) != 0 else (n-grades+1)
 
-def lower_thrs_constr(m, n, mu=1):
+def lower_thrs_constr(m, n, offset, mu=1):
 
     min_thr = compute_lower_thrs(n)
 
     # find the number of slack variables per constraint
     slack_vars = math.floor(1+math.log2(n-min_thr))
-    dim = n*m+slack_vars*m
+    dim = offset+slack_vars*m
 
     # initialize Q and c
     Q = np.zeros([dim, dim])
     c = m * min_thr * min_thr
-    offset = n*m
 
     for i1 in range(n):
         for i2 in range(n):
@@ -184,18 +183,17 @@ def lower_thrs_constr(m, n, mu=1):
 
     return (mu*Q, mu*c)
 
-def upper_thrs_constr(m, n, mu=1):
+def upper_thrs_constr(m, n, offset, mu=1):
 
     max_thr = compute_upper_thrs(n, m)
 
     # find the number of slack variables per constraint
     slack_vars = math.floor(1+math.log2(max_thr))
-    dim = n*m+slack_vars*m
+    dim = offset+slack_vars*m
 
     # initialize Q and c
     Q = np.zeros([dim, dim])
     c = m * max_thr * max_thr
-    offset = n*m
 
     for i1 in range(n):
         for i2 in range(n):
@@ -320,13 +318,15 @@ def main():
         Q = Q + Q_conc
         c = c + c_conc
     if config['constraints']['min_thr'] == True:
-        (Q_min_thr, c_min_thr) = lower_thrs_constr(m, n, mu_min_thr_constr)
+        (Q_min_thr, c_min_thr) = lower_thrs_constr(m, n, Q.shape[0], mu_min_thr_constr)
         pad = Q_min_thr.shape[0] - Q.shape[0]
         Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_min_thr
         c = c + c_min_thr
     if config['constraints']['max_thr'] == True:
-        (Q_max_thr, c_max_thr) = upper_thrs_constr(m, n, mu_max_thr_constr)
-        # SOMETHING TO DO HERE
+        (Q_max_thr, c_max_thr) = upper_thrs_constr(m, n, Q.shape[0], mu_max_thr_constr)
+        pad = Q_max_thr.shape[0] - Q.shape[0]
+        Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_max_thr
+        c = c + c_max_thr
 
     # BQM generation
     bqm = from_matrix_to_bqm(Q, c)
