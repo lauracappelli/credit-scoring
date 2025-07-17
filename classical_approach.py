@@ -1,5 +1,6 @@
 from src.select_data import *
 from src.check_constraints import *
+from cost_function import compute_lower_thrs, compute_upper_thrs
 import itertools
 import math
 import time
@@ -14,24 +15,28 @@ def main():
     alpha_conc = config['alpha_concentration']
     shots = config['shots']
 
-    mu_one_calss_constr = config['mu_one_calss_constr']
-    mu_staircase_constr = config['mu_staircase_constr']
-    mu_concentration_constr = config['mu_concentration_constr']
+    min_thr = compute_lower_thrs(n)
+    max_thrs = compute_upper_thrs(n, grades)
 
     all_solutions = itertools.product(range(grades), repeat=n)
+    print(f"Testing {grades ** n} combinations...")
     valid_solutions = []
-    
+
+    start_time = time.perf_counter_ns()    
     for sol in all_solutions:
+        # print(sol)
         # build matrix
         matrix = np.zeros([n,grades])
         for i, el in enumerate(sol):
             # counterpart i in the el-th grade
             matrix[i][el] = 1
         
-        if check_staircase(matrix) and check_concentration(matrix, grades, n):
+        if check_staircase(matrix) and check_concentration(matrix, grades, n) and check_upper_thrs(matrix, max_thrs) and check_lower_thrs(matrix, min_thr):
             valid_solutions.append(sol)
 
-    print(valid_solutions)
+    end_time = time.perf_counter_ns()
+    print(f"Solutions:\n{valid_solutions}")
+    print(f"Time: {(end_time-start_time)/10e9} s")
 
 if __name__ == '__main__':
     main()
