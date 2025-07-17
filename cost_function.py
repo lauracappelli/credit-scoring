@@ -128,17 +128,22 @@ def compute_lower_thrs(n):
 def compute_upper_thrs(n, grades):
     return math.floor(n*0.15) if grades > 7 and math.floor(n*0.15) != 0 else (n-grades+1)
 
-def lower_thrs_constr(m, n, offset, mu=1):
+def threshold_constr(m, n, offset, minmax, mu=1):
 
-    min_thr = compute_lower_thrs(n)
-
-    # find the number of slack variables per constraint
-    slack_vars = math.floor(1+math.log2(n-min_thr))
-    dim = offset+slack_vars*m
+    if minmax == 'min':
+        thr = compute_lower_thrs(n)
+        slack_vars = math.floor(1+math.log2(n-thr)) # to check
+    elif minmax == 'max':
+        thr = compute_upper_thrs(n, m)
+        slack_vars = math.floor(1+math.log2(thr)) # to check
+    else:
+        print("Error in threshold function call")
+        sys.exit(1)
 
     # initialize Q and c
+    dim = offset+slack_vars*m
     Q = np.zeros([dim, dim])
-    c = m * min_thr * min_thr
+    c = m * thr * thr
 
     for i1 in range(n):
         for i2 in range(n):
@@ -165,67 +170,12 @@ def lower_thrs_constr(m, n, offset, mu=1):
     for i in range(n):
         for j in range(m):
             u = i*m+j
-            Q[u,u] -= 2*min_thr
+            Q[u,u] -= 2*thr
 
     index = 0
     for l in range(slack_vars):
         for j in range(m):
-            Q[offset+index][offset+index] += min_thr*math.pow(2,1+math.floor((l*m+j+1)/m))
-            index += 1
-
-    for i in range(n):
-        for l in range(slack_vars):
-            for j in range(m):
-                w2 = [i*m+j, l*m+j]
-                tmp = math.pow(2,1+math.floor((w2[1]+1)/m))
-                Q[w2[0]][offset+w2[1]] -= -0.5*tmp
-                Q[offset+w2[1]][w2[0]] -= -0.5*tmp
-
-    return (mu*Q, mu*c)
-
-def upper_thrs_constr(m, n, offset, mu=1):
-
-    max_thr = compute_upper_thrs(n, m)
-
-    # find the number of slack variables per constraint
-    slack_vars = math.floor(1+math.log2(max_thr))
-    dim = offset+slack_vars*m
-
-    # initialize Q and c
-    Q = np.zeros([dim, dim])
-    c = m * max_thr * max_thr
-
-    for i1 in range(n):
-        for i2 in range(n):
-            for j in range(m):
-                u2 = [i1*m+j, i2*m+j]
-                if u2[0]==u2[1]: # questo l'ho modificato, forse c'era un typo
-                    Q[u2[0]][u2[1]] += 1
-                else:
-                    Q[u2[0]][u2[1]] += 0.5
-                    Q[u2[1]][u2[0]] += 0.5
-
-    for l1 in range(slack_vars):
-        for l2 in range(slack_vars):
-            for j in range(m):
-                v2 = [l1*m+j, l2*m+j]
-                tmp = math.pow(2,math.floor((v2[0]+1)/m)+math.floor((v2[1]+1)/m))
-                if v2[0]==v2[1]:
-                    Q[offset+v2[0]][offset+v2[1]] += tmp
-                else:
-                    Q[offset+v2[0]][offset+v2[1]] += 0.5*tmp
-                    Q[offset+v2[1]][offset+v2[0]] += 0.5*tmp
-
-
-    for i in range(n):
-        for j in range(m):
-            u = i*m+j
-            Q[u,u] -= 2*max_thr
-
-    index = 0
-    for l in range(slack_vars):
-        for j in range(m):
-            Q[offset+index][offset+index] += max_thr*math.pow(2,1+math.floor((l*m+j+1)/m))
+            Q[offset+index][offset+index] += thr*math.pow(2,1+math.floor((l*m+j+1)/m))
             index += 1
 
     for i in range(n):
@@ -318,12 +268,12 @@ def main():
         Q = Q + Q_conc
         c = c + c_conc
     if config['constraints']['min_thr'] == True:
-        (Q_min_thr, c_min_thr) = lower_thrs_constr(m, n, Q.shape[0], mu_min_thr_constr)
+        (Q_min_thr, c_min_thr) = threshold_constr(m, n, Q.shape[0], 'min', mu_min_thr_constr)
         pad = Q_min_thr.shape[0] - Q.shape[0]
         Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_min_thr
         c = c + c_min_thr
     if config['constraints']['max_thr'] == True:
-        (Q_max_thr, c_max_thr) = upper_thrs_constr(m, n, Q.shape[0], mu_max_thr_constr)
+        (Q_max_thr, c_max_thr) = threshold_constr(m, n, Q.shape[0], 'max', mu_max_thr_constr)
         pad = Q_max_thr.shape[0] - Q.shape[0]
         Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_max_thr
         c = c + c_max_thr
