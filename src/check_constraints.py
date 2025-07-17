@@ -7,7 +7,8 @@ def check_staircase(matrix, verbose=False):
     ones_per_row = np.sum(matrix == 1, axis=1)
     if not np.all(ones_per_row == 1):
         if verbose:
-            print("Error: more or less than one class per counterpart")
+            print("Error: logic constraint not respected")
+            print("\tMmore or less than one class per counterpart")
         return False
 
     # retreive all the 1's indexes
@@ -17,11 +18,13 @@ def check_staircase(matrix, verbose=False):
     # check the first and the last counterpart
     if index_1[0] != 0:
         if verbose:
-            print("Error in the first counterpart")
+            print("Error: logic constraint not respected")
+            print("\tError in the first counterpart")
         return False
     if index_1[-1] != matrix.shape[1]-1:
         if verbose:
-            print("Error in the last counterpart")
+            print("Error: logic constraint not respected")
+            print("\tError in the last counterpart")
         return False
 
     # check if the matrix is a staircase matrix
@@ -31,7 +34,8 @@ def check_staircase(matrix, verbose=False):
         # print(f"index {i+1} contains {el}")
         if el != index_1[i] and el != index_1[i]+1:
             if verbose:
-                print(f"Error in the counterpart {i+2}")
+                print("Error: logic constraint not respected")
+                print(f"\tError in the counterpart {i+2}")
             return False
 
     if verbose:
