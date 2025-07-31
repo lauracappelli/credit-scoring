@@ -110,11 +110,10 @@ def check_heterogeneity(matrix, dr, verbose=False):
         n1, n2 = grad_cardinality[i], grad_cardinality[i+1]
 
         # t-test e p-value con varianza campionaria
-        # grade_1 = dr[cum:cum + n1] #  dr della classe i
-        # cum = cum + n1
-        # grade_2 = dr[cum:cum+n2] # dr della classe i+1
-        # s1, s2 = np.var(grade_1, ddof=1), np.var(grade_2, ddof=1)  
-        # t_stat[i], p_val[i] = stats.ttest_ind(grade_1, grade_2, equal_var=True)
+        # grade1 = dr[matrix[:, i] == 1]
+        # grade2 = dr[matrix[:, i+1] == 1]
+        # s1, s2 = np.var(grade1, ddof=1), np.var(grade2, ddof=1)  
+        # t_stat[i], p_val[i] = stats.ttest_ind(grade1, grade2, equal_var=True)
 
         # t-test e p-value con varianza binomiale (quella chiesta da ISP)
         s1, s2 = binomial_var[i], binomial_var[i+1] # = mean*(1-mean)
