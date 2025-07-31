@@ -72,6 +72,21 @@ def generate_data(config):
     dataset = dataset.sort_values(by='score')
     return dataset
 
+def generate_data_var_prob(config):
+    
+    score = np.sort(np.random.uniform(-10, 2, size=config['n_counterpart']))
+    default = np.random.binomial(n=1, p=((score+10)/12)*0.4)
+
+    # np.random.seed(42)
+    dataset = pd.DataFrame({
+        'counterpart_id': np.arange(1, config['n_counterpart']+1),
+        'default': default,
+        'score': score
+    })
+
+    dataset = dataset.sort_values(by='score')
+    return dataset
+
 def gen_random_Q(size, c):
     # define binary quadratic problem
     Q_dict = {(i, j): random.randint(0,9) for i in range(size) for j in range(size)}
