@@ -1,5 +1,6 @@
 import numpy as np
 import math
+from scipy import stats
 
 def check_staircase(matrix, verbose=False):
 
@@ -94,3 +95,35 @@ def check_lower_thrs(matrix, min_thrs, verbose=False):
     if verbose:
         print("Lower threshold limit constraint checked")
     return True
+
+def check_heterogeneity(matrix, dr, verbose=False):
+    print(f"default: {dr.T}")
+
+    grad_cardinality = np.sum(matrix, axis=0) #N_j
+    grad_dr = np.sum(matrix * dr, axis=0) / grad_cardinality #l_j
+    binomial_var = stats.binom.var(1, grad_dr) #sigma^2_j senza dividere per n (altrimenti si sostituisce grad_cardinality a 1)
+    
+    cum = 0
+    t_stat = np.zeros(matrix.shape[1]-1)
+    p_val = np.zeros(matrix.shape[1]-1)
+    for i in range(matrix.shape[1]-1):
+        n1, n2 = grad_cardinality[i], grad_cardinality[i+1]
+
+        # t-test e p-value con varianza campionaria
+        # grade_1 = dr[cum:cum + n1] #  dr della classe i
+        # cum = cum + n1
+        # grade_2 = dr[cum:cum+n2] # dr della classe i+1
+        # s1, s2 = np.var(grade_1, ddof=1), np.var(grade_2, ddof=1)  
+        # t_stat[i], p_val[i] = stats.ttest_ind(grade_1, grade_2, equal_var=True)
+
+        # t-test e p-value con varianza binomiale (quella chiesta da ISP)
+        s1, s2 = binomial_var[i], binomial_var[i+1] # = mean*(1-mean)
+        pooled_std_dev = np.sqrt(((n1 - 1)*s1 + (n2 - 1)*s2) / (n1 + n2 - 2))
+        t_stat[i] = (grad_dr[i] - grad_dr[i+1]) / (pooled_std_dev * np.sqrt(1/n1 + 1/n2))
+        p_val[i] = 2 * stats.t.sf(np.abs(t_stat[i]), n1 + n2 - 2)
+
+    print("t-test", t_stat)
+    print("p_val", p_val)
+
+    return True
+

@@ -327,5 +327,9 @@ def main():
     check_lower_thrs(annealing_matrix, compute_lower_thrs(n), verbose)
     check_upper_thrs(annealing_matrix, compute_upper_thrs(n,m), verbose)
 
+    dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)
+    default = dataset['default'].to_numpy().reshape(n,1)
+    check_heterogeneity(annealing_matrix, default, verbose)
+
 if __name__ == '__main__':
     main()
