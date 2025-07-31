@@ -243,6 +243,7 @@ def main():
     m = config['m_company']
 
     alpha_conc = config['alpha_concentration']
+    alpha_het = config['alpha_heterogeneity']
     shots = config['shots']
 
     mu_one_calss_constr = config['mu']['one_calss']
@@ -329,7 +330,7 @@ def main():
 
     dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)
     default = dataset['default'].to_numpy().reshape(n,1)
-    check_heterogeneity(annealing_matrix, default, verbose)
+    check_heterogeneity(annealing_matrix, default, alpha_het, verbose)
 
 if __name__ == '__main__':
     main()

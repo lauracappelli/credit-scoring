@@ -96,7 +96,7 @@ def check_lower_thrs(matrix, min_thrs, verbose=False):
         print("\t\u2713 Lower threshold limit constraint checked")
     return True
 
-def check_heterogeneity(matrix, dr, verbose=False):
+def check_heterogeneity(matrix, dr, alpha_het=0.01, verbose=False):
     # print(f"default: {dr.T}")
     grad_cardinality = np.sum(matrix, axis=0) #N_j
     grad_dr = np.sum(matrix * dr, axis=0) / grad_cardinality #l_j
@@ -119,7 +119,7 @@ def check_heterogeneity(matrix, dr, verbose=False):
         pooled_std_dev = np.sqrt(((n1 - 1)*s1 + (n2 - 1)*s2) / (n1 + n2 - 2))
         t_stat[i] = (grad_dr[i] - grad_dr[i+1]) / (pooled_std_dev * np.sqrt(1/n1 + 1/n2))
         p_val[i] = 2 * stats.t.sf(np.abs(t_stat[i]), n1 + n2 - 2)
-        if p_val[i] > 0.01:
+        if p_val[i] > alpha_het:
             if verbose:
                 print("\tx Error: heterogeneous constraint not respected")
                 return False
