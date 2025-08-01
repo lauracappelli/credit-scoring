@@ -118,18 +118,27 @@ def check_heterogeneity(matrix, dr, alpha_het=0.01, verbose=False):
         # t-test e p-value con varianza campionaria
         # grade1 = dr[matrix[:, i] == 1]
         # grade2 = dr[matrix[:, i+1] == 1]
-        # s1, s2 = np.var(grade1, ddof=1), np.var(grade2, ddof=1)  
+        # s1, s2 = np.var(grade1, ddof=1), np.var(grade2, ddof=1)
+        # if s1 == 0 and s2 == 0:
+        #     if verbose:
+        #         print("\tx Error: heterogeneous constraint not respected")
+        #     return False
         # t_stat[i], p_val[i] = stats.ttest_ind(grade1, grade2, equal_var=True)
 
         # t-test e p-value con varianza binomiale (quella chiesta da ISP)
         s1, s2 = binomial_var[i], binomial_var[i+1] # = mean*(1-mean)
+        if s1 == 0 and s2 == 0:
+            if verbose:
+                print("\tx Error: heterogeneous constraint not respected")
+            return False
         pooled_std_dev = np.sqrt(((n1 - 1)*s1 + (n2 - 1)*s2) / (n1 + n2 - 2))
         t_stat[i] = (grad_dr[i] - grad_dr[i+1]) / (pooled_std_dev * np.sqrt(1/n1 + 1/n2))
         p_val[i] = 2 * stats.t.sf(np.abs(t_stat[i]), n1 + n2 - 2)
         if p_val[i] > alpha_het:
             if verbose:
                 print("\tx Error: heterogeneous constraint not respected")
-                return False
+                print(f"\t\t Grades {i} and {i+1} are not heterogeneous")
+            return False
 
     # print("t-test", t_stat)
     # print("p_val", p_val)
