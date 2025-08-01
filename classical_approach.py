@@ -12,7 +12,12 @@ def main():
     n = config['n_counterpart']
     grades = config['m_company']
 
+    dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)    
+    default = dataset['default'].to_numpy().reshape(n,1)
+
     alpha_conc = config['alpha_concentration']
+    alpha_het = config['alpha_heterogeneity']
+
     shots = config['shots']
 
     min_thr = compute_lower_thrs(n)
@@ -31,7 +36,7 @@ def main():
             # counterpart i in the el-th grade
             matrix[i][el] = 1
         
-        if check_staircase(matrix) and check_concentration(matrix, grades, n) and check_upper_thrs(matrix, max_thrs) and check_lower_thrs(matrix, min_thr):
+        if check_staircase(matrix) and check_concentration(matrix, grades, n) and check_upper_thrs(matrix, max_thrs) and check_lower_thrs(matrix, min_thr) and check_heterogeneity(matrix, default, alpha_het, False):
             valid_solutions.append(sol)
 
     end_time = time.perf_counter_ns()
