@@ -99,6 +99,13 @@ def check_lower_thrs(matrix, min_thrs, verbose=False):
 def check_heterogeneity(matrix, dr, alpha_het=0.01, verbose=False):
     # print(f"default: {dr.T}")
     grad_cardinality = np.sum(matrix, axis=0) #N_j
+    
+    # Check if all the grades are not empty
+    if not ((grad_cardinality == 0) == False).all():
+        if verbose:
+            print("\tx Error in Heterogeneity constraint: at least one grade is empty")
+        return False
+
     grad_dr = np.sum(matrix * dr, axis=0) / grad_cardinality #l_j
     binomial_var = stats.binom.var(1, grad_dr) #sigma^2_j senza dividere per n (altrimenti si sostituisce grad_cardinality a 1)
     
