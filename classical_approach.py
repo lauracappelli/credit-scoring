@@ -17,6 +17,7 @@ def main():
 
     alpha_conc = config['alpha_concentration']
     alpha_het = config['alpha_heterogeneity']
+    alpha_hom = config['alpha_homogeneity']
 
     shots = config['shots']
 
@@ -36,7 +37,13 @@ def main():
             # counterpart i in the el-th grade
             matrix[i][el] = 1
         
-        if check_staircase(matrix) and check_concentration(matrix, grades, n) and check_upper_thrs(matrix, max_thrs) and check_lower_thrs(matrix, min_thr) and check_heterogeneity(matrix, default, alpha_het, False):
+        if check_staircase(matrix) and \
+            check_concentration(matrix, grades, n) and \
+            check_upper_thrs(matrix, max_thrs) and \
+            check_lower_thrs(matrix, min_thr) and \
+            check_heterogeneity(matrix, default, alpha_het) and \
+            check_homogeneity(matrix, default, alpha_hom):
+
             valid_solutions.append(sol)
 
     end_time = time.perf_counter_ns()

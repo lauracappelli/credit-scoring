@@ -130,6 +130,7 @@ def check_heterogeneity(matrix, dr, alpha_het=0.01, verbose=False):
         if s1 == 0 and s2 == 0:
             if verbose:
                 print("\tx Error: heterogeneous constraint not respected")
+                print(f"\t\t Grades {i} and {i+1} are not heterogeneous")
             return False
         pooled_std_dev = np.sqrt(((n1 - 1)*s1 + (n2 - 1)*s2) / (n1 + n2 - 2))
         t_stat[i] = (grad_dr[i] - grad_dr[i+1]) / (pooled_std_dev * np.sqrt(1/n1 + 1/n2))
@@ -147,3 +148,45 @@ def check_heterogeneity(matrix, dr, alpha_het=0.01, verbose=False):
         print("\t\u2713 Heterogeneous constraint checked")
     return True
 
+def check_homogeneity(matrix, dr, alpha_hom=0.05, verbose=False):
+    for j in range(matrix.shape[1]):
+        grade_dr = dr[matrix[:, j] == 1]
+
+        # Check if the grade is not empty
+        if grade_dr.size == 0:
+            if verbose:
+              print("\tx Error in homogeneity constraint: at least one grade is empty")
+            return False
+        
+        # compute sigma^2(j)
+        l_j = np.mean(grade_dr)
+        sigma2 = l_j*(1-l_j)
+
+        for i in range(1):
+            # select two (not empty) random subset
+            mask = np.random.choice([True, False], size=grade_dr.size)
+            mask[0], mask[-1] = True, False
+            
+            sub1, sub2 = np.array(grade_dr[mask]), np.array(grade_dr[~mask])
+            n1, n2 = sub1.size, sub2.size
+            mean1, mean2 = np.mean(sub1), np.mean(sub2)
+            s1, s2 = mean1*(1-mean1), mean2*(1-mean2)
+
+            if s1 == 0 and s2 == 0:
+                if verbose:
+                    print("\tx Error: homogeneity constraint not respected")
+                    print(f"\t\t Grades {i} and {i+1} are not homogeneous")
+                return False
+            z_stat = (s1 - s2) / np.sqrt(sigma2 * (1/n1 + 1/n2))
+            p_val = 2 * stats.norm.sf(abs(z_stat))
+
+            if p_val > alpha_hom:
+                if verbose:
+                    print("\tx Error: homogeneity constraint not respected")
+                    print(f"\t\t Grades {i} and {i+1} are not homogeneous")
+                return False
+
+    if verbose:
+        print("\t\u2713 Homogeneity constraint checked")
+    return True
+    
