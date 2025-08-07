@@ -87,6 +87,17 @@ def generate_data_var_prob(config):
     dataset = dataset.sort_values(by='score')
     return dataset
 
+def generate_staircase_matrix(m, n, min_thr, max_thr):
+    grad_cardinality = [n//m + 1 if i < n%m else n//m for i in range(m)]
+    random.shuffle(grad_cardinality)
+    
+    matrix = np.zeros([n,m])
+    pad = 0
+    for i, el in enumerate(grad_cardinality):
+        matrix[pad:el+pad,i] = 1
+        pad = pad + el
+    return matrix
+
 def gen_random_Q(size, c):
     # define binary quadratic problem
     Q_dict = {(i, j): random.randint(0,9) for i in range(size) for j in range(size)}
