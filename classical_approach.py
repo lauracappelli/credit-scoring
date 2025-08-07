@@ -29,6 +29,7 @@ def test_random_solution(config, grades, n, default, min_thr, max_thr):
 
     end_time = time.perf_counter_ns()
 
+    print("Solution:\n", np.argmax(matrix, axis=1))
     print(f"Test time: {(end_time-start_time)/10e9} s")
     return
 
