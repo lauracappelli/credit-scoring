@@ -74,14 +74,19 @@ def generate_data(config):
 
 def generate_data_var_prob(config):
     
-    score = np.sort(np.random.uniform(-10, 2, size=config['n_counterpart']))
-    default = np.random.binomial(n=1, p=((score+10)/12)*0.4)
+    n = config['n_counterpart']
+    probabilities = np.linspace(0.0, config['default_prob'], n)
+    random_values = np.random.rand(n)
+    random_booleans = (random_values < probabilities).astype(int)
+    # print("Prob:", probabilities)
+    # print("Random val:", random_values)
+    # print("Default:", random_booleans)
 
     # np.random.seed(42)
     dataset = pd.DataFrame({
-        'counterpart_id': np.arange(1, config['n_counterpart']+1),
-        'default': default,
-        'score': score
+        'counterpart_id': np.arange(1, n+1),
+        'default': random_booleans,
+        'score': np.random.uniform(-10, 2, size=n)
     })
 
     dataset = dataset.sort_values(by='score')
