@@ -92,7 +92,7 @@ def generate_data_var_prob(config):
     dataset = dataset.sort_values(by='score')
     return dataset
 
-def generate_staircase_matrix(m, n, min_thr, max_thr):
+def generate_staircase_matrix(m, n):
     grad_cardinality = [n//m + 1 if i < n%m else n//m for i in range(m)]
     random.shuffle(grad_cardinality)
     

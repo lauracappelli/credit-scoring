@@ -8,7 +8,7 @@ import time
 def test_random_solution(config, grades, n, default, min_thr, max_thr):
     print("Testing one random setup...")
 
-    matrix = generate_staircase_matrix(grades, n, min_thr, max_thr)
+    matrix = generate_staircase_matrix(grades, n)
     # print(np.array(default).T)
     # print(matrix)
 
@@ -29,7 +29,7 @@ def test_random_solution(config, grades, n, default, min_thr, max_thr):
 
     end_time = time.perf_counter_ns()
 
-    print("Solution:\n", np.argmax(matrix, axis=1))
+    # print("Solution:\n", np.argmax(matrix, axis=1))
     print(f"Test time: {(end_time-start_time)/10e9} s")
     return
 
@@ -84,8 +84,8 @@ def main():
     min_thr = compute_lower_thrs(n)
     max_thr = compute_upper_thrs(n, grades)
 
-    # test_random_solution(config, grades, n, default, min_thr, max_thr)
-    test_all_solutions(config, grades, n, default, min_thr, max_thr)
+    test_random_solution(config, grades, n, default, min_thr, max_thr)
+    # test_all_solutions(config, grades, n, default, min_thr, max_thr)
 
 if __name__ == '__main__':
     main()
