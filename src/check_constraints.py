@@ -1,6 +1,8 @@
 import numpy as np
 import math
+import itertools
 from scipy import stats
+from sklearn import metrics
 
 def check_staircase(matrix, verbose=False):
 
@@ -189,4 +191,62 @@ def check_homogeneity(matrix, dr, alpha_hom=0.05, verbose=False):
     if verbose:
         print("\t\u2713 Homogeneity constraint checked")
     return True
+
+def check_monotonicity(matrix, dr, verbose=False):
+    # print(f"default: {dr.T}")
+    grad_cardinality = np.sum(matrix, axis=0) #N_j
     
+    # Check if all the grades are not empty
+    if not ((grad_cardinality == 0) == False).all():
+        if verbose:
+            print("\tx Error in Monotonicity constraint: at least one grade is empty")
+        return False
+
+    # Compute DR and check if it is increasing or decreasing
+    grad_dr = np.sum(matrix * dr, axis=0) / grad_cardinality #l_j
+    # print(f"DR: {grad_dr}")
+    decr =  all(grad_dr[ll] >= grad_dr[ll+1] for ll in range(len(grad_dr) - 1))
+    incr =  all(grad_dr[ll] <= grad_dr[ll+1] for ll in range(len(grad_dr) - 1))
+
+    if incr == True and decr == False:
+        if verbose:
+            print("\t\u2713 Monotonicity constraint checked")
+        return True
+    else:
+        if verbose:
+            print("\tx Error: monotonicity constraint not respected")
+        return False
+
+def conf_matrix(grades, n, dr, verbose=False):
+    print(f"Testing {grades ** n} combinations...")
+    real = []
+    summ_list = []
+
+    for vec in itertools.product(range(grades), repeat=n):
+        # build matrix
+        matrix = np.zeros([n,grades])
+        for i, el in enumerate(vec):
+            matrix[i][el] = 1  # counterpart i in the el-th grade
+       
+        # matrices that fullfilled logic constraint
+        if check_staircase(matrix):
+
+            # compute "real" value
+            real.append(check_monotonicity(matrix, dr))
+
+            # compute "predicted" value
+            summ = 0
+            for j in range(grades-1):
+                for i_1 in range(n):
+                    for i_2 in range(n):
+                        summ+=(dr[i_1].item()-dr[i_2].item())*matrix[i_1,j]*matrix[i_2,j+1]
+            summ_list.append(summ)
+
+    test_min = min(summ_list)
+    predicted = [el == test_min for el in summ_list]
+
+    # print(dr.T)
+    # print(real)
+    # print(predicted)
+    confusion_matrix = metrics.confusion_matrix(real, predicted)
+    print(confusion_matrix)

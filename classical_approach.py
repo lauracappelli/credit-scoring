@@ -87,5 +87,12 @@ def main():
     test_random_solution(config, grades, n, default, min_thr, max_thr)
     # test_all_solutions(config, grades, n, default, min_thr, max_thr)
 
+    # TEST: TO BE DELETED
+    # matrix = generate_staircase_matrix(grades, n)
+    # check_monotonicity(matrix, default)
+
+    # TEST: TO BE DELETED
+    # conf_matrix(grades, n, default)
+
 if __name__ == '__main__':
     main()
