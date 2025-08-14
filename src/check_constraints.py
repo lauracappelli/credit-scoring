@@ -53,8 +53,18 @@ def check_staircase(matrix, verbose=False):
         print("\t\u2713 Logic constraint checked")
     return True
 
-def check_monotonicity(matrix, dr, verbose=False):
-    # print(f"default: {dr.T}")
+def check_monotonicity(matrix, default, verbose=False):
+    """
+    Test if the input matrix fulfill the monotonicity constraint.
+
+    Args:
+        matrix: numpy array 2D to test
+        verbose: enable verbose printing
+    Returns:
+        bool: result of the test 
+    """
+
+    # print(f"default: {default.T}")
     grad_cardinality = np.sum(matrix, axis=0) #N_j
     
     # Check if all the grades are not empty
@@ -63,8 +73,9 @@ def check_monotonicity(matrix, dr, verbose=False):
             print("\tx Error in Monotonicity constraint: at least one grade is empty")
         return False
 
-    # Compute DR and check if it is increasing or decreasing
-    grad_dr = np.sum(matrix * dr, axis=0) / grad_cardinality #l_j
+    # Compute all the default rates and check if they are increasing or decreasing
+    # (compute both to check if they are not constant)
+    grad_dr = np.sum(matrix * default, axis=0) / grad_cardinality #l_j
     # print(f"DR: {grad_dr}")
     decr =  all(grad_dr[ll] >= grad_dr[ll+1] for ll in range(len(grad_dr) - 1))
     incr =  all(grad_dr[ll] <= grad_dr[ll+1] for ll in range(len(grad_dr) - 1))
@@ -154,29 +165,43 @@ def check_lower_thrs(matrix, min_thrs, verbose=False):
         print("\t\u2713 Lower threshold limit constraint checked")
     return True
 
-def check_heterogeneity(matrix, dr, alpha_het=0.01, verbose=False):
-    
-    # print(f"default: {dr.T}")
+def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
+    """
+    Test if the input matrix fulfill the heterogeneity constraint.
+
+    Args:
+        matrix: numpy array 2D to test
+        default: default of the counterparts in the matrix
+        alpha_het: alpha value of the t-test
+        verbose: enable verbose printing
+    Returns:
+        bool: result of the test 
+    """
+
+    # print(f"default: {default.T}")
     grad_cardinality = np.sum(matrix, axis=0) #N_j
     
-    # Check if all the grades are not empty
+    # Check if the grades are not empty
     if not ((grad_cardinality == 0) == False).all():
         if verbose:
             print("\tx Error in Heterogeneity constraint: at least one grade is empty")
         return False
 
-    grad_dr = np.sum(matrix * dr, axis=0) / grad_cardinality #l_j
-    binomial_var = stats.binom.var(1, grad_dr) #sigma^2_j senza dividere per n (altrimenti si sostituisce grad_cardinality a 1)
+    # compte the default rate of each grades
+    grad_dr = np.sum(matrix * default, axis=0) / grad_cardinality #l_j
+    # binomial variances following the formula 14 in the WP5 report
+    # (to obtain the standard binomial variance formula sobstitute 1 with grad_cardinality)
+    binomial_var = stats.binom.var(1, grad_dr)
     
-    cum = 0
+    # compute the t-test for each couple of grades
     t_stat = np.zeros(matrix.shape[1]-1)
     p_val = np.zeros(matrix.shape[1]-1)
     for i in range(matrix.shape[1]-1):
         n1, n2 = grad_cardinality[i], grad_cardinality[i+1]
 
-        # t-test e p-value con varianza campionaria
-        # grade1 = dr[matrix[:, i] == 1]
-        # grade2 = dr[matrix[:, i+1] == 1]
+        # t-test and p-value (sample variance)
+        # grade1 = default[matrix[:, i] == 1]
+        # grade2 = default[matrix[:, i+1] == 1]
         # s1, s2 = np.var(grade1, ddof=1), np.var(grade2, ddof=1)
         # if s1 == 0 and s2 == 0:
         #     if verbose:
@@ -184,7 +209,7 @@ def check_heterogeneity(matrix, dr, alpha_het=0.01, verbose=False):
         #     return False
         # t_stat[i], p_val[i] = stats.ttest_ind(grade1, grade2, equal_var=True)
 
-        # t-test e p-value con varianza binomiale (quella chiesta da ISP)
+        # t-test and p-value (binomial variance)
         s1, s2 = binomial_var[i], binomial_var[i+1] # = mean*(1-mean)
         if s1 == 0 and s2 == 0:
             if verbose:
@@ -207,9 +232,23 @@ def check_heterogeneity(matrix, dr, alpha_het=0.01, verbose=False):
         print("\t\u2713 Heterogeneous constraint checked")
     return True
 
-def check_homogeneity(matrix, dr, alpha_hom=0.05, verbose=False):
+def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
+    """
+    Test if the input matrix fulfill the homogeneity constraint.
+
+    Args:
+        matrix: numpy array 2D to test
+        default: default of the counterparts in the matrix
+        alpha_het: alpha value of the z-test
+        verbose: enable verbose printing
+    Returns:
+        bool: result of the test 
+    """
+
+    # run the test for each grade j
     for j in range(matrix.shape[1]):
-        grade_dr = dr[matrix[:, j] == 1]
+        # compute the default rate of each grades
+        grade_dr = default[matrix[:, j] == 1]
 
         # Check if the grade is not empty
         if grade_dr.size == 0:
@@ -221,7 +260,8 @@ def check_homogeneity(matrix, dr, alpha_hom=0.05, verbose=False):
         l_j = np.mean(grade_dr)
         sigma2 = l_j*(1-l_j)
 
-        for i in range(1):
+        # extract randomly 500 couple of sub-populations
+        for i in range(500):
             # select two (not empty) random subset
             mask = np.random.choice([True, False], size=grade_dr.size)
             mask[0], mask[-1] = True, False
@@ -236,6 +276,8 @@ def check_homogeneity(matrix, dr, alpha_hom=0.05, verbose=False):
                     print("\tx Error: homogeneity constraint not respected")
                     print(f"\t\t Grades {i} and {i+1} are not homogeneous")
                 return False
+            
+            # compute z-test
             z_stat = (s1 - s2) / np.sqrt(sigma2 * (1/n1 + 1/n2))
             p_val = 2 * stats.norm.sf(abs(z_stat))
 

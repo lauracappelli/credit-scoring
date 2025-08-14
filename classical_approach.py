@@ -27,6 +27,8 @@ def test_random_solution(config, grades, n, default, min_thr, max_thr):
         check_heterogeneity(matrix, default, config['alpha_heterogeneity'], True)
     if config['test']['homogeneity']:
         check_homogeneity(matrix, default, config['alpha_homogeneity'], True)
+    if config['test']['monotonicity']:
+        check_monotonicity(matrix, default, True)
 
     end_time = time.perf_counter_ns()
 
@@ -64,6 +66,8 @@ def test_all_solutions(config, grades, n, default, min_thr, max_thr):
             flag = False
         if config['test']['homogeneity'] and flag and not check_homogeneity(matrix, default, config['alpha_homogeneity'], verbose):
             flag = False
+        if config['test']['monotonicity'] and flag and not check_monotonicity(matrix, default, verbose):
+            flag = False    
 
         if flag:
             valid_solutions.append(sol)
