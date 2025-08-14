@@ -1,10 +1,17 @@
 import numpy as np
 import math
-import itertools
 from scipy import stats
-from sklearn import metrics
 
 def check_staircase(matrix, verbose=False):
+    """
+    Test if the input matrix fulfill the logic constraint.
+
+    Args:
+        matrix: numpy array 2D to test
+        verbose: enable verbose printing
+    Returns:
+        bool: result of the test 
+    """
 
     # check if each counterpart is in one class
     ones_per_row = np.sum(matrix == 1, axis=1)
@@ -15,27 +22,28 @@ def check_staircase(matrix, verbose=False):
         return False
 
     # retreive all the 1's indexes
-    index_1 = np.argmax(matrix == 1, axis=1)
-    # print(index_1)
+    counterpart_grade = np.argmax(matrix == 1, axis=1)
 
     # check the first and the last counterpart
-    if index_1[0] != 0:
+    if counterpart_grade[0] != 0:
         if verbose:
             print("\tx Error: logic constraint not respected")
             print("\t\tError in the first counterpart")
         return False
-    if index_1[-1] != matrix.shape[1]-1:
+    if counterpart_grade[-1] != matrix.shape[1]-1:
         if verbose:
             print("\tx Error: logic constraint not respected")
             print("\t\tError in the last counterpart")
         return False
 
-    # check if the matrix is a staircase matrix
-    for i, el in enumerate(index_1[1:]):
-        # i = inex of the vector index_1 (from 0 to m-1)
-        # el = element index_1[i+1]
-        # print(f"index {i+1} contains {el}")
-        if el != index_1[i] and el != index_1[i]+1:
+    # to verify it the matrix is a staircase matrix we check if:
+    #  - the counterpart i+1 has the same grade of the counterpart i
+    #  - the counterpart i+1 is in the following grade wrt the counterpart i
+    for i, gr in enumerate(counterpart_grade[1:]):
+        # i = index of the counterpart (from 0 to n-1)
+        # gr = grade of the next (i+1) counterpart
+        # print(f"counterpart {i+1} belongs to grade {gr}")
+        if gr != counterpart_grade[i] and gr != counterpart_grade[i]+1:
             if verbose:
                 print("\tx Error: logic constraint not respected")
                 print(f"\t\tError in the counterpart {i+2}")
@@ -45,14 +53,53 @@ def check_staircase(matrix, verbose=False):
         print("\t\u2713 Logic constraint checked")
     return True
 
-def check_concentration(matrix, m, n, alpha_conc = 0.05, verbose=False):
+def check_monotonicity(matrix, dr, verbose=False):
+    # print(f"default: {dr.T}")
+    grad_cardinality = np.sum(matrix, axis=0) #N_j
+    
+    # Check if all the grades are not empty
+    if not ((grad_cardinality == 0) == False).all():
+        if verbose:
+            print("\tx Error in Monotonicity constraint: at least one grade is empty")
+        return False
+
+    # Compute DR and check if it is increasing or decreasing
+    grad_dr = np.sum(matrix * dr, axis=0) / grad_cardinality #l_j
+    # print(f"DR: {grad_dr}")
+    decr =  all(grad_dr[ll] >= grad_dr[ll+1] for ll in range(len(grad_dr) - 1))
+    incr =  all(grad_dr[ll] <= grad_dr[ll+1] for ll in range(len(grad_dr) - 1))
+
+    if incr == True and decr == False:
+        if verbose:
+            print("\t\u2713 Monotonicity constraint checked")
+        return True
+    else:
+        if verbose:
+            print("\tx Error: monotonicity constraint not respected")
+        return False
+
+def check_concentration(matrix, alpha_conc = 0.05, verbose=False):
+    """
+    Test if the input matrix fulfill the concentration constraint.
+
+    Args:
+        matrix: numpy array 2D to test
+        alpha_conc: upper bound for the adjusted herfindal index
+        verbose: enable verbose printing
+    Returns:
+        bool: result of the test 
+    """
+
+    n, m = matrix.shape
+
+    # See formulas 69 and 70 in the WP5 report
     J_floor = math.floor(n*n*(alpha_conc + (1-alpha_conc)/m))
-    s = 0
+    my_sum = 0
     for i1 in range(n):
         for i2 in range(n):
             for j in range(m):
-                s = s + matrix[i1,j] * matrix[i2,j]
-    if s <= J_floor:
+                my_sum = my_sum + matrix[i1,j] * matrix[i2,j]
+    if my_sum <= J_floor:
         if verbose:
             print("\t\u2713 Concentration constraint checked")
         return True
@@ -61,23 +108,21 @@ def check_concentration(matrix, m, n, alpha_conc = 0.05, verbose=False):
             print("\tx Error: concentration constraint not respected")
         return False
 
-def check_concentration_approx(matrix, verbose=False):
-    ones_per_column = np.sum(matrix == 1, axis=0)
-    # print(ones_per_column)
-
-    if np.ptp(ones_per_column) <= 1:
-        if verbose:
-            print("\t\u2713 Concentration (approx) constraint checked")
-        return True
-    else:
-        if verbose:
-            print("\tx Error: concentration (approx) constraint not respected")
-        return False
-
 def check_upper_thrs(matrix, max_thrs, verbose=False):
+    """
+    Test if the input matrix fulfill the upper threshold constraint.
 
-    for ii in np.sum(matrix, axis=0):
-        if ii > max_thrs:
+    Args:
+        matrix: numpy array 2D to test
+        max_thrs: max threshold admitted
+        verbose: enable verbose printing
+    Returns:
+        bool: result of the test 
+    """
+
+    # compute the number of counterparts per grade and check if it's smaller than the threshold
+    for cntp_per_grade in np.sum(matrix, axis=0):
+        if cntp_per_grade > max_thrs:
             if verbose:
                 print("\tx Error: upper threshold limit constraint not respected")
             return False
@@ -87,9 +132,20 @@ def check_upper_thrs(matrix, max_thrs, verbose=False):
     return True
 
 def check_lower_thrs(matrix, min_thrs, verbose=False):
-    
-    for ii in np.sum(matrix, axis=0):
-        if ii < min_thrs:
+    """
+    Test if the input matrix fulfill the lower threshold constraint.
+
+    Args:
+        matrix: numpy array 2D to test
+        max_thrs: min threshold admitted
+        verbose: enable verbose printing
+    Returns:
+        bool: result of the test 
+    """
+
+    # compute the number of counterparts per grade and check if it's higher than the threshold
+    for cntp_per_grade in np.sum(matrix, axis=0):
+        if cntp_per_grade < min_thrs:
             if verbose:
                 print("\tx Error: lower threshold limit constraint not respected")
             return False
@@ -99,6 +155,7 @@ def check_lower_thrs(matrix, min_thrs, verbose=False):
     return True
 
 def check_heterogeneity(matrix, dr, alpha_het=0.01, verbose=False):
+    
     # print(f"default: {dr.T}")
     grad_cardinality = np.sum(matrix, axis=0) #N_j
     
@@ -191,62 +248,3 @@ def check_homogeneity(matrix, dr, alpha_hom=0.05, verbose=False):
     if verbose:
         print("\t\u2713 Homogeneity constraint checked")
     return True
-
-def check_monotonicity(matrix, dr, verbose=False):
-    # print(f"default: {dr.T}")
-    grad_cardinality = np.sum(matrix, axis=0) #N_j
-    
-    # Check if all the grades are not empty
-    if not ((grad_cardinality == 0) == False).all():
-        if verbose:
-            print("\tx Error in Monotonicity constraint: at least one grade is empty")
-        return False
-
-    # Compute DR and check if it is increasing or decreasing
-    grad_dr = np.sum(matrix * dr, axis=0) / grad_cardinality #l_j
-    # print(f"DR: {grad_dr}")
-    decr =  all(grad_dr[ll] >= grad_dr[ll+1] for ll in range(len(grad_dr) - 1))
-    incr =  all(grad_dr[ll] <= grad_dr[ll+1] for ll in range(len(grad_dr) - 1))
-
-    if incr == True and decr == False:
-        if verbose:
-            print("\t\u2713 Monotonicity constraint checked")
-        return True
-    else:
-        if verbose:
-            print("\tx Error: monotonicity constraint not respected")
-        return False
-
-def conf_matrix(grades, n, dr, verbose=False):
-    print(f"Testing {grades ** n} combinations...")
-    real = []
-    summ_list = []
-
-    for vec in itertools.product(range(grades), repeat=n):
-        # build matrix
-        matrix = np.zeros([n,grades])
-        for i, el in enumerate(vec):
-            matrix[i][el] = 1  # counterpart i in the el-th grade
-       
-        # matrices that fullfilled logic constraint
-        if check_staircase(matrix):
-
-            # compute "real" value
-            real.append(check_monotonicity(matrix, dr))
-
-            # compute "predicted" value
-            summ = 0
-            for j in range(grades-1):
-                for i_1 in range(n):
-                    for i_2 in range(n):
-                        summ+=(dr[i_1].item()-dr[i_2].item())*matrix[i_1,j]*matrix[i_2,j+1]
-            summ_list.append(summ)
-
-    test_min = min(summ_list)
-    predicted = [el == test_min for el in summ_list]
-
-    # print(dr.T)
-    # print(real)
-    # print(predicted)
-    confusion_matrix = metrics.confusion_matrix(real, predicted)
-    print(confusion_matrix)
