@@ -324,7 +324,7 @@ def main():
     print("Result validation:")
     verbose = True
     check_staircase(annealing_matrix, verbose)
-    check_concentration(annealing_matrix, m, n, alpha_conc, verbose)
+    check_concentration(annealing_matrix, alpha_conc, verbose)
     # check_concentration_approx(annealing_matrix, verbose)
     check_lower_thrs(annealing_matrix, compute_lower_thrs(n), verbose)
     check_upper_thrs(annealing_matrix, compute_upper_thrs(n,m), verbose)

@@ -1,5 +1,6 @@
 from src.select_data import *
 from src.check_constraints import *
+from src.other_func import *
 from cost_function import compute_lower_thrs, compute_upper_thrs
 import itertools
 import math
@@ -17,7 +18,7 @@ def test_random_solution(config, grades, n, default, min_thr, max_thr):
     if config['test']['logic']:
         check_staircase(matrix, True)
     if config['test']['conentration']:
-        check_concentration(matrix, config['m_company'], config['n_counterpart'], config['alpha_concentration'], True)
+        check_concentration(matrix, config['alpha_concentration'], True)
     if config['test']['min_thr']:
         check_upper_thrs(matrix, max_thr, True)
     if config['test']['max_thr']:
@@ -53,7 +54,7 @@ def test_all_solutions(config, grades, n, default, min_thr, max_thr):
         verbose = False
         if config['test']['logic'] and flag and not check_staircase(matrix, verbose):
             flag = False
-        if config['test']['conentration'] and flag and not check_concentration(matrix, config['m_company'], config['n_counterpart'], config['alpha_concentration'], verbose):
+        if config['test']['conentration'] and flag and not check_concentration(matrix, config['alpha_concentration'], verbose):
             flag = False
         if config['test']['min_thr'] and flag and not check_upper_thrs(matrix, max_thr, verbose):
             flag = False
@@ -115,4 +116,4 @@ def stat_conf_matrix():
 
 if __name__ == '__main__':
     main()
-    # stat_conf_matrix()
+    #stat_conf_matrix()
