@@ -94,5 +94,25 @@ def main():
     # TEST: TO BE DELETED
     # conf_matrix(grades, n, default)
 
+def stat_conf_matrix():
+
+    config = read_config()
+
+    n = config['n_counterpart']
+    grades = config['m_company']
+
+    dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
+    default = dataset['default'].to_numpy().reshape(n,1)
+
+    n_trials = 50
+
+    cum = conf_matrix(grades, n, default)
+    for i in range(n_trials-1):
+        dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
+        default = dataset['default'].to_numpy().reshape(n,1)
+        cum += conf_matrix(grades, n, default)
+    print(cum)
+
 if __name__ == '__main__':
     main()
+    # stat_conf_matrix()
