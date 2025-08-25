@@ -18,8 +18,9 @@ def main():
     #  - lower threshold: 1% of the counterparts
     #    (or 1 if there are less than 100 counterparts)
     #  - upper threshold: 15% of the counterparts
-    #    (or n-grades+1 if there are less than 7 grades and the 15% is less
-    #    than 0. If these constraints are not respected ....)
+    #    (if there are less than 7 grades or if the 15% is less than 0, the
+    #    upper threshold is set to n-grades+1. In these situations, there aren't
+    #    any integer numbers such that the constraint is fulfilled)
     min_thr = compute_lower_thrs(n)
     max_thr = compute_upper_thrs(n, grades)
 
