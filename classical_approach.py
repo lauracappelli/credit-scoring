@@ -26,7 +26,7 @@ def main():
     # list of valid solutions
     valid_solutions = []
 
-    print(f"Testing {grades ** n} combinations...")
+    print(f"\nTesting {grades ** n} combinations With the default vector:\n {default.T}")
 
     start_time = time.perf_counter_ns()    
 
@@ -64,9 +64,8 @@ def main():
             valid_solutions.append(sol)
 
     end_time = time.perf_counter_ns()
-    print(f"{len(valid_solutions)} solutions found\n")
-    print(f"Time: {(end_time-start_time)/10e9} s")
-    print(f"Solutions:\n{valid_solutions}")
+    print(f"{len(valid_solutions)} solutions found in {(end_time-start_time)/10e9} s")
+    print(f"Solutions:\n{valid_solutions}\n")
 
 if __name__ == '__main__':
     main()
