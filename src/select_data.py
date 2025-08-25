@@ -5,8 +5,14 @@ import random
 from dimod import BinaryQuadraticModel
 
 def read_config():
+    """
+    Read the configuration file with the iperparameters definition.
 
-    # check if the argument was passed
+    Returns:
+        dict: iperparameters 
+    """
+
+    # check if the argument exists
     if len(sys.argv) > 1:
         config_file = sys.argv[1]
     else:
@@ -25,7 +31,16 @@ def read_config():
     return config
 
 def load_data(config):
-        
+    """
+    Load the counterparts from the database, selecting only the attributes specified in the configuration file.
+    The configuration file also specifies the number of entries.
+
+    Args:
+        dict: iperparameters
+    Returns:
+        pandas dataframe: dataset of the counterparts ordered by score
+    """
+
     # read dataset
     dataset = pd.read_csv(open(config['data_path']), delimiter=';', usecols=['ID_Fittizio', 'DEFAULT_FLAG_rett_fact', 'score_quant_integrato'])
     dataset = dataset.rename(columns={'ID_Fittizio':'counterpart_id', 'DEFAULT_FLAG_rett_fact':'default', 'score_quant_integrato':'score'})
@@ -61,7 +76,16 @@ def load_data(config):
     return dataset
 
 def generate_data(config):
-    
+    """
+    Generate a dataset of random counterparts.
+    The number of entries is specified in the config file.
+
+    Args:
+        dict: iperparameters
+    Returns:
+        pandas dataframe: dataset of the counterparts ordered by score
+    """
+
     # np.random.seed(42)
     dataset = pd.DataFrame({
         'counterpart_id': np.arange(1, config['n_counterpart']+1),
@@ -72,19 +96,71 @@ def generate_data(config):
     dataset = dataset.sort_values(by='score')
     return dataset
 
+def generate_data_var_prob(config):
+    """
+    Generate a dataset of random counterparts.
+    The probability of generating the default attribute depends on the score.
+    The number of entries is specified in the config file.
+
+    Args:
+        dict: iperparameters
+    Returns:
+        pandas dataframe: dataset of the counterparts ordered by score
+    """
+
+    n = config['n_counterpart']
+    probabilities = np.linspace(0.0, config['default_prob'], n)
+    random_values = np.random.rand(n)
+    random_booleans = (random_values < probabilities).astype(int)
+    # print("Prob:", probabilities)
+    # print("Random val:", random_values)
+    # print("Default:", random_booleans)
+
+    # np.random.seed(42)
+    dataset = pd.DataFrame({
+        'counterpart_id': np.arange(1, n+1),
+        'default': random_booleans,
+        'score': np.random.uniform(-10, 2, size=n)
+    })
+
+    dataset = dataset.sort_values(by='score')
+    return dataset
+
+def generate_staircase_matrix(m, n):
+    """
+    Generate a random binary staircase matrix in which the counterparts are
+    equally distributed across in the grades.
+
+    Args:
+        m: number of columns (grades)
+        n: number of rows (counterparts)
+    Returns:
+        numpy array: binary staircase matrix
+    """
+
+    grad_cardinality = [n//m + 1 if i < n%m else n//m for i in range(m)]
+    random.shuffle(grad_cardinality)
+    
+    matrix = np.zeros([n,m])
+    pad = 0
+    for i, el in enumerate(grad_cardinality):
+        matrix[pad:el+pad,i] = 1
+        pad = pad + el
+    return matrix
+
 def gen_random_Q(size, c):
+    """
+    Generate a random binary quadratic problem.
+
+    Args:
+        size: linear size of the problem
+        c: constant of the binary quadratic problem
+    Returns:
+        dimod BinaryQuadraticModel: bqm object
+    """
+
     # define binary quadratic problem
     Q_dict = {(i, j): random.randint(0,9) for i in range(size) for j in range(size)}
     bqm = BinaryQuadraticModel.from_qubo(Q_dict, c)
 
     return bqm
-
-if __name__ == '__main__':
-
-    config = read_config()
-
-    dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)
-
-    attributes = list(dataset.columns.values)
-    print("The dataset has {} entries with {} attributes:\n{}".format(dataset.shape[0], len(attributes), attributes))
-    print(dataset)

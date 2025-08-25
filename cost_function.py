@@ -243,6 +243,8 @@ def main():
     m = config['m_company']
 
     alpha_conc = config['alpha_concentration']
+    alpha_het = config['alpha_heterogeneity']
+    alpha_hom = config['alpha_homogeneity']
     shots = config['shots']
 
     mu_one_calss_constr = config['mu']['one_calss']
@@ -322,10 +324,15 @@ def main():
     print("Result validation:")
     verbose = True
     check_staircase(annealing_matrix, verbose)
-    check_concentration(annealing_matrix, m, n, alpha_conc, verbose)
+    check_concentration(annealing_matrix, alpha_conc, verbose)
     # check_concentration_approx(annealing_matrix, verbose)
     check_lower_thrs(annealing_matrix, compute_lower_thrs(n), verbose)
     check_upper_thrs(annealing_matrix, compute_upper_thrs(n,m), verbose)
+
+    dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)
+    default = dataset['default'].to_numpy().reshape(n,1)
+    check_heterogeneity(annealing_matrix, default, alpha_het, verbose)
+    check_homogeneity(annealing_matrix, default, alpha_hom, verbose)
 
 if __name__ == '__main__':
     main()
