@@ -1,123 +1,72 @@
 from src.select_data import *
 from src.check_constraints import *
-from src.other_func import *
 from cost_function import compute_lower_thrs, compute_upper_thrs
 import itertools
 import math
 import time
 
-def test_random_solution(config, grades, n, default, min_thr, max_thr):
-    print("Testing one random setup...")
+def main():
 
-    matrix = generate_staircase_matrix(grades, n)
-    # print(np.array(default).T)
-    # print(matrix)
+    # Read iperparameters from config file
+    config = read_config()
+    n = config['n_counterpart']
+    grades = config['m_company']
+    dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
+    default = dataset['default'].to_numpy().reshape(n,1)
 
-    start_time = time.perf_counter_ns()
+    # compute lower and upper thresholds:
+    #  - lower threshold: 1% of the counterparts
+    #    (or 1 if there are less than 100 counterparts)
+    #  - upper threshold: 15% of the counterparts
+    #    (or n-grades+1 if there are less than 7 grades and the 15% is less
+    #    than 0. If these constraints are not respected ....)
+    min_thr = compute_lower_thrs(n)
+    max_thr = compute_upper_thrs(n, grades)
 
-    if config['test']['logic']:
-        check_staircase(matrix, True)
-    if config['test']['conentration']:
-        check_concentration(matrix, config['alpha_concentration'], True)
-    if config['test']['min_thr']:
-        check_upper_thrs(matrix, max_thr, True)
-    if config['test']['max_thr']:
-        check_lower_thrs(matrix, min_thr, True)
-    if config['test']['heterogeneity']:
-        check_heterogeneity(matrix, default, config['alpha_heterogeneity'], True)
-    if config['test']['homogeneity']:
-        check_homogeneity(matrix, default, config['alpha_homogeneity'], True)
-    if config['test']['monotonicity']:
-        check_monotonicity(matrix, default, True)
-
-    end_time = time.perf_counter_ns()
-
-    # print("Solution:\n", np.argmax(matrix, axis=1))
-    print(f"Test time: {(end_time-start_time)/10e9} s")
-    return
-
-def test_all_solutions(config, grades, n, default, min_thr, max_thr):
-    print(f"Testing {grades ** n} combinations...")
+    # list of valid solutions
     valid_solutions = []
 
+    print(f"Testing {grades ** n} combinations...")
+
     start_time = time.perf_counter_ns()    
-    # print(np.array(default).T)
 
+    # loop over all the possible combinations of the counterparts in the grades
     for sol in itertools.product(range(grades), repeat=n):
-
-        # build matrix
+        
+        # from itertools to numpy matrix
         matrix = np.zeros([n,grades])
         for i, el in enumerate(sol):
-            matrix[i][el] = 1  # counterpart i in the el-th grade
-        # print(matrix)
+            # set the element [i][el] to 1 if the counterpart i is in the el-th grade
+            matrix[i][el] = 1
 
-        # execute tests
+        # execute tests: run each test only if
+        #  - the test is required in the config file
+        #  - previous tests did not fail
+        # If a test fails, set the flag variable to False to avoid running other tests on the same combination
         flag = True
-        verbose = False
-        if config['test']['logic'] and flag and not check_staircase(matrix, verbose):
+        if config['test']['logic'] and flag and not check_staircase(matrix):
             flag = False
-        if config['test']['conentration'] and flag and not check_concentration(matrix, config['alpha_concentration'], verbose):
+        if config['test']['conentration'] and flag and not check_concentration(matrix, config['alpha_concentration']):
             flag = False
-        if config['test']['min_thr'] and flag and not check_upper_thrs(matrix, max_thr, verbose):
+        if config['test']['min_thr'] and flag and not check_upper_thrs(matrix, max_thr):
             flag = False
-        if config['test']['max_thr'] and flag and not check_lower_thrs(matrix, min_thr, verbose):
+        if config['test']['max_thr'] and flag and not check_lower_thrs(matrix, min_thr):
             flag = False
-        if config['test']['heterogeneity'] and flag and not check_heterogeneity(matrix, default, config['alpha_heterogeneity'], verbose):
+        if config['test']['heterogeneity'] and flag and not check_heterogeneity(matrix, default, config['alpha_heterogeneity']):
             flag = False
-        if config['test']['homogeneity'] and flag and not check_homogeneity(matrix, default, config['alpha_homogeneity'], verbose):
+        if config['test']['homogeneity'] and flag and not check_homogeneity(matrix, default, config['alpha_homogeneity']):
             flag = False
-        if config['test']['monotonicity'] and flag and not check_monotonicity(matrix, default, verbose):
+        if config['test']['monotonicity'] and flag and not check_monotonicity(matrix, default):
             flag = False    
 
+        # If all the tests are completed, the solution is valid
         if flag:
             valid_solutions.append(sol)
 
     end_time = time.perf_counter_ns()
-    print(f"Solutions:\n{valid_solutions}")
+    print(f"{len(valid_solutions)} solutions found\n")
     print(f"Time: {(end_time-start_time)/10e9} s")
-
-def main():
-
-    config = read_config()
-
-    n = config['n_counterpart']
-    grades = config['m_company']
-
-    dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
-    default = dataset['default'].to_numpy().reshape(n,1)
-
-    min_thr = compute_lower_thrs(n)
-    max_thr = compute_upper_thrs(n, grades)
-
-    test_random_solution(config, grades, n, default, min_thr, max_thr)
-    # test_all_solutions(config, grades, n, default, min_thr, max_thr)
-
-    # TEST: TO BE DELETED
-    # matrix = generate_staircase_matrix(grades, n)
-    # check_monotonicity(matrix, default)
-
-    # TEST: TO BE DELETED
-    # conf_matrix(grades, n, default)
-
-def stat_conf_matrix():
-
-    config = read_config()
-
-    n = config['n_counterpart']
-    grades = config['m_company']
-
-    dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
-    default = dataset['default'].to_numpy().reshape(n,1)
-
-    n_trials = 50
-
-    cum = conf_matrix(grades, n, default)
-    for i in range(n_trials-1):
-        dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
-        default = dataset['default'].to_numpy().reshape(n,1)
-        cum += conf_matrix(grades, n, default)
-    print(cum)
+    print(f"Solutions:\n{valid_solutions}")
 
 if __name__ == '__main__':
     main()
-    #stat_conf_matrix()
