@@ -10,7 +10,7 @@ def main():
     # Read iperparameters from config file
     config = read_config()
     n = config['n_counterpart']
-    grades = config['m_company']
+    grades = config['grades']
     dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
     default = dataset['default'].to_numpy().reshape(n,1)
 

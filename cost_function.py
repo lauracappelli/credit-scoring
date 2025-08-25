@@ -240,7 +240,7 @@ def main():
 
     config = read_config()
     n = config['n_counterpart']
-    m = config['m_company']
+    m = config['grades']
 
     alpha_conc = config['alpha_concentration']
     alpha_het = config['alpha_heterogeneity']
