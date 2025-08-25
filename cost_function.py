@@ -247,7 +247,7 @@ def main():
     alpha_hom = config['alpha_homogeneity']
     shots = config['shots']
 
-    mu_one_calss_constr = config['mu']['one_calss']
+    mu_one_class_constr = config['mu']['one_class']
     mu_staircase_constr = config['mu']['logic']
     mu_concentration_constr = config['mu']['concentration']
     mu_min_thr_constr = config['mu']['min_thr']
@@ -260,7 +260,7 @@ def main():
     Q = np.zeros([m*n, m*n])
     c = 0
     if config['constraints']['one_class'] == True:
-        (Q_one_class,c_one_class) = one_class_const(m,n,mu_one_calss_constr)
+        (Q_one_class,c_one_class) = one_class_const(m,n,mu_one_class_constr)
         Q = Q + Q_one_class
         c = c + c_one_class
     if config['constraints']['logic'] == True:
