@@ -21,6 +21,17 @@ def check_concentration_approx(matrix, verbose=False):
             print("\tx Error: concentration (approx) constraint not respected")
         return False
 
+def test_submatrix_penalties():
+    for x in itertools.product([0, 1], repeat=4):
+        a = (1-x[3-1]-x[4-1])*x[1-1]+x[3-1]*x[4-1]
+        b = (1-x[1-1]-x[2-1])*x[4-1]+x[1-1]*x[2-1]
+        c = x[2-1]*x[3-1]
+        d = (1-x[1-1]-x[2-1])*x[3-1]+x[1-1]*x[2-1]
+        print("Submatrix: ")
+        print(np.array(tuple(itertools.islice(x, 4))).reshape(2, 2))
+        print(f"a={a}, b={b}, c={c}, d={d}")
+    return
+
 def test_one_random_solution(config, grades, n, default, min_thr, max_thr):
     print("Testing one random setup...")
 
