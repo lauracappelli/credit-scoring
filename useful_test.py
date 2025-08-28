@@ -32,36 +32,6 @@ def test_submatrix_penalties():
         print(f"a={a}, b={b}, c={c}, d={d}")
     return
 
-def test_one_random_solution(config, grades, n, default, min_thr, max_thr):
-    print("Testing one random setup...")
-
-    matrix = generate_staircase_matrix(grades, n)
-    # print(np.array(default).T)
-    # print(matrix)
-
-    start_time = time.perf_counter_ns()
-
-    if config['test']['logic']:
-        check_staircase(matrix, True)
-    if config['test']['conentration']:
-        check_concentration(matrix, config['alpha_concentration'], True)
-    if config['test']['min_thr']:
-        check_upper_thrs(matrix, max_thr, True)
-    if config['test']['max_thr']:
-        check_lower_thrs(matrix, min_thr, True)
-    if config['test']['heterogeneity']:
-        check_heterogeneity(matrix, default, config['alpha_heterogeneity'], True)
-    if config['test']['homogeneity']:
-        check_homogeneity(matrix, default, config['alpha_homogeneity'], True)
-    if config['test']['monotonicity']:
-        check_monotonicity(matrix, default, True)
-
-    end_time = time.perf_counter_ns()
-
-    # print("Solution:\n", np.argmax(matrix, axis=1))
-    print(f"Test time: {(end_time-start_time)/10e9} s")
-    return
-
 def conf_matrix(grades, n, dr, verbose=False):
     #print(f"Testing {grades ** n} combinations...")
     real = []
@@ -129,12 +99,23 @@ def main():
     min_thr = compute_lower_thrs(n)
     max_thr = compute_upper_thrs(n, grades)
 
+    #--------------------------------------
+
+    # TEST ONE RANDOM SETUP
     # generate a staircase matrix and test if the other constraints are fullfilled
-    # test_one_random_solution(config, grades, n, default, min_thr, max_thr)
+    print("Testing one random setup...")
+    matrix = generate_staircase_matrix(grades, n)
+    print("default:")
+    print(np.array(default).T)
+    print("matrix:")
+    print(matrix)
+    test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, True)
+
+    #--------------------------------------
 
     # TEST ON CONFUSION MATRIX
     # conf_matrix(grades, n, default, True)
-    stat_conf_matrix(50)
+    # stat_conf_matrix(50)
 
 if __name__ == '__main__':
     main()
