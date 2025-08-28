@@ -5,6 +5,8 @@ import hybrid
 import math
 import time
 import itertools
+import gurobipy as gpy
+from gurobipy import GRB
 
 def one_class_const(m, n, mu=1):
     Q = np.zeros([n*m, n*m])
@@ -236,6 +238,66 @@ def brute_force_solver(Q, c, dim):
 
     return (np.array(Ymin), Cmin)
 
+def gurobi_solver(m, n, matrix, c, gurobi_n_sol, gurobi_fidelity):
+    size = matrix.shape[0]
+    # model definition
+    qubo_model = gpy.Model("QCS")
+    qubo_vars = qubo_model.addVars(size, vtype=GRB.BINARY, name="x")
+
+    # cost function definition
+    qubo_expr = gpy.QuadExpr()
+    row_idxs, col_idxs = np.nonzero(matrix)
+    for ii, jj in zip(row_idxs, col_idxs):
+        qubo_expr.add(matrix[ii, jj] * qubo_vars[ii] * qubo_vars[jj])
+    qubo_expr.addConstant(c)
+
+    # add const function to the model
+    qubo_model.setObjective(qubo_expr, GRB.MINIMIZE)
+
+    # Setting solver parameters
+    qubo_model.setParam("OutputFlag", 1) # verbosity
+    qubo_model.setParam("Seed", 0)  # fix seed
+    # qubo_model.setParam("TimeLimit", timelimit)
+    
+    # Search more than 1 solution
+    num_max_solutions = gurobi_n_sol
+    if num_max_solutions > 1:
+        qubo_model.setParam("PoolSolutions", num_max_solutions)
+        qubo_model.setParam("PoolSearchMode", 2)
+        qubo_model.setParam("PoolGap", gurobi_fidelity)
+
+    # Run the Gurobi QUBO optimization
+    qubo_model.optimize()
+
+    # Print result
+    if qubo_model.Status in {GRB.OPTIMAL, GRB.SUBOPTIMAL}:
+        if num_max_solutions == 1:
+            solution = [int(qubo_vars[i].X) for i in range(size)]
+            if len(solution) > m*n:
+                solution = solution[:m*n]
+            print("\nBest solution:\n", np.array(solution).reshape(n, m))
+            print("Cost of the function:", qubo_model.ObjVal)
+
+            return np.array(solution).reshape(n, m)
+        
+        else:
+            # select all the solutions or num_max_solutions solutions
+            nfound = min(qubo_model.SolCount, num_max_solutions)
+
+            for sol_idx in range(nfound):
+                qubo_model.setParam(GRB.Param.SolutionNumber, sol_idx)
+                qubo_bitstring = np.array(
+                    [int(qubo_vars[jj].Xn) for jj in range(size)]
+                )
+                if qubo_bitstring.shape[0] > m*n:
+                    qubo_bitstring = qubo_bitstring[:m*n]
+                print(f"solution {sol_idx+1}:\n{qubo_bitstring.reshape(n,m)}")
+                print("Cost of the function:", qubo_model.PoolObjVal)
+            
+            return nfound
+    else:
+        print("No solutions found")
+    
 def main():
 
     config = read_config()
@@ -297,6 +359,8 @@ def main():
     # print(f"\nBrute Force result:\n{result_bf.reshape(n,m)}")
     # print(f"Time of brute force solution: {(end_time - start_time)/10e9} s\n")
 
+    #-------------------------------
+
     # # Solving exactly with dwave
     # start_time = time.perf_counter_ns()
     # e_result = exact_solver(bqm)
@@ -312,6 +376,8 @@ def main():
     # print(f"Time of all exact solutions: {elapsed_time_ns/10e9} s")
     # # print(f"First solution:\n{result_exact_solver[0].reshape(n, m)}")
 
+    #-------------------------------
+
     # Solving with annealing 
     start_time = time.perf_counter_ns()
     result = annealer_solver(Q.shape[0], bqm, shots)
@@ -320,6 +386,13 @@ def main():
     annealing_matrix = result_ann.reshape(n, m)
     print(f"\nAnnealing result:\n{annealing_matrix}")    
     print(f"Time of annealing solution: {(end_time - start_time)/10e9} s\n")
+
+    #-------------------------------
+
+    # Solving with Gurobi
+    # gurobi_sol = gurobi_solver(m, n, Q, c, config['gurobi_n_sol'], config['gurobi_fidelity'])
+
+    #-------------------------------
 
     print("Result validation:")
     verbose = True
