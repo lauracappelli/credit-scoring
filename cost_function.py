@@ -304,6 +304,9 @@ def main():
     n = config['n_counterpart']
     m = config['grades']
 
+    dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)
+    default = dataset['default'].to_numpy().reshape(n,1)
+    
     alpha_conc = config['alpha_concentration']
     alpha_het = config['alpha_heterogeneity']
     alpha_hom = config['alpha_homogeneity']
@@ -393,19 +396,8 @@ def main():
     # gurobi_sol = gurobi_solver(m, n, Q, c, config['gurobi_n_sol'], config['gurobi_fidelity'])
 
     #-------------------------------
-
-    print("Result validation:")
     verbose = True
-    check_staircase(annealing_matrix, verbose)
-    check_concentration(annealing_matrix, alpha_conc, verbose)
-    # check_concentration_approx(annealing_matrix, verbose)
-    check_lower_thrs(annealing_matrix, compute_lower_thrs(n), verbose)
-    check_upper_thrs(annealing_matrix, compute_upper_thrs(n,m), verbose)
-
-    dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)
-    default = dataset['default'].to_numpy().reshape(n,1)
-    check_heterogeneity(annealing_matrix, default, alpha_het, verbose)
-    check_homogeneity(annealing_matrix, default, alpha_hom, verbose)
+    test_one_solution(annealing_matrix, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), verbose)
 
 if __name__ == '__main__':
     main()
