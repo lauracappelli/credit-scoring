@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import itertools
+import pandas as pd
 from scipy import stats
 from sklearn import metrics
 from src.select_data import *
@@ -86,6 +87,41 @@ def stat_conf_matrix(n_trials):
         cum += conf_matrix(grades, n, default)
     print(cum)
 
+def from_random_to_databse(config, default):
+
+    # read dataset
+    dataset = pd.read_csv(open(config['data_path']), delimiter=';', usecols=['ID_Fittizio', 'DEFAULT_FLAG_rett_fact', 'score_quant_integrato'])
+    dataset = dataset.rename(columns={'ID_Fittizio':'counterpart_id', 'DEFAULT_FLAG_rett_fact':'default', 'score_quant_integrato':'score'})
+   
+    # select optional attributes
+    if config['attributes']['years']:
+        opt_attr = pd.read_csv(open(config['data_path']), delimiter=';', usecols=['perf_year'])
+        opt_attr = opt_attr.rename(columns={'perf_year':'year'})
+        dataset['year'] = opt_attr['year'].values
+        dataset = dataset[dataset['year'].isin(config['attributes']['years'])]
+
+    # sort dataset by score
+    dataset = dataset.sort_values(by='score')
+
+    # Extract counterparts from dataset
+    couterparts = []
+    used_ids = set()
+    min_score = -100
+    for val in default:
+        # select the first free counterpart with that default
+        row = dataset[(dataset["default"] == val) & (~dataset["counterpart_id"].isin(used_ids) & (dataset["score"] > min_score))].head(1)
+        if not row.empty:
+            couterparts.append(row.iloc[0])
+            used_ids.add(row.iloc[0]["counterpart_id"])
+            min_score = row.iloc[0]["score"]
+
+    # formatting result
+    result = pd.DataFrame(couterparts)
+    cols = ["counterpart_id", "year"]
+    result[cols] = result[cols].astype(int)
+
+    return result
+
 def main():
 
     config = read_config()
@@ -105,11 +141,17 @@ def main():
     # generate a staircase matrix and test if the other constraints are fullfilled
     print("Testing one random setup...")
     matrix = generate_staircase_matrix(grades, n)
-    print("default:")
-    print(np.array(default).T)
-    print("matrix:")
-    print(matrix)
+    # print("default:")
+    # print(np.array(default).T)
+    # print("matrix:")
+    # print(matrix)
     test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, True)
+
+    new_df = from_random_to_databse(config, default.flatten().tolist())
+    new_df.drop("year", axis=1, inplace=True)
+    new_df = new_df[['counterpart_id', 'score', 'default']]
+    new_df.to_csv("data/selected_counterparts.csv", index=False)
+    # print(new_df)
 
     #--------------------------------------
 
