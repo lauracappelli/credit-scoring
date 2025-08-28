@@ -86,6 +86,9 @@ def generate_data(config):
         pandas dataframe: dataset of the counterparts ordered by score
     """
 
+    if not isinstance(config['n_counterpart'], (int)):
+        sys.exit("Error: specify a number of counterparts")
+
     # np.random.seed(42)
     dataset = pd.DataFrame({
         'counterpart_id': np.arange(1, config['n_counterpart']+1),
@@ -108,6 +111,9 @@ def generate_data_var_prob(config):
         pandas dataframe: dataset of the counterparts ordered by score
     """
 
+    if not isinstance(config['n_counterpart'], (int)):
+        sys.exit("Error: specify a number of counterparts")
+        
     n = config['n_counterpart']
     probabilities = np.linspace(0.0, config['default_prob'], n)
     random_values = np.random.rand(n)

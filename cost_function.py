@@ -301,12 +301,12 @@ def gurobi_solver(m, n, matrix, c, gurobi_n_sol, gurobi_fidelity):
 def main():
 
     config = read_config()
-    n = config['n_counterpart']
-    m = config['grades']
 
     dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)
+    n = len(dataset)
+    m = config['grades']
     default = dataset['default'].to_numpy().reshape(n,1)
-    
+
     alpha_conc = config['alpha_concentration']
     alpha_het = config['alpha_heterogeneity']
     alpha_hom = config['alpha_homogeneity']
