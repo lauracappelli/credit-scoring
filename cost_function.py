@@ -124,14 +124,14 @@ def concentration_constr(m, n, mu=1):
 
     return (mu*Q, mu*c)
 
-def l_func(v, m):
-	return math.floor(v/(m-1))
-
 def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
+
+    def l_func(v):
+	    return math.floor(v/(m-1))
 
     # check if the default values are not equal
     if np.all(default==0) or np.all(default==1):
-        print("Error in monotonicity function call. Default values all equal")
+        print("Error in monotonicity function call. Default values are all equal")
         sys.exit(0)
 
     num_of_default = sum(default)
@@ -242,10 +242,10 @@ def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
     for v2_item in v2:	
         v_1 = v2_item[0]; v_2 = v2_item[1]
         if v_1==v_2:
-            Q[ offset_sy + v_1 , offset_sy + v_2 ] += math.pow( 2, l_func(v_1,m) + l_func(v_2,m) )*mu2
+            Q[ offset_sy + v_1 , offset_sy + v_2 ] += math.pow( 2, l_func(v_1) + l_func(v_2) )*mu2
         else:
-            Q[ offset_sy + v_1 , offset_sy + v_2 ] += math.pow( 2, l_func(v_1,m) + l_func(v_2,m) )*mu2*0.5
-            Q[ offset_sy + v_2 , offset_sy + v_1 ] += math.pow( 2, l_func(v_1,m) + l_func(v_2,m) )*mu2*0.5
+            Q[ offset_sy + v_1 , offset_sy + v_2 ] += math.pow( 2, l_func(v_1) + l_func(v_2) )*mu2*0.5
+            Q[ offset_sy + v_2 , offset_sy + v_1 ] += math.pow( 2, l_func(v_1) + l_func(v_2) )*mu2*0.5
     # second summation
     for u4_item in u4:
         u_1 = u4_item[0]; u_2 = u4_item[1]
@@ -262,14 +262,14 @@ def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
     for h_item in h:
         u_1 = h_item[0]; u_2 = h_item[1]; v = h_item[2]
         t21 = u2.index([u_2,u_1])
-        Q[ offset + t21 , offset_sy + v ] += math.pow( 2, l_func(v,m) + 1 )*mu2*0.5
-        Q[ offset_sy + v , offset + t21 ] += math.pow( 2, l_func(v,m) + 1 )*mu2*0.5
+        Q[ offset + t21 , offset_sy + v ] += math.pow( 2, l_func(v) + 1 )*mu2*0.5
+        Q[ offset_sy + v , offset + t21 ] += math.pow( 2, l_func(v) + 1 )*mu2*0.5
     # second summation
     for h_item in h:
         u_1 = h_item[0]; u_2 = h_item[1]; v = h_item[2]
         t12 = u2.index([u_1,u_2])
-        Q[ offset + t12 , offset_sy + v ] += (-1)*math.pow( 2, l_func(v,m) + 1 )*mu2*0.5
-        Q[ offset_sy + v , offset + t12 ] += (-1)*math.pow( 2, l_func(v,m) + 1 )*mu2*0.5
+        Q[ offset + t12 , offset_sy + v ] += (-1)*math.pow( 2, l_func(v) + 1 )*mu2*0.5
+        Q[ offset_sy + v , offset + t12 ] += (-1)*math.pow( 2, l_func(v) + 1 )*mu2*0.5
 
     return Q
 
