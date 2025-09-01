@@ -130,6 +130,7 @@ def main():
     grades = config['grades']
 
     dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
+    # dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)    
     default = dataset['default'].to_numpy().reshape(n,1)
 
     min_thr = compute_lower_thrs(n)
@@ -147,6 +148,7 @@ def main():
     # print(matrix)
     test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, True)
 
+    # connect to the database
     new_df = from_random_to_databse(config, default.flatten().tolist())
     new_df.drop("year", axis=1, inplace=True)
     new_df = new_df[['counterpart_id', 'score', 'default']]
