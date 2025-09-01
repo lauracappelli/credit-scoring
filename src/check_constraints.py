@@ -251,10 +251,10 @@ def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
         # compute the default rate of each grades
         grade_dr = default[matrix[:, j] == 1]
 
-        # Check if the grade is not empty
-        if grade_dr.size == 0:
+        # Check if the grade has at least two elements (needed to build sub-populations)
+        if grade_dr.size <= 2:
             if verbose:
-              print("\tx Error in homogeneity constraint: at least one grade is empty")
+              print("\tx Error in homogeneity constraint: at least one grade has less than 2 elements")
             return False
         
         # compute sigma^2(j)
