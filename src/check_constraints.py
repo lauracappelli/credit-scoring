@@ -313,21 +313,21 @@ def test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, verb
     print("Checking the constraints...")
 
     start_time = time.perf_counter_ns()
-    flag = False
-    if not (config['test']['logic'] and not check_staircase(matrix, verbose)):
-        flag = True
-        if config['test']['conentration'] and not check_concentration(matrix, config['alpha_concentration'], verbose):
-            flag = False
-        if config['test']['min_thr'] and not check_upper_thrs(matrix, max_thr, verbose):
-            flag = False
-        if config['test']['max_thr'] and not check_lower_thrs(matrix, min_thr, verbose):
-            flag = False
-        if config['test']['heterogeneity'] and not check_heterogeneity(matrix, default, config['alpha_heterogeneity'], verbose):
-            flag = False
-        if config['test']['homogeneity'] and not check_homogeneity(matrix, default, config['alpha_homogeneity'], verbose):
-            flag = False
-        if config['test']['monotonicity'] and not check_monotonicity(matrix, default, verbose):
-            flag = False
+    flag = True
+    if config['test']['logic'] and not check_staircase(matrix, verbose):
+        flag = False
+    if config['test']['conentration'] and not check_concentration(matrix, config['alpha_concentration'], verbose):
+        flag = False
+    if config['test']['min_thr'] and not check_upper_thrs(matrix, max_thr, verbose):
+        flag = False
+    if config['test']['max_thr'] and not check_lower_thrs(matrix, min_thr, verbose):
+        flag = False
+    if config['test']['heterogeneity'] and not check_heterogeneity(matrix, default, config['alpha_heterogeneity'], verbose):
+        flag = False
+    if config['test']['homogeneity'] and not check_homogeneity(matrix, default, config['alpha_homogeneity'], verbose):
+        flag = False
+    if config['test']['monotonicity'] and not check_monotonicity(matrix, default, verbose):
+        flag = False
     end_time = time.perf_counter_ns()
 
     print(f"Test time: {(end_time-start_time)/10e9} s")
