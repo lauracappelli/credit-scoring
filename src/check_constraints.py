@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import time
 from scipy import stats
 
 def check_staircase(matrix, verbose=False):
@@ -250,10 +251,10 @@ def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
         # compute the default rate of each grades
         grade_dr = default[matrix[:, j] == 1]
 
-        # Check if the grade is not empty
-        if grade_dr.size == 0:
+        # Check if the grade has at least two elements (needed to build sub-populations)
+        if grade_dr.size <= 2:
             if verbose:
-              print("\tx Error in homogeneity constraint: at least one grade is empty")
+              print("\tx Error in homogeneity constraint: at least one grade has less than 2 elements")
             return False
         
         # compute sigma^2(j)
@@ -290,3 +291,44 @@ def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
     if verbose:
         print("\t\u2713 Homogeneity constraint checked")
     return True
+
+def test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, verbose):
+    """
+    Given a solution of the problem, check all the constraints as requested in
+    the config file
+
+    Args:
+        matrix: numpy array 2D
+        config: yaml object with the config file hyperparameters
+        n: number of counterparts
+        grades: number of grades
+        default: default of the counterparts in the matrix
+        max_thr: upper threshold
+        min_thr: lower threshold
+        verbose: enable verbose printing
+    Returns:
+        bool: result of the tests  
+    """
+
+    print("Checking the constraints...")
+
+    start_time = time.perf_counter_ns()
+    flag = True
+    if config['test']['logic'] and not check_staircase(matrix, verbose):
+        flag = False
+    if config['test']['monotonicity'] and not check_monotonicity(matrix, default, verbose):
+        flag = False
+    if config['test']['conentration'] and not check_concentration(matrix, config['alpha_concentration'], verbose):
+        flag = False
+    if config['test']['min_thr'] and not check_upper_thrs(matrix, max_thr, verbose):
+        flag = False
+    if config['test']['max_thr'] and not check_lower_thrs(matrix, min_thr, verbose):
+        flag = False
+    if config['test']['heterogeneity'] and not check_heterogeneity(matrix, default, config['alpha_heterogeneity'], verbose):
+        flag = False
+    if config['test']['homogeneity'] and not check_homogeneity(matrix, default, config['alpha_homogeneity'], verbose):
+        flag = False
+    end_time = time.perf_counter_ns()
+
+    print(f"Test time: {(end_time-start_time)/10e9} s")
+    return flag
