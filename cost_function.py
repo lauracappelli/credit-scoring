@@ -8,7 +8,6 @@ import itertools
 import gurobipy as gpy
 from gurobipy import GRB
 
-# penalty: "first counterpart in first class"
 def first_counterpart_const(m, n, mu=1):
     Q = np.zeros([n*m, n*m])
     
@@ -18,7 +17,6 @@ def first_counterpart_const(m, n, mu=1):
         Q[jj][0] -= 0.5
     return mu*Q
 
-# penalty: "last counterpart in the last class"
 def last_counterpart_const(m, n, mu=1):
     Q = np.zeros([n*m, n*m])
 
@@ -29,7 +27,6 @@ def last_counterpart_const(m, n, mu=1):
         Q[tt][(n*m)-1] -= 0.5
     return mu*Q
 
-# penalty: "one class per counterpart"
 def one_class_const(m, n, mu=1):
     Q = np.zeros([n*m, n*m])
     c = 0
@@ -47,7 +44,6 @@ def one_class_const(m, n, mu=1):
         c += 1
     return (mu*Q, mu*c)
 
-# penalty: "staircase matrix"
 def staircase_constr(m, n, mu=1):
     Q = first_counterpart_const(m,n) + last_counterpart_const(m,n)
 
@@ -103,7 +99,7 @@ def staircase_constr(m, n, mu=1):
 
     return mu*Q
 
-def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
+def monotonicity_constr(m, n, default, offset, mu=1):
 
     def l_func(v):
 	    return math.floor(v/(m-1))
@@ -115,10 +111,10 @@ def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
 
     num_of_default = sum(default)
     param = (n-num_of_default)*num_of_default
-    num_of_y = math.floor(1+math.log2(param))
+    Ny = math.floor(1+math.log2(param))
     dim_y = 2*(m-1)*param
     offset_sy = offset + dim_y
-    dim_sy = (m-1)*num_of_y
+    dim_sy = (m-1)*Ny
 
     dim = offset + dim_y + dim_sy
     Q = np.zeros([dim, dim])
@@ -150,8 +146,8 @@ def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
                 u4.append([u_1, u_2, u_3, u_4])
     
     l2j1 = []
-    for l1 in range(num_of_y):
-        for l2 in range(num_of_y):
+    for l1 in range(Ny):
+        for l2 in range(Ny):
             for j in range(m-1):
                 l2j1.append([l1,l2,j+1])
     v2 = []
@@ -165,34 +161,34 @@ def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
         for c_min_item in C_set_minus:
             u_1=(c_min_item[0]-1)*m + (j+1) -1
             u_2=(c_min_item[1]-1)*m + (j+1) -1
-            for l in range(num_of_y):
+            for l in range(Ny):
                 v = l*(m-1) + (j+1) -1
                 h.append([u_1,u_2,v])
 
     for u2_item in u2:
         u_1 = u2_item[0]; u_2 = u2_item[1]
         if u_1==u_2+1:
-            Q[u_1,u_2+1] += mu1
+            Q[u_1,u_2+1] += mu
         else:
-            Q[u_1,u_2+1] += mu1*0.5
-            Q[u_2+1,u_1] += mu1*0.5
+            Q[u_1,u_2+1] += mu*0.5
+            Q[u_2+1,u_1] += mu*0.5
 
     for u2_item in u2:
         u_1 = u2_item[0]; u_2 = u2_item[1]
         t=u2.index([u_1,u_2])
-        Q[ offset + t, offset + t ] += mu1*3
+        Q[ offset + t, offset + t ] += mu*3
 
     for u2_item in u2:
         u_1 = u2_item[0]; u_2 = u2_item[1]
         t=u2.index([u_1,u_2])
-        Q[u_1,offset + t] += mu1*(-2)*0.5
-        Q[offset + t,u_1] += mu1*(-2)*0.5
+        Q[u_1,offset + t] += mu*(-2)*0.5
+        Q[offset + t,u_1] += mu*(-2)*0.5
 
     for u2_item in u2:
         u_1 = u2_item[0]; u_2 = u2_item[1]
         t=u2.index([u_1,u_2])
-        Q[u_2+1,offset + t] += mu1*(-2)*0.5
-        Q[offset + t,u_2+1] += mu1*(-2)*0.5
+        Q[u_2+1,offset + t] += mu*(-2)*0.5
+        Q[offset + t,u_2+1] += mu*(-2)*0.5
 
     # first summation
     for u4_item in u4:
@@ -201,10 +197,10 @@ def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
         t21 = u2.index([u_2,u_1])
         t43 = u2.index([u_4,u_3])
         if t21==t43:
-            Q[ offset + t21 , offset + t43 ] += mu2
+            Q[ offset + t21 , offset + t43 ] += mu
         else:
-            Q[ offset + t21 , offset + t43 ] += mu2*0.5
-            Q[ offset + t43 , offset + t21 ] += mu2*0.5
+            Q[ offset + t21 , offset + t43 ] += mu*0.5
+            Q[ offset + t43 , offset + t21 ] += mu*0.5
     # second summation
     for u4_item in u4:
         u_1 = u4_item[0]; u_2 = u4_item[1]
@@ -212,19 +208,19 @@ def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
         t12 = u2.index([u_1,u_2])
         t34 = u2.index([u_3,u_4])
         if t12==t34:
-            Q[ offset + t12 , offset + t34 ] += mu2
+            Q[ offset + t12 , offset + t34 ] += mu
         else:
-            Q[ offset + t12 , offset + t34 ] += mu2*0.5
-            Q[ offset + t34 , offset + t12 ] += mu2*0.5
+            Q[ offset + t12 , offset + t34 ] += mu*0.5
+            Q[ offset + t34 , offset + t12 ] += mu*0.5
             
     # first summation
     for v2_item in v2:	
         v_1 = v2_item[0]; v_2 = v2_item[1]
         if v_1==v_2:
-            Q[ offset_sy + v_1 , offset_sy + v_2 ] += math.pow( 2, l_func(v_1) + l_func(v_2) )*mu2
+            Q[ offset_sy + v_1 , offset_sy + v_2 ] += math.pow( 2, l_func(v_1) + l_func(v_2) )*mu
         else:
-            Q[ offset_sy + v_1 , offset_sy + v_2 ] += math.pow( 2, l_func(v_1) + l_func(v_2) )*mu2*0.5
-            Q[ offset_sy + v_2 , offset_sy + v_1 ] += math.pow( 2, l_func(v_1) + l_func(v_2) )*mu2*0.5
+            Q[ offset_sy + v_1 , offset_sy + v_2 ] += math.pow( 2, l_func(v_1) + l_func(v_2) )*mu*0.5
+            Q[ offset_sy + v_2 , offset_sy + v_1 ] += math.pow( 2, l_func(v_1) + l_func(v_2) )*mu*0.5
     # second summation
     for u4_item in u4:
         u_1 = u4_item[0]; u_2 = u4_item[1]
@@ -232,23 +228,23 @@ def monotonicity_constr(m, n, default, offset, mu1=1, mu2=1, mu3=1):
         t21 = u2.index([u_2,u_1])
         t34 = u2.index([u_3,u_4])
         if t21==t34:
-            Q[ offset + t21 , offset + t34 ] += mu2*(-2)
+            Q[ offset + t21 , offset + t34 ] += mu*(-2)
         else:
-            Q[ offset + t21 , offset + t34 ] += mu2*(-2)*0.5
-            Q[ offset + t34 , offset + t21 ] += mu2*(-2)*0.5
+            Q[ offset + t21 , offset + t34 ] += mu*(-2)*0.5
+            Q[ offset + t34 , offset + t21 ] += mu*(-2)*0.5
 
     # first summation
     for h_item in h:
         u_1 = h_item[0]; u_2 = h_item[1]; v = h_item[2]
         t21 = u2.index([u_2,u_1])
-        Q[ offset + t21 , offset_sy + v ] += math.pow( 2, l_func(v) + 1 )*mu2*0.5
-        Q[ offset_sy + v , offset + t21 ] += math.pow( 2, l_func(v) + 1 )*mu2*0.5
+        Q[ offset + t21 , offset_sy + v ] += math.pow( 2, l_func(v) + 1 )*mu*0.5
+        Q[ offset_sy + v , offset + t21 ] += math.pow( 2, l_func(v) + 1 )*mu*0.5
     # second summation
     for h_item in h:
         u_1 = h_item[0]; u_2 = h_item[1]; v = h_item[2]
         t12 = u2.index([u_1,u_2])
-        Q[ offset + t12 , offset_sy + v ] += (-1)*math.pow( 2, l_func(v) + 1 )*mu2*0.5
-        Q[ offset_sy + v , offset + t12 ] += (-1)*math.pow( 2, l_func(v) + 1 )*mu2*0.5
+        Q[ offset + t12 , offset_sy + v ] += (-1)*math.pow( 2, l_func(v) + 1 )*mu*0.5
+        Q[ offset_sy + v , offset + t12 ] += (-1)*math.pow( 2, l_func(v) + 1 )*mu*0.5
 
     return Q
 
@@ -483,7 +479,7 @@ def main():
         Q = Q + Q_conc
         c = c + c_conc
     if config['constraints']['monotonicity'] == True:
-        Q_monoton = monotonicity_constr(m, n, default.T.squeeze(), Q.shape[0], mu_monotonicity, mu_monotonicity, mu_monotonicity)
+        Q_monoton = monotonicity_constr(m, n, default.T.squeeze(), Q.shape[0], mu_monotonicity)
         pad = Q_monoton.shape[0] - Q.shape[0]
         Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_monoton
     if config['constraints']['min_thr'] == True:
