@@ -6,9 +6,9 @@ Repository of the Quantum Credit Scoring project, realized and developed within 
 
 This project, realized in collaboration with **Banca Intesa Sanpaolo**, aims to develop an algorithm that uses quantum computing features to solve the financial problem of the credit rating scale definition. More in details, the goal is to categorize $n$ counterparts into $m$ grades according to several constraints. 
 
-At the beginning of the collaboration, we implement the notebook `read_dataset.ipynb`. This notebook reads the dataset of the counterpats provided by Intesa Sanpaolo and performs some statistical analyses on it.
+At the beginning of the collaboration, we implement the notebook `read_dataset.ipynb`. This notebook reads the dataset of the counterpats provided by Intesa Sanpaolo and performs some statistical analyses on it. Note: The dataset cannot be shared; for demonstration purposes, for the orher script we implemented functions that generate random datasets.
 
-The code that solves the rating scale definition problem requires some Python packages, such as [dwave-hybrid](https://docs.ocean.dwavesys.com/en/stable/docs_hybrid/sdk_index.html)). We used a Conda environment created as follows:
+The code that solves the rating scale definition problem requires some Python packages, such as [dwave-hybrid](https://docs.ocean.dwavesys.com/en/stable/docs_hybrid/sdk_index.html). We used a Conda environment created as follows:
 
 ```
 conda create -n <env_name> python=3.13.2
