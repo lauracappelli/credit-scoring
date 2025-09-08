@@ -106,7 +106,7 @@ def generate_data_var_prob(config):
     The number of entries is specified in the config file.
 
     Args:
-        dict: iperparameters
+        dict: hyperparameters
     Returns:
         pandas dataframe: dataset of the counterparts ordered by score
     """
