@@ -5,7 +5,7 @@ from scipy import stats
 
 def check_staircase(matrix, verbose=False):
     """
-    Test if the input matrix fulfill the logic constraint.
+    Test if the input matrix fulfill the logical constraint.
 
     Args:
         matrix: numpy array 2D to test
@@ -18,7 +18,7 @@ def check_staircase(matrix, verbose=False):
     ones_per_row = np.sum(matrix == 1, axis=1)
     if not np.all(ones_per_row == 1):
         if verbose:
-            print("\tx Error: logic constraint not respected")
+            print("\tx Error: logical constraint not respected")
             print("\t\tMore or less than one class per counterpart")
         return False
 
@@ -28,12 +28,12 @@ def check_staircase(matrix, verbose=False):
     # check the first and the last counterpart
     if counterpart_grade[0] != 0:
         if verbose:
-            print("\tx Error: logic constraint not respected")
+            print("\tx Error: logical constraint not respected")
             print("\t\tError in the first counterpart")
         return False
     if counterpart_grade[-1] != matrix.shape[1]-1:
         if verbose:
-            print("\tx Error: logic constraint not respected")
+            print("\tx Error: logical constraint not respected")
             print("\t\tError in the last counterpart")
         return False
 
@@ -46,12 +46,12 @@ def check_staircase(matrix, verbose=False):
         # print(f"counterpart {i+1} belongs to grade {gr}")
         if gr != counterpart_grade[i] and gr != counterpart_grade[i]+1:
             if verbose:
-                print("\tx Error: logic constraint not respected")
+                print("\tx Error: logical constraint not respected")
                 print(f"\t\tError in the counterpart {i+2}")
             return False
 
     if verbose:
-        print("\t\u2713 Logic constraint checked")
+        print("\t\u2713 Logical constraint checked")
     return True
 
 def check_monotonicity(matrix, default, verbose=False):
