@@ -8,6 +8,7 @@ import itertools
 import gurobipy as gpy
 from gurobipy import GRB
 
+# penalty: "first counterpart in first class"
 def first_counterpart_const(m, n, mu=1):
     Q = np.zeros([n*m, n*m])
     
@@ -17,6 +18,7 @@ def first_counterpart_const(m, n, mu=1):
         Q[jj][0] -= 0.5
     return mu*Q
 
+# penalty: "last counterpart in the last class"
 def last_counterpart_const(m, n, mu=1):
     Q = np.zeros([n*m, n*m])
 
@@ -27,6 +29,7 @@ def last_counterpart_const(m, n, mu=1):
         Q[tt][(n*m)-1] -= 0.5
     return mu*Q
 
+# penalty: "one class per counterpart"
 def one_class_const(m, n, mu=1):
     Q = np.zeros([n*m, n*m])
     c = 0
@@ -44,6 +47,7 @@ def one_class_const(m, n, mu=1):
         c += 1
     return (mu*Q, mu*c)
 
+# penalty: "staircase matrix"
 def staircase_constr(m, n, mu=1):
     Q = first_counterpart_const(m,n) + last_counterpart_const(m,n)
 
@@ -381,6 +385,7 @@ def annealer_solver(dim, bqm, shots):
     return result_state
 
 def gurobi_solver(m, n, matrix, c, gurobi_n_sol, gurobi_fidelity):
+    print()
     size = matrix.shape[0]
     # model definition
     qubo_model = gpy.Model("QCS")
@@ -450,6 +455,12 @@ def main():
     m = config['grades']
     default = dataset['default'].to_numpy().reshape(n,1)
 
+    print("\nSELECTED INSTANCE:")
+    print("Number of counterparts: ", n)
+    print("Number of grades: ", m)
+    print("Dataset:")
+    print(dataset.reset_index(drop=True))
+
     alpha_conc = config['alpha_concentration']
     alpha_het = config['alpha_heterogeneity']
     alpha_hom = config['alpha_homogeneity']
@@ -497,55 +508,73 @@ def main():
     # generate the BMQ
     bqm = from_matrix_to_bqm(Q, c)
 
-    print(f"Matrix size:{Q.shape}")
-    print(f"Time of generation: {(end_time - start_time)/10e9} s")
+    print(f"\nThe QUBO problem has {Q.shape[0]} variables")
+    print(f"\nThe time spent to generate the QUBO matrix is: {(end_time - start_time)/10e9} s")
 
     #-------------------------------
 
-    # # Solving with brute force
-    # start_time = time.perf_counter_ns()
-    # (result_bf, cost) = brute_force_solver(Q,c,Q.shape[0])
-    # end_time = time.perf_counter_ns()
-    # if config['constraints']['min_thr'] == True:
-    #     result_bf = result_bf[:m*n]
-    # print(f"\nBrute Force result:\n{result_bf.reshape(n,m)}")
-    # print(f"Time of brute force solution: {(end_time - start_time)/10e9} s\n")
+    # Solving with brute force
+    if config['solvers']['brute_force']:
+        start_time = time.perf_counter_ns()
+        (result_bf, cost) = brute_force_solver(Q,c,Q.shape[0])
+        end_time = time.perf_counter_ns()
+        if config['constraints']['min_thr'] == True:
+            result_bf = result_bf[:m*n]
+        print(f"\nBinary staircase matrix obtained with the brute force approach:")
+        print(result_bf.reshape(n,m))
+        print(f"\nTime of solution: {(end_time - start_time)/10e9} s\n")
+        dataset["Brute_force_rating"] = np.argmax(result_bf.reshape(n,m), axis=1) + 1
+
+        print("The rate is:")
+        print(dataset[["counterpart_id", "default", "score", "Brute_force_rating"]])
 
     #-------------------------------
 
-    # # Solving exactly with dwave
-    # start_time = time.perf_counter_ns()
-    # e_result = exact_solver(bqm)
-    # df_result = e_result.lowest().to_pandas_dataframe()
-    # end_time = time.perf_counter_ns()
-    # elapsed_time_ns = end_time - start_time
-    # # Print all the solutions
-    # result_exact_solver = df_result.iloc[:, :m*n].to_numpy()
-    # # print(f"All exact solutions:\n{df_result}")
-    # print(f"Exact solutions with dwave: {int(result_exact_solver.size/(m*n))}")
-    # for sol in result_exact_solver[:]:
-    #     print(f"solution:\n{sol.reshape(n, m)}")
-    # print(f"Time of all exact solutions: {elapsed_time_ns/10e9} s")
-    # # print(f"First solution:\n{result_exact_solver[0].reshape(n, m)}")
+    # Solving exactly with dwave
+    if config['solvers']['dwave_exact']:
+        start_time = time.perf_counter_ns()
+        e_result = exact_solver(bqm)
+        df_result = e_result.lowest().to_pandas_dataframe()
+        end_time = time.perf_counter_ns()
+        elapsed_time_ns = end_time - start_time
+        # Print all the solutions
+        result_exact_solver = df_result.iloc[:, :m*n].to_numpy()
+        # print(f"All exact solutions:\n{df_result}")
+
+        print(f"\nBinary staircase matrices obtained with the brute force approach: {int(result_exact_solver.size/(m*n))}")
+        for sol in result_exact_solver[:]:
+            print(f"solution:\n{sol.reshape(n, m)}")
+
+        print(f"\nTime to compute all exact solutions: {elapsed_time_ns/10e9} s")
+        # print(f"First solution:\n{result_exact_solver[0].reshape(n, m)}")
+
+        # Add the first solution to the dataset
+        dataset["DWave_Brute_force_rating"] = np.argmax(result_exact_solver[0].reshape(n,m), axis=1) + 1
+        print(dataset[["counterpart_id", "default", "score", "DWave_Brute_force_rating"]])
 
     #-------------------------------
 
     # Solving with annealing 
-    start_time = time.perf_counter_ns()
-    result = annealer_solver(Q.shape[0], bqm, shots)
-    end_time = time.perf_counter_ns()
-    result_ann = np.array([int(x) for x in result.samples.first.sample.values()])[:m*n]
-    annealing_matrix = result_ann.reshape(n, m)
-    print(f"\nAnnealing result:\n{annealing_matrix}")    
-    print(f"Time of annealing solution: {(end_time - start_time)/10e9} s\n")
+    if config['solvers']['annealing']:
+        start_time = time.perf_counter_ns()
+        result = annealer_solver(Q.shape[0], bqm, shots)
+        end_time = time.perf_counter_ns()
+        result_ann = np.array([int(x) for x in result.samples.first.sample.values()])[:m*n]
+        annealing_matrix = result_ann.reshape(n, m)
+        print(f"\nBinary staircase matrix obtained with the annealing solver:\n{annealing_matrix}")
+        print(f"\nTime to compute the annealing solution: {(end_time - start_time)/10e9} s\n")
+
+        dataset["Annealing_rating"] = np.argmax(annealing_matrix, axis=1) + 1
+        print(dataset[["counterpart_id", "default", "score", "Annealing_rating"]])
 
     #-------------------------------
 
     # Solving with Gurobi
-    # gurobi_sol = gurobi_solver(m, n, Q, c, config['gurobi_n_sol'], config['gurobi_fidelity'])
+    if config['solvers']['gurobi']:
+        gurobi_sol = gurobi_solver(m, n, Q, c, config['gurobi_n_sol'], config['gurobi_fidelity'])
 
     #-------------------------------
-    print("Result validation:")
+    print("\nResult validation of the annealing result:")
     verbose = True
     is_valid = test_one_solution(annealing_matrix, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), verbose)
 
