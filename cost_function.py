@@ -106,7 +106,7 @@ def staircase_constr(m, n, mu=1):
 def monotonicity_constr(m, n, default, offset, mu=1):
 
     def l_func(v):
-	    return math.floor(v/(m-1))
+        return math.floor(v/(m-1))
 
     # check if the default values are not equal
     if np.all(default==0) or np.all(default==1):
