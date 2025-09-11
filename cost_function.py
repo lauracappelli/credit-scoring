@@ -458,6 +458,7 @@ def main():
     print("\nSELECTED INSTANCE:")
     print("Number of counterparts: ", n)
     print("Number of grades: ", m)
+    print(f"The number of default is {np.sum(default)}")
     print("Dataset:")
     print(dataset.reset_index(drop=True))
 
