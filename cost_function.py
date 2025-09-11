@@ -567,16 +567,14 @@ def main():
         dataset["Annealing_rating"] = np.argmax(annealing_matrix, axis=1) + 1
         print(dataset[["counterpart_id", "default", "score", "Annealing_rating"]])
 
+        print("\nResult validation of the annealing result:")
+        verbose = True
+        is_valid = test_one_solution(annealing_matrix, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), verbose)
     #-------------------------------
 
     # Solving with Gurobi
     if config['solvers']['gurobi']:
         gurobi_sol = gurobi_solver(m, n, Q, c, config['gurobi_n_sol'], config['gurobi_fidelity'])
-
-    #-------------------------------
-    print("\nResult validation of the annealing result:")
-    verbose = True
-    is_valid = test_one_solution(annealing_matrix, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), verbose)
 
 if __name__ == '__main__':
     main()
