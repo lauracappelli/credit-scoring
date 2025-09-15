@@ -107,11 +107,7 @@ def monotonicity_constr(m, n, default, offset, mu=1):
 
     def l_func(v):
         return math.floor(v/(m-1))
-
-    # check if the default values are not equal
-    if np.all(default==0) or np.all(default==1):
-        print("Error in monotonicity function call. Default values are all equal")
-        sys.exit(0)
+    # default vector must be different from all 0 and all 1
 
     num_of_default = sum(default)
     param = (n-num_of_default)*num_of_default
@@ -422,15 +418,16 @@ def gurobi_solver(m, n, matrix, c, gurobi_n_sol, gurobi_fidelity):
             solution = [int(qubo_vars[i].X) for i in range(size)]
             if len(solution) > m*n:
                 solution = solution[:m*n]
-            print("\nBest solution:\n", np.array(solution).reshape(n, m))
+            np_sol = np.array(solution).reshape(n, m)
+            print("\nBest solution:\n", np_sol)
             print("Cost of the function:", qubo_model.ObjVal)
 
-            return np.array(solution).reshape(n, m)
+            return [np_sol]
         
         else:
             # select all the solutions or num_max_solutions solutions
             nfound = min(qubo_model.SolCount, num_max_solutions)
-
+            list_sol = []
             for sol_idx in range(nfound):
                 qubo_model.setParam(GRB.Param.SolutionNumber, sol_idx)
                 qubo_bitstring = np.array(
@@ -438,10 +435,13 @@ def gurobi_solver(m, n, matrix, c, gurobi_n_sol, gurobi_fidelity):
                 )
                 if qubo_bitstring.shape[0] > m*n:
                     qubo_bitstring = qubo_bitstring[:m*n]
-                print(f"solution {sol_idx+1}:\n{qubo_bitstring.reshape(n,m)}")
+                np_sol = qubo_bitstring.reshape(n,m)
+                print(f"solution {sol_idx+1}:\n{np_sol}")
                 print("Cost of the function:", qubo_model.PoolObjVal)
+                list_sol.append(np_sol)
             
-            return nfound
+            return list_sol
+        
     else:
         print("No solutions found")
     
@@ -455,6 +455,9 @@ def main():
     m = config['grades']
     default = dataset['default'].to_numpy().reshape(n,1)
 
+    #default.T.squeeze()
+    #if np.all(default==0) or np.all(default==1):
+    
     print("\nSELECTED INSTANCE:")
     print("Number of counterparts: ", n)
     print("Number of grades: ", m)
@@ -571,11 +574,18 @@ def main():
         print("\nResult validation of the annealing result:")
         verbose = True
         is_valid = test_one_solution(annealing_matrix, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), verbose)
-    #-------------------------------
 
+    #-------------------------------
     # Solving with Gurobi
     if config['solvers']['gurobi']:
-        gurobi_sol = gurobi_solver(m, n, Q, c, config['gurobi_n_sol'], config['gurobi_fidelity'])
+        np_sol = gurobi_solver(m, n, Q, c, config['gurobi_n_sol'], config['gurobi_fidelity'])
+        #print(gurobi_sol)
+        print("\nResult validation of the gurobi result:")
+        verbose = True
+        for np_sol_item in np_sol:
+            is_valid = test_one_solution(np_sol_item, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), verbose)
+        print("default:", default.flatten().tolist())
+
 
 if __name__ == '__main__':
     main()
