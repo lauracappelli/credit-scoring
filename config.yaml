@@ -1,7 +1,7 @@
 data_path: 'data/dataset-ispq.csv'  # if empty, random data is generated
 
 random_data: 'yes'      # select 'yes' to generate random dataset
-default_prob: 0.4       # probability of default (range: 0 - 1)
+default_prob: 0.125       # probability of default (range: 0 - 1)
 
 attributes:             # select optional attributes
     years: [2012, 2015] # list of (not consecutive) years from 2012 to 2020, [] = ignore attribute
@@ -9,17 +9,14 @@ attributes:             # select optional attributes
     revenue: 'no'
     geo_area: 'no'
 
-n_counterpart: 8      # could be a number or 'all'
-grades: 3
+n_counterpart: 5      # could be a number or 'all'
+grades: 2
 
 alpha_concentration: 0.05
 alpha_heterogeneity: 0.01
 alpha_homogeneity: 0.05
 
 shots: 100000
-
-gurobi_n_sol: 1
-gurobi_fidelity: 1
 
 constraints:
     one_class: True
@@ -41,16 +38,16 @@ test:
 mu: 
     one_class: 150
     logic: 150
-    concentration: 20
+    concentration: 1
     min_thr: 10
     max_thr: 10
-    monotonicity: 50
+    monotonicity: 100
 
 solvers:
     brute_force: False
     dwave_exact: False
-    annealing: True
-    gurobi: False
+    annealing: False
+    gurobi: True
 
-gurobi_n_sol: 5
-gurobi_fidelity: 0.1
+gurobi_n_sol: 1
+gurobi_fidelity: 1
