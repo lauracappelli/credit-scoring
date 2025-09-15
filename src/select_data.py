@@ -90,9 +90,13 @@ def generate_data(config):
         sys.exit("Error: specify a number of counterparts")
 
     # np.random.seed(42)
+    def_rand = np.random.choice([0, 1], size=config['n_counterpart'], p=[1-config['default_prob'], config['default_prob']])
+    while np.all(def_rand==0) or np.all(def_rand==1):
+        def_rand = np.random.choice([0, 1], size=config['n_counterpart'], p=[1-config['default_prob'], config['default_prob']])
+
     dataset = pd.DataFrame({
         'counterpart_id': np.arange(1, config['n_counterpart']+1),
-        'default': np.random.choice([0, 1], size=config['n_counterpart'], p=[1-config['default_prob'], config['default_prob']]),
+        'default': def_rand,
         'score': np.random.uniform(-10, 2, size=config['n_counterpart'])
     })
 
