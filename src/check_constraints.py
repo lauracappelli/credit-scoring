@@ -5,7 +5,7 @@ from scipy import stats
 
 def check_staircase(matrix, verbose=False):
     """
-    Test if the input matrix fulfill the logical constraint.
+    Test if the input matrix fulfills the logical constraint.
 
     Args:
         matrix: numpy array 2D to test
@@ -56,7 +56,7 @@ def check_staircase(matrix, verbose=False):
 
 def check_monotonicity(matrix, default, verbose=False):
     """
-    Test if the input matrix fulfill the monotonicity constraint.
+    Test if the input matrix fulfills the monotonicity constraint.
 
     Args:
         matrix: numpy array 2D to test
@@ -92,7 +92,7 @@ def check_monotonicity(matrix, default, verbose=False):
 
 def check_concentration(matrix, alpha_conc = 0.05, verbose=False):
     """
-    Test if the input matrix fulfill the concentration constraint.
+    Test if the input matrix fulfills the concentration constraint.
 
     Args:
         matrix: numpy array 2D to test
@@ -122,7 +122,7 @@ def check_concentration(matrix, alpha_conc = 0.05, verbose=False):
 
 def check_upper_thrs(matrix, max_thrs, verbose=False):
     """
-    Test if the input matrix fulfill the upper threshold constraint.
+    Test if the input matrix fulfills the upper threshold constraint.
 
     Args:
         matrix: numpy array 2D to test
@@ -145,7 +145,7 @@ def check_upper_thrs(matrix, max_thrs, verbose=False):
 
 def check_lower_thrs(matrix, min_thrs, verbose=False):
     """
-    Test if the input matrix fulfill the lower threshold constraint.
+    Test if the input matrix fulfills the lower threshold constraint.
 
     Args:
         matrix: numpy array 2D to test
@@ -168,7 +168,7 @@ def check_lower_thrs(matrix, min_thrs, verbose=False):
 
 def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
     """
-    Test if the input matrix fulfill the heterogeneity constraint.
+    Test if the input matrix fulfills the heterogeneity constraint.
 
     Args:
         matrix: numpy array 2D to test
@@ -235,7 +235,7 @@ def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
 
 def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
     """
-    Test if the input matrix fulfill the homogeneity constraint.
+    Test if the input matrix fulfills the homogeneity constraint.
 
     Args:
         matrix: numpy array 2D to test
