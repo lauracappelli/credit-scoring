@@ -9,22 +9,23 @@ attributes:             # select optional attributes
     revenue: 'no'
     geo_area: 'no'
 
-n_counterpart: 5      # could be a number or 'all'
-grades: 2
+n_counterpart: 50      # could be a number or 'all'
+grades: 3
 
 alpha_concentration: 0.05
 alpha_heterogeneity: 0.01
 alpha_homogeneity: 0.05
 
-shots: 100000
+shots: 2000000
+reads: 5
 
 constraints:
     one_class: True
     logic: True
     conentration: True
-    min_thr: True
-    max_thr: True
-    monotonicity: True
+    min_thr: False
+    max_thr: False
+    monotonicity: False
 
 test:
     logic: True
@@ -36,18 +37,18 @@ test:
     homogeneity: True
 
 mu: 
-    one_class: 150
-    logic: 150
+    one_class: 30
+    logic: 70
     concentration: 1
-    min_thr: 10
-    max_thr: 10
+    min_thr: 50
+    max_thr: 50
     monotonicity: 100
 
 solvers:
     brute_force: False
     dwave_exact: False
-    annealing: False
-    gurobi: True
+    annealing: True
+    gurobi: False
 
 gurobi_n_sol: 1
 gurobi_fidelity: 1

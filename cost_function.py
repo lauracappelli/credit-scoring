@@ -369,17 +369,24 @@ def exact_solver(bqm):
 
     return sampleset
 
-def annealer_solver(dim, bqm, shots):
+def annealer_solver(dim, bqm, reads, shots, n, m):
 
     # define the initial state (all elements = 0 or random elements)
     state = hybrid.core.State.from_sample({i: 0 for i in range(dim)}, bqm)
     # state = hybrid.core.State.from_sample({i: np.random.randint(0, 2) for i in range(dim)}, bqm)
 
-    sampler = hybrid.samplers.SimulatedAnnealingProblemSampler(num_sweeps=shots)
-    result_state = sampler.run(state).result()
- 
-    return result_state
+    sampler = hybrid.SimulatedAnnealingProblemSampler(num_reads=reads, num_sweeps=shots, beta_range=(0.1, 5.0), beta_schedule_type='geometric')
+    sample_set = sampler.run(state).result()
 
+    # data analysis
+    # sample_df = sample_set.samples.to_pandas_dataframe()
+    # for i, sample in sample_df.iterrows():
+    #     print(f"Soluzione {i}:")
+    #     print("  energia:", sample.energy)   # energia associata
+    #     print(sample_df.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m))
+
+    return sample_set
+    
 def gurobi_solver(m, n, matrix, c, gurobi_n_sol, gurobi_fidelity):
     print()
     size = matrix.shape[0]
@@ -469,6 +476,7 @@ def main():
     alpha_het = config['alpha_heterogeneity']
     alpha_hom = config['alpha_homogeneity']
     shots = config['shots']
+    reads = config['reads']
 
     mu_one_class_constr = config['mu']['one_class']
     mu_staircase_constr = config['mu']['logic']
@@ -561,7 +569,7 @@ def main():
     # Solving with annealing 
     if config['solvers']['annealing']:
         start_time = time.perf_counter_ns()
-        result = annealer_solver(Q.shape[0], bqm, shots)
+        result = annealer_solver(Q.shape[0], bqm, reads, shots, n, m)
         end_time = time.perf_counter_ns()
         result_ann = np.array([int(x) for x in result.samples.first.sample.values()])[:m*n]
         annealing_matrix = result_ann.reshape(n, m)
