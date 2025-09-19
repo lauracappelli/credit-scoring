@@ -18,7 +18,7 @@ def check_staircase(matrix, verbose=False):
     ones_per_row = np.sum(matrix == 1, axis=1)
     if not np.all(ones_per_row == 1):
         if verbose:
-            print("\tx Error: logical constraint not respected")
+            print("\tx Error: logical constraint not fulfilled")
             print("\t\tMore or less than one class per counterpart")
         return False
 
@@ -28,12 +28,12 @@ def check_staircase(matrix, verbose=False):
     # check the first and the last counterpart
     if counterpart_grade[0] != 0:
         if verbose:
-            print("\tx Error: logical constraint not respected")
+            print("\tx Error: logical constraint not fulfilled")
             print("\t\tError in the first counterpart")
         return False
     if counterpart_grade[-1] != matrix.shape[1]-1:
         if verbose:
-            print("\tx Error: logical constraint not respected")
+            print("\tx Error: logical constraint not fulfilled")
             print("\t\tError in the last counterpart")
         return False
 
@@ -46,12 +46,12 @@ def check_staircase(matrix, verbose=False):
         # print(f"counterpart {i+1} belongs to grade {gr}")
         if gr != counterpart_grade[i] and gr != counterpart_grade[i]+1:
             if verbose:
-                print("\tx Error: logical constraint not respected")
+                print("\tx Error: logical constraint not fulfilled")
                 print(f"\t\tError in the counterpart {i+2}")
             return False
 
     if verbose:
-        print("\t\u2713 Logical constraint checked")
+        print("\t\u2713 Logical constraint fulfilled")
     return True
 
 def check_monotonicity(matrix, default, verbose=False):
@@ -83,11 +83,11 @@ def check_monotonicity(matrix, default, verbose=False):
 
     if incr == True and decr == False:
         if verbose:
-            print("\t\u2713 Monotonicity constraint checked")
+            print("\t\u2713 Monotonicity constraint fulfilled")
         return True
     else:
         if verbose:
-            print("\tx Error: monotonicity constraint not respected")
+            print("\tx Error: monotonicity constraint not fulfilled")
         return False
 
 def check_concentration(matrix, alpha_conc = 0.05, verbose=False):
@@ -96,7 +96,7 @@ def check_concentration(matrix, alpha_conc = 0.05, verbose=False):
 
     Args:
         matrix: numpy array 2D to test
-        alpha_conc: upper bound for the adjusted herfindal index
+        alpha_conc: upper bound for the adjusted Herfindahl index
         verbose: enable verbose printing
     Returns:
         bool: result of the test 
@@ -113,11 +113,11 @@ def check_concentration(matrix, alpha_conc = 0.05, verbose=False):
                 my_sum = my_sum + matrix[i1,j] * matrix[i2,j]
     if my_sum <= J_floor:
         if verbose:
-            print("\t\u2713 Concentration constraint checked")
+            print("\t\u2713 Concentration constraint fulfilled")
         return True
     else:
         if verbose:
-            print("\tx Error: concentration constraint not respected")
+            print("\tx Error: concentration constraint not fulfilled")
         return False
 
 def check_upper_thrs(matrix, max_thrs, verbose=False):
@@ -126,21 +126,21 @@ def check_upper_thrs(matrix, max_thrs, verbose=False):
 
     Args:
         matrix: numpy array 2D to test
-        max_thrs: max threshold admitted
+        max_thrs: upper threshold admitted
         verbose: enable verbose printing
     Returns:
         bool: result of the test 
     """
 
-    # compute the number of counterparts per grade and check if it's smaller than the threshold
+    # compute the number of counterparts for each grade and check if it is smaller than the upper threshold
     for cntp_per_grade in np.sum(matrix, axis=0):
         if cntp_per_grade > max_thrs:
             if verbose:
-                print("\tx Error: upper threshold limit constraint not respected")
+                print("\tx Error: upper threshold constraint not fulfilled")
             return False
     
     if verbose:
-        print("\t\u2713 Upper threshold limit constraint checked")
+        print("\t\u2713 Upper threshold constraint fulfilled")
     return True
 
 def check_lower_thrs(matrix, min_thrs, verbose=False):
@@ -149,21 +149,21 @@ def check_lower_thrs(matrix, min_thrs, verbose=False):
 
     Args:
         matrix: numpy array 2D to test
-        max_thrs: min threshold admitted
+        max_thrs: lower threshold admitted
         verbose: enable verbose printing
     Returns:
         bool: result of the test 
     """
 
-    # compute the number of counterparts per grade and check if it's higher than the threshold
+    # compute the number of counterparts for each grade and check if it is higher than the lower threshold
     for cntp_per_grade in np.sum(matrix, axis=0):
         if cntp_per_grade < min_thrs:
             if verbose:
-                print("\tx Error: lower threshold limit constraint not respected")
+                print("\tx Error: lower threshold constraint not fulfilled")
             return False
     
     if verbose:
-        print("\t\u2713 Lower threshold limit constraint checked")
+        print("\t\u2713 Lower threshold constraint fulfilled")
     return True
 
 def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
@@ -206,7 +206,7 @@ def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
         # s1, s2 = np.var(grade1, ddof=1), np.var(grade2, ddof=1)
         # if s1 == 0 and s2 == 0:
         #     if verbose:
-        #         print("\tx Error: heterogeneous constraint not respected")
+        #         print("\tx Error: heterogeneous constraint not fulfilled")
         #     return False
         # t_stat[i], p_val[i] = stats.ttest_ind(grade1, grade2, equal_var=True)
 
@@ -214,7 +214,7 @@ def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
         s1, s2 = binomial_var[i], binomial_var[i+1] # = mean*(1-mean)
         if s1 == 0 and s2 == 0:
             if verbose:
-                print("\tx Error: heterogeneous constraint not respected")
+                print("\tx Error: heterogeneous constraint not fulfilled")
                 print(f"\t\t Grades {i} and {i+1} are not heterogeneous")
             return False
         pooled_std_dev = np.sqrt(((n1 - 1)*s1 + (n2 - 1)*s2) / (n1 + n2 - 2))
@@ -222,7 +222,7 @@ def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
         p_val[i] = 2 * stats.t.sf(np.abs(t_stat[i]), n1 + n2 - 2)
         if p_val[i] > alpha_het:
             if verbose:
-                print("\tx Error: heterogeneous constraint not respected")
+                print("\tx Error: heterogeneous constraint not fulfilled")
                 print(f"\t\t Grades {i} and {i+1} are not heterogeneous")
             return False
 
@@ -230,7 +230,7 @@ def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
     # print("p_val", p_val)
 
     if verbose:
-        print("\t\u2713 Heterogeneous constraint checked")
+        print("\t\u2713 Heterogeneous constraint fulfilled")
     return True
 
 def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
@@ -274,7 +274,7 @@ def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
 
             if s1 == 0 and s2 == 0:
                 if verbose:
-                    print("\tx Error: homogeneity constraint not respected")
+                    print("\tx Error: homogeneity constraint not fulfilled")
                     print(f"\t\t Grades {i} and {i+1} are not homogeneous")
                 return False
             
@@ -284,12 +284,12 @@ def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
 
             if p_val > alpha_hom:
                 if verbose:
-                    print("\tx Error: homogeneity constraint not respected")
+                    print("\tx Error: homogeneity constraint not fulfilled")
                     print(f"\t\t Grades {i} and {i+1} are not homogeneous")
                 return False
 
     if verbose:
-        print("\t\u2713 Homogeneity constraint checked")
+        print("\t\u2713 Homogeneity constraint fulfilled")
     return True
 
 def test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, verbose):
@@ -318,7 +318,7 @@ def test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, verb
         flag = False
     if config['test']['monotonicity'] and not check_monotonicity(matrix, default, verbose):
         flag = False
-    if config['test']['conentration'] and not check_concentration(matrix, config['alpha_concentration'], verbose):
+    if config['test']['concentration'] and not check_concentration(matrix, config['alpha_concentration'], verbose):
         flag = False
     if config['test']['min_thr'] and not check_upper_thrs(matrix, max_thr, verbose):
         flag = False
