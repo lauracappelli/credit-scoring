@@ -103,6 +103,41 @@ def staircase_constr(m, n, mu=1):
 
     return mu*Q
 
+def monotonicity_constr_appr(m, n, default, mu=1):
+    num_of_default = sum(default)
+    C_set_minus = []
+    for i1 in range(n):
+        for i2 in range(n):
+            if default[i1]-default[i2] == -1:
+                C_set_minus.append([i1+1,i2+1])
+    u2 = []
+    for j in range(m-1):
+        for [i1,i2] in C_set_minus:
+            u_1,u_2 = (i1-1)*m+j-1 , (i1-1)*m+j-1
+            u2.append([u_1,u_2])
+    
+    Q = np.zeros([n*m, n*m])
+
+    for u2_item in u2:
+        u_1 = u2_item[0]; u_2 = u2_item[1]
+        if u_2==u_1+1:
+            Q[u_2,u_1+1] += 1
+        else:
+            Q[u_2,u_1+1] += 0.5
+            Q[u_1+1,u_2] += 0.5
+    
+    for u2_item in u2:
+        u_1 = u2_item[0]; u_2 = u2_item[1]
+        if u_1==u_2+1:
+            Q[u_1,u_2+1] -= 1
+        else:
+            Q[u_1,u_2+1] -= 0.5
+            Q[u_2+1,u_1] -= 0.5
+
+    c = (m-1)*(n-num_of_default)*num_of_default
+
+    return (mu*Q, mu*c)
+
 def monotonicity_constr(m, n, default, offset, mu=1):
 
     def l_func(v):
@@ -457,8 +492,10 @@ def main():
     config = read_config()
 
     # generate a random dataset or select data from the dataset
-    dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)
-    n = len(dataset)
+    dataset = generate_or_load_dataset(config)# if config['random_data'] == 'yes' else load_data(config)
+
+    #n = len(dataset) not working if loading ISP dataset
+    n = config['n_counterpart']
     m = config['grades']
     default = dataset['default'].to_numpy().reshape(n,1)
 
@@ -497,14 +534,17 @@ def main():
         c = c + c_one_class
     if config['constraints']['logic'] == True:
         Q = Q + staircase_constr(m,n,mu_staircase_constr)
-    if config['constraints']['conentration'] == True:
+    if config['constraints']['concentration'] == True:
         (Q_conc,c_conc) = concentration_constr(m, n, mu_concentration_constr)
         Q = Q + Q_conc
         c = c + c_conc
     if config['constraints']['monotonicity'] == True:
-        Q_monoton = monotonicity_constr(m, n, default.T.squeeze(), Q.shape[0], mu_monotonicity)
-        pad = Q_monoton.shape[0] - Q.shape[0]
-        Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_monoton
+        #Q_monoton = monotonicity_constr(m, n, default.T.squeeze(), Q.shape[0], mu_monotonicity)
+        (Q_monoton, c_monoton) = monotonicity_constr_appr(m, n, default.T.squeeze(), mu_monotonicity)
+        #pad = Q_monoton.shape[0] - Q.shape[0]
+        #Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_monoton
+        Q = Q + Q_monoton
+        c = c + c_monoton
     if config['constraints']['min_thr'] == True:
         (Q_min_thr, c_min_thr) = threshold_constr(m, n, Q.shape[0], 'min', mu_min_thr_constr)
         pad = Q_min_thr.shape[0] - Q.shape[0]

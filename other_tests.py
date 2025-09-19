@@ -77,12 +77,12 @@ def stat_conf_matrix(n_trials):
     n = config['n_counterpart']
     grades = config['grades']
 
-    dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
+    dataset = generate_or_load_dataset_incr_def_prob(config) if config['random_data'] == 'yes' else load_data(config)    
     default = dataset['default'].to_numpy().reshape(n,1)
 
     cum = conf_matrix(grades, n, default)
     for i in range(n_trials-1):
-        dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
+        dataset = generate_or_load_dataset_incr_def_prob(config) if config['random_data'] == 'yes' else load_data(config)    
         default = dataset['default'].to_numpy().reshape(n,1)
         cum += conf_matrix(grades, n, default)
     print(cum)
@@ -129,8 +129,8 @@ def main():
     n = config['n_counterpart']
     grades = config['grades']
 
-    dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)    
-    # dataset = generate_data(config) if config['random_data'] == 'yes' else load_data(config)    
+    dataset = generate_or_load_dataset_incr_def_prob(config) if config['random_data'] == 'yes' else load_data(config)    
+    # dataset = generate_or_load_dataset(config) if config['random_data'] == 'yes' else load_data(config)    
     default = dataset['default'].to_numpy().reshape(n,1)
 
     min_thr = compute_lower_thrs(n)

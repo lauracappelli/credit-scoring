@@ -1,5 +1,5 @@
 # ISP dataset
-data_path: 'data/dataset-ispq.csv'  # if empty, random data is generated
+data_path: 'data/dataset-ispq.csv'  # if empty, it returns an error 
 
 attributes:                         # select optional attributes from ISP dataset
     years: [2012, 2015]             # list of (not consecutive) years from 2012 to 2020, [] = ignore attribute
@@ -8,13 +8,20 @@ attributes:                         # select optional attributes from ISP datase
     geo_area: 'no'
 
 # dataset
-data_source: 'random_incr'          # select from: random_uniform, random_incr, random_num_def, ISPdataset
+data_source: 'random_uniform'          # select from: 1) random_uniform, 2) random_incr, 3) random_num_def, 4) ISPdataset
+# 1) random_uniform:
+# it generates a random default vector where each element has probabibility of being 1 equal to default_prob
+# 2) random_incr:
+# it generates a random default vector where the i-th (zero-based) element has probabibility of being 1 equal to i/n
+# 3) random_num_def:
+# it generates a default vector having d = 1 default_module times
+# 4) dataset: it loads the stored dataset
 default_prob: 0.125                 # valid only if data_source: 'random_uniform'
                                     # default_prob is the probability of default (range: 0 - 1) per counterpart
 default_module: 2                   # valid only if data_source: 'random_num_def' (range: 1 - n-1)
-                                    # random_num_def is the number of counterparts in default
+                                    # default_module is the number of counterparts in default
 
-n_counterpart: 5                    # could be a number or 'all'
+n_counterpart: 4                    # could be a number or 'all'
 grades: 2
 
 alpha_concentration: 0.05           # range: 0 - 1, threshold of the adjust Herf index
@@ -57,7 +64,7 @@ test:
 solvers:
     brute_force: False
     dwave_exact: False
-    annealing: True
-    gurobi: False
+    annealing: False
+    gurobi: True
 
-
+reads: 5

@@ -9,7 +9,7 @@ def main():
 
     # Read iperparameters from config file
     config = read_config()
-    dataset = generate_data_var_prob(config) if config['random_data'] == 'yes' else load_data(config)
+    dataset = generate_or_load_dataset(config)# if config['random_data'] == 'yes' else load_data(config)
     n = len(dataset)
     grades = config['grades']
     default = dataset['default'].to_numpy().reshape(n,1)
@@ -47,7 +47,7 @@ def main():
         flag = True
         if config['test']['logic'] and flag and not check_staircase(matrix):
             flag = False
-        if config['test']['conentration'] and flag and not check_concentration(matrix, config['alpha_concentration']):
+        if config['test']['concentration'] and flag and not check_concentration(matrix, config['alpha_concentration']):
             flag = False
         if config['test']['min_thr'] and flag and not check_upper_thrs(matrix, max_thr):
             flag = False
