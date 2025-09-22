@@ -106,33 +106,42 @@ def staircase_constr(m, n, mu=1):
 def monotonicity_constr_appr(m, n, default, mu=1):
     num_of_default = sum(default)
     C_set_minus = []
+    C_set_plus = []
     for i1 in range(n):
         for i2 in range(n):
             if default[i1]-default[i2] == -1:
                 C_set_minus.append([i1+1,i2+1])
-    u2 = []
+            if default[i1]-default[i2] == +1:
+                C_set_plus.append([i1+1,i2+1])
+    u2_minus = []
+    u2_plus = []
+
     for j in range(m-1):
         for [i1,i2] in C_set_minus:
-            u_1,u_2 = (i1-1)*m+j-1 , (i1-1)*m+j-1
-            u2.append([u_1,u_2])
+            u_1_min,u_2_min = (i1-1)*m+(j+1)-1 , (i2-1)*m+(j+1)-1
+            u2_minus.append([u_1_min,u_2_min])
+
+        for [i1,i2] in C_set_plus:
+            u_1_plu,u_2_plu = (i1-1)*m+(j+1)-1 , (i2-1)*m+ (j+1)-1
+            u2_plus.append([u_1_plu,u_2_plu])
     
     Q = np.zeros([n*m, n*m])
 
-    for u2_item in u2:
-        u_1 = u2_item[0]; u_2 = u2_item[1]
-        if u_2==u_1+1:
-            Q[u_2,u_1+1] += 1
-        else:
-            Q[u_2,u_1+1] += 0.5
-            Q[u_1+1,u_2] += 0.5
-    
-    for u2_item in u2:
-        u_1 = u2_item[0]; u_2 = u2_item[1]
+    for u2_minus_item in u2_minus:
+        u_1 = u2_minus_item[0]; u_2 = u2_minus_item[1]
         if u_1==u_2+1:
             Q[u_1,u_2+1] -= 1
         else:
             Q[u_1,u_2+1] -= 0.5
             Q[u_2+1,u_1] -= 0.5
+    
+    for u2_plus_item in u2_plus:
+        u_1 = u2_plus_item[0]; u_2 = u2_plus_item[1]
+        if u_1==u_2+1:
+            Q[u_1,u_2+1] += 1
+        else:
+            Q[u_1,u_2+1] += 0.5
+            Q[u_2+1,u_1] += 0.5
 
     c = (m-1)*(n-num_of_default)*num_of_default
 
@@ -592,10 +601,12 @@ def main():
         # Print all the solutions
         result_exact_solver = df_result.iloc[:, :m*n].to_numpy()
         # print(f"All exact solutions:\n{df_result}")
+        energies = df_result['energy'].to_numpy()
+        print("energies: ", energies)
 
         print(f"\nBinary staircase matrices obtained with the brute force approach: {int(result_exact_solver.size/(m*n))}")
         for sol in result_exact_solver[:]:
-            print(f"solution:\n{sol.reshape(n, m)}")
+            print(f"solution:\n{sol.reshape(n, m)}")            
 
         print(f"\nTime to compute all exact solutions: {elapsed_time_ns/10e9} s")
         # print(f"First solution:\n{result_exact_solver[0].reshape(n, m)}")

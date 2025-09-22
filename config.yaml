@@ -15,14 +15,15 @@ data_source: 'random_uniform'          # select from: 1) random_uniform, 2) rand
 # it generates a random default vector where the i-th (zero-based) element has probabibility of being 1 equal to i/n
 # 3) random_num_def:
 # it generates a default vector having d = 1 default_module times
-# 4) dataset: it loads the stored dataset
-default_prob: 0.125                 # valid only if data_source: 'random_uniform'
+# 4) ISPdataset:
+# it loads the stored dataset
+default_prob: 0.1                   # valid only if data_source: 'random_uniform'
                                     # default_prob is the probability of default (range: 0 - 1) per counterpart
 default_module: 2                   # valid only if data_source: 'random_num_def' (range: 1 - n-1)
                                     # default_module is the number of counterparts in default
 
-n_counterpart: 4                    # could be a number or 'all'
-grades: 2
+n_counterpart: 20
+grades: 10
 
 alpha_concentration: 0.05           # range: 0 - 1, threshold of the adjust Herf index
 alpha_heterogeneity: 0.01           # range: 0 - 1, threshold of the gaussian probability
@@ -33,21 +34,25 @@ constraints:
     one_class: True
     logic: True
     monotonicity: True
-    concentration: True             # soft constraint
-    min_thr: True
-    max_thr: True
+    concentration: False             # soft constraint
+    min_thr: False
+    max_thr: False
 
 # QUBO coefficients
 mu: 
     one_class: 150
     logic: 150
-    monotonicity: 100
+    monotonicity: 40
     concentration: 1
     min_thr: 10
     max_thr: 10
 
-shots: 100000                       # parameter of the annealer
-gurobi_n_sol: 1
+# parameter of the annealer
+shots: 100000000
+reads: 5
+
+# gurobi parameter
+gurobi_n_sol: 8
 gurobi_fidelity: 1
 
 # constraints to check after running the solver
@@ -64,7 +69,7 @@ test:
 solvers:
     brute_force: False
     dwave_exact: False
-    annealing: False
-    gurobi: True
+    annealing: True
+    gurobi: False
 
-reads: 5
+
