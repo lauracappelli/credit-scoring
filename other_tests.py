@@ -9,6 +9,51 @@ from src.check_constraints import *
 from cost_function import compute_upper_thrs, compute_lower_thrs
 import time
 
+def print_config():
+    print('PRINTING CONFIGURATIONS: ')
+    config = read_config()
+    n = config['n_counterpart']
+    m =  config['grades']
+    data_source = config['data_source']
+    default_prob = config['default_module']
+    default_module = config['default_prob']
+    solver = config['solvers']
+    shots = config['shots']
+    #'constraint' == config['constraints']
+    #'mu' == config['mu']
+    print("number of counterparts:", n)
+    print("number of grades:", m)
+
+    if data_source == 'random_uniform':
+        print("generating a random default vector where each element has probabibility of being 1 equal to ", default_prob)
+    if data_source == 'random_incr':
+        print("generating random default vector where the i-th (zero-based) element has probabibility of being 1 equal to i/n")
+    if data_source == 'random_incr':
+        print("generating a default vector having d = 1 a number of times equal to", default_module)
+    if data_source == 'ISPdataset':
+        print("loading the dataset with the following attributes:")
+    if solver['brute_force'] == True:
+        print("solver: brute force")
+    elif solver['dwave_exact'] == True:
+        print("solver: exact dwave")
+    elif solver['annealing'] == True:
+        print("solver: annealing with number of shots equal to", shots)
+    elif solver['gurobi'] == True:
+        print("solver: gurobi")
+
+    if config['constraints']['one_class'] == True:
+        print("mu of uniqueness", config['mu']['one_class'])
+    if config['constraints']['logic'] == True:
+        print("mu of logical", config['mu']['logical'])
+    if config['constraints']['one_class'] == True:
+        print("mu of monotonicity", config['mu']['monotonicity'])
+    if config['constraints']['concentration'] == True:
+        print("mu of uniqueness", config['mu']['concentration'])
+    if config['constraints']['min_thr'] == True:
+        print("mu of lower card threshold", config['mu']['min_thr'])
+    if config['constraints']['max_thr'] == True:
+        print("mu of upper card threshold",config['mu']['max_thr'])
+
 def check_concentration_approx(matrix, verbose=False):
     ones_per_column = np.sum(matrix == 1, axis=0)
     # print(ones_per_column)

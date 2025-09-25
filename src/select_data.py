@@ -5,14 +5,6 @@ import random
 from dimod import BinaryQuadraticModel
 import os
 
-def check_ISP_dataset(datapath):
-    if not os.path.exists(datapath):
-        print(f"The dataset at '{datapath}' was not found.")
-        #raise FileNotFoundError(f"The dataset at '{datapath}' was not found.")
-        sys.exit(0)
-    # Your code to load the dataset goes here
-    print(f"Dataset successfully loaded from '{datapath}'.")
-
 def read_config():
     """
     Read the configuration file with the iperparameters definition.
@@ -38,51 +30,6 @@ def read_config():
         
     # return the config dictionary
     return config
-
-def print_config():
-    print('PRINTING CONFIGURATIONS: ')
-    config = read_config()
-    n = config['n_counterpart']
-    m =  config['grades']
-    data_source = config['data_source']
-    default_prob = config['default_module']
-    default_module = config['default_prob']
-    solver = config['solvers']
-    shots = config['shots']
-    #'constraint' == config['constraints']
-    #'mu' == config['mu']
-    print("number of counterparts:", n)
-    print("number of grades:", m)
-
-    if data_source == 'random_uniform':
-        print("generating a random default vector where each element has probabibility of being 1 equal to ", default_prob)
-    if data_source == 'random_incr':
-        print("generating random default vector where the i-th (zero-based) element has probabibility of being 1 equal to i/n")
-    if data_source == 'random_incr':
-        print("generating a default vector having d = 1 a number of times equal to", default_module)
-    if data_source == 'ISPdataset':
-        print("loading the dataset with the following attributes:")
-    if solver['brute_force'] == True:
-        print("solver: brute force")
-    elif solver['dwave_exact'] == True:
-        print("solver: exact dwave")
-    elif solver['annealing'] == True:
-        print("solver: annealing with number of shots equal to", shots)
-    elif solver['gurobi'] == True:
-        print("solver: gurobi")
-
-    if config['constraints']['one_class'] == True:
-        print("mu of uniqueness", config['mu']['one_class'])
-    if config['constraints']['logic'] == True:
-        print("mu of logical", config['mu']['logical'])
-    if config['constraints']['one_class'] == True:
-        print("mu of monotonicity", config['mu']['monotonicity'])
-    if config['constraints']['concentration'] == True:
-        print("mu of uniqueness", config['mu']['concentration'])
-    if config['constraints']['min_thr'] == True:
-        print("mu of lower card threshold", config['mu']['min_thr'])
-    if config['constraints']['max_thr'] == True:
-        print("mu of upper card threshold",config['mu']['max_thr'])
 
 def load_data(config):
     """
@@ -150,59 +97,40 @@ def generate_or_load_dataset(config):
     if not isinstance(def_mod, (int)) or not 1 <= def_mod < n:
         sys.exit("Error: specify a meaningful value of number of defaults")
 
-    if data_source == 'random_uniform':
+    if data_source == 'ISPdataset':
+        datapath = config['data_path']
+        if not os.path.exists(datapath):
+            print(f"The dataset at '{datapath}' was not found.")
+            sys.exit(0)
+        return load_data(config)
+    
+    else:
+        # np.random.seed(42)
+        default_vec = np.zeros(n)
+        
+        if data_source == 'random_uniform':
+            while np.all(default_vec == 0) or np.all(default_vec == 1):
+                default_vec = np.random.choice([0, 1], size = n,p = [1-def_prob, def_prob])
 
-        # np.random.seed(42)
-        def_rand = np.random.choice([0, 1], size = n,p = [1-def_prob, def_prob])
-        while np.all(def_rand == 0) or np.all(def_rand == 1):
-            def_rand = np.random.choice([0, 1], size = n, p= [1-def_prob, def_prob])
+        elif data_source == 'random_incr':
+            while np.all(default_vec == 0) or np.all(default_vec == 1):
+                default_vec = np.zeros(n)
+                for i in range(n):
+                    default_vec[i] = np.random.choice([0, 1], p=[1-i/n,i/n])
+
+        elif data_source == 'random_num_def':
+            indices_to_set_to_one = random.sample(range(n), def_mod)
+            for index in indices_to_set_to_one:
+                default_vec[index] = 1
+
         dataset = pd.DataFrame({
-        'counterpart_id': np.arange(1, n+1),
-        'default': def_rand,
-        'score': np.random.uniform(-10, 2, size = n)
+            'counterpart_id': np.arange(1, n+1),
+            'default': default_vec,
+            'score': np.random.uniform(-10, 2, size = n)
         })
         dataset = dataset.sort_values(by='score')
+
         return dataset
-    elif data_source == 'random_incr':
-        # np.random.seed(42)
-        def_rand = []
-        for ind in range(n):
-            def_rand.append(np.random.choice([0, 1],size = n,p=[1-ind/n,ind/n])[0])
-        while np.all(def_rand == 0) or np.all(def_rand ==1):
-            def_rand = []
-            for ind in range(n):
-                def_rand.append(np.random.choice([0, 1],size = n,p=[1-ind/n,ind/n])[0])
-        dataset = pd.DataFrame({
-        'counterpart_id': np.arange(1, n+1),
-        'default': def_rand,
-        'score': np.random.uniform(-10, 2, size = n)
-        })
-        dataset = dataset.sort_values(by='score')
-        return dataset
-    elif data_source == 'random_num_def':
-        # np.random.seed(42)
-        def_modul = config['default_module']
-        def_rand = [0] * n
-        indices_to_set_to_one = random.sample(range(n), def_modul)
-        for index in indices_to_set_to_one:
-            def_rand[index] = 1
-        dataset = pd.DataFrame({
-        'counterpart_id': np.arange(1, n+1),
-        'default': def_rand,
-        'score': np.random.uniform(-10, 2, size = n)
-        })
-        dataset = dataset.sort_values(by='score')
-        return dataset
-    elif data_source == 'ISPdataset':
-        try:
-            datapath = config['data_path']
-            print(datapath)
-            check_ISP_dataset(datapath)
-            print("*****")
-            return load_data(config)
-        except FileNotFoundError as e:
-            print("**")
-            print(e)
 
 def generate_staircase_matrix(m, n):
     """
