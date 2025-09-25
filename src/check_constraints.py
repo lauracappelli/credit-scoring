@@ -179,6 +179,13 @@ def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
         bool: result of the test 
     """
 
+    counterparts = matrix.shape[0]
+    grades = matrix.shape[1]
+    if counterparts < grades * 30:
+        if verbose:
+            print("\tx Error in Heterogeneity constraint: number of counterpars not sufficient")
+        return False
+
     # print(f"default: {default.T}")
     grad_cardinality = np.sum(matrix, axis=0) #N_j
     
@@ -195,9 +202,9 @@ def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
     binomial_var = stats.binom.var(1, grad_dr)
     
     # compute the t-test for each couple of grades
-    t_stat = np.zeros(matrix.shape[1]-1)
-    p_val = np.zeros(matrix.shape[1]-1)
-    for i in range(matrix.shape[1]-1):
+    t_stat = np.zeros(grades-1)
+    p_val = np.zeros(grades-1)
+    for i in range(grades-1):
         n1, n2 = grad_cardinality[i], grad_cardinality[i+1]
 
         # t-test and p-value (sample variance)
@@ -245,6 +252,13 @@ def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
     Returns:
         bool: result of the test 
     """
+
+    counterparts = matrix.shape[0]
+    grades = matrix.shape[1]
+    if counterparts < grades * 30:
+        if verbose:
+            print("\tx Error in homogeneity constraint: number of counterpars not sufficient")
+        return False
 
     # run the test for each grade j
     for j in range(matrix.shape[1]):
