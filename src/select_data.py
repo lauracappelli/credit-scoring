@@ -126,7 +126,7 @@ def generate_or_load_dataset(config):
         dataset = pd.DataFrame({
             'counterpart_id': np.arange(1, n+1),
             'default': default_vec,
-            'score': np.random.uniform(-10, 2, size = n)
+            'score': -4 + 3 * np.random.randn(n)
         })
         dataset = dataset.sort_values(by='score')
 
