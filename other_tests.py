@@ -174,7 +174,7 @@ def main():
     n = config['n_counterpart']
     grades = config['grades']
 
-    dataset = generate_or_load_dataset_incr_def_prob(config) if config['random_data'] == 'yes' else load_data(config)    
+    dataset = generate_or_load_dataset(config)    
     # dataset = generate_or_load_dataset(config) if config['random_data'] == 'yes' else load_data(config)    
     default = dataset['default'].to_numpy().reshape(n,1)
 

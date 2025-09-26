@@ -118,6 +118,14 @@ def generate_or_load_dataset(config):
                 for i in range(n):
                     default_vec[i] = np.random.choice([0, 1], p=[1-i/n,i/n])
 
+        elif data_source == 'real_dist':
+            random_vec = np.random.rand(n)
+            prob = np.linspace(0, 1, n)
+            index_1 = np.where(random_vec < prob)[0]
+            if len(index_1) > def_mod:
+                index_1 = np.random.choice(index_1, def_mod, replace=False)
+            default_vec[index_1] = 1
+        
         elif data_source == 'random_num_def':
             indices_to_set_to_one = random.sample(range(n), def_mod)
             for index in indices_to_set_to_one:
