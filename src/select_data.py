@@ -120,7 +120,7 @@ def generate_or_load_dataset(config):
 
         elif data_source == 'real_dist':
             random_vec = np.random.rand(n)
-            prob = np.linspace(0, 1, n)
+            prob = np.linspace(0, 1, n)**2
             index_1 = np.where(random_vec < prob)[0]
             if len(index_1) > def_mod:
                 index_1 = np.random.choice(index_1, def_mod, replace=False)
