@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import random
 from dimod import BinaryQuadraticModel
+from scipy.stats import truncnorm
 import os
 
 def read_config():
@@ -126,6 +127,18 @@ def generate_or_load_dataset(config):
                 index_1 = np.random.choice(index_1, def_mod, replace=False)
             default_vec[index_1] = 1
         
+        elif data_source == 'monoton':
+            num_def = int(np.floor(n * def_prob))
+            print(num_def)
+            if num_def < 1:
+                default_vec[-1] = 1
+            elif num_def == 2:
+                default_vec[-1] = 1
+                default_vec[round(np.random.randint(n/2)+n/2)] = 1
+            else:
+                default_vec[-num_def:] = 1
+                random.shuffle(default_vec[round(n/2):n])
+        
         elif data_source == 'random_num_def':
             indices_to_set_to_one = random.sample(range(n), def_mod)
             for index in indices_to_set_to_one:
@@ -134,7 +147,7 @@ def generate_or_load_dataset(config):
         dataset = pd.DataFrame({
             'counterpart_id': np.arange(1, n+1),
             'default': default_vec,
-            'score': -4 + 3 * np.random.randn(n)
+            'score': truncnorm.rvs(-4/1.5, 4, loc=-4, scale=1.5, size=n)
         })
         dataset = dataset.sort_values(by='score')
 
