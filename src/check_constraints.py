@@ -37,7 +37,7 @@ def check_staircase(matrix, verbose=False):
             print("\t\tError in the last counterpart")
         return False
 
-    # to verify it the matrix is a staircase matrix we check if:
+    # to verify if the matrix is a staircase matrix we check if:
     #  - the counterpart i+1 has the same grade of the counterpart i
     #  - the counterpart i+1 is in the following grade wrt the counterpart i
     for i, gr in enumerate(counterpart_grade[1:]):

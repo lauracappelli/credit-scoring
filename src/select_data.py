@@ -109,16 +109,34 @@ def generate_or_load_dataset(config):
         # np.random.seed(42)
         default_vec = np.zeros(n)
         
+        # it generates a random default vector where each element has probability of being 1 equal to default_prob
         if data_source == 'random_uniform':
             while np.all(default_vec == 0) or np.all(default_vec == 1):
                 default_vec = np.random.choice([0, 1], size = n,p = [1-def_prob, def_prob])
 
+        # it generates a random default vector where the i-th (zero-based) element has probability of being 1 equal to i/n
         elif data_source == 'random_incr':
             while np.all(default_vec == 0) or np.all(default_vec == 1):
                 default_vec = np.zeros(n)
                 for i in range(n):
                     default_vec[i] = np.random.choice([0, 1], p=[1-i/n,i/n])
 
+        # it generates a default vector having d = 1 default_module times
+        elif data_source == 'random_num_def':
+            indices_to_set_to_one = random.sample(range(n), def_mod)
+            for index in indices_to_set_to_one:
+                default_vec[index] = 1
+
+        # it requires the default vector as a screen input
+        elif data_source == 'd_screen_input':
+            default_vec = list(map(int, input("Enter the default vector with numbers separated by spaces: ").split()))
+        
+        # it requires the one_indices, i. e. the config parameter having the indices of the default vector with value equal to 1
+        elif data_source == 'd_conf_input':
+            for one_ind in config['one_indices']:
+                default_vec[one_ind] = 1
+
+        # it generates a random default vector with a probability of having d = 1 increasing w. r. t. the index of counterparts
         elif data_source == 'real_dist':
             random_vec = np.random.rand(n)
             prob = np.linspace(0, 1, n)**2
@@ -138,20 +156,14 @@ def generate_or_load_dataset(config):
             else:
                 default_vec[-num_def:] = 1
                 random.shuffle(default_vec[round(n/2):n])
-        
-        elif data_source == 'random_num_def':
-            indices_to_set_to_one = random.sample(range(n), def_mod)
-            for index in indices_to_set_to_one:
-                default_vec[index] = 1
 
-        dataset = pd.DataFrame({
-            'counterpart_id': np.arange(1, n+1),
-            'default': default_vec,
-            'score': truncnorm.rvs(-4/1.5, 4, loc=-4, scale=1.5, size=n)
-        })
-        dataset = dataset.sort_values(by='score')
-
-        return dataset
+    dataset = pd.DataFrame({
+        'counterpart_id': np.arange(1, n+1),
+        'score': truncnorm.rvs(-4/1.5, 4, loc=-4, scale=1.5, size=n)
+    })
+    dataset = dataset.sort_values(by='score')
+    dataset['default']=default_vec
+    return dataset
 
 def generate_staircase_matrix(m, n):
     """

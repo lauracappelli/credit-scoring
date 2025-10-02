@@ -1,29 +1,38 @@
-# ISP dataset
-data_path: 'data/dataset-ispq.csv'  # if empty, it returns an error 
+# dataset
+data_source: 'd_screen_input'
+# select from:
+# 1) ISPdataset:
+# it loads the stored dataset
+# 2) random_uniform:
+# it generates a random default vector where each element has probability of being 1 equal to default_prob
+# 3) random_incr:
+# it generates a random default vector where the i-th (zero-based) element has probability of being 1 equal to i/n
+# 4) random_num_def:
+# it generates a default vector having d = 1 default_module times
+# 5) d_screen_input:
+# it requires the default vector as a screen input
+# 6) d_conf_input:
+# it requires the one_indices, i. e. the config parameter having the indices of the default vector with value equal to 1
+# 7) real_dist:
+# it generates a random default vector with a probability of having d = 1 increasing w. r. t. the index of counterparts
 
+n_counterpart: 6                    # n
+grades: 3                           # m
+
+default_prob: 0.1                   # valid only if data_source: 'random_uniform'
+                                    # default_prob is the probability of default (range: 0 - 1) per counterpart
+default_module: 1                   # valid only if data_source: 'random_num_def' (range: 1 - n-2)
+                                    # default_module is the number of counterparts in default
+one_indices: [3,5]                  # valid only if data_source: 'd_conf_input'
+                                    # one_indices is the list of the 0-based indices (range: 0 - n-1)
+                                    # having default equal to 1
+
+data_path: 'data/dataset-ispq.csv'  # ISP dataset, if absent, it returns an error
 attributes:                         # select optional attributes from ISP dataset
     years: [2012, 2015]             # list of (not consecutive) years from 2012 to 2020, [] = ignore attribute
     sector: 'no'
     revenue: 'no'
     geo_area: 'no'
-
-# dataset
-data_source: 'real_dist'          # select from: 1) random_uniform, 2) random_incr, 3) random_num_def, 4) ISPdataset
-# 1) random_uniform:
-# it generates a random default vector where each element has probabibility of being 1 equal to default_prob
-# 2) random_incr:
-# it generates a random default vector where the i-th (zero-based) element has probabibility of being 1 equal to i/n
-# 3) random_num_def:
-# it generates a default vector having d = 1 default_module times
-# 4) ISPdataset:
-# it loads the stored dataset
-default_prob: 0.1                   # valid only if data_source: 'random_uniform'
-                                    # default_prob is the probability of default (range: 0 - 1) per counterpart
-default_module: 2                   # valid only if data_source: 'random_num_def' (range: 1 - n-1)
-                                    # default_module is the number of counterparts in default
-
-n_counterpart: 10
-grades: 4
 
 alpha_concentration: 0.05           # range: 0 - 1, threshold of the adjust Herf index
 alpha_heterogeneity: 0.01           # range: 0 - 1, threshold of the gaussian probability
@@ -47,14 +56,6 @@ mu:
     min_thr: 10
     max_thr: 10
 
-# parameter of the annealer
-shots: 1000
-reads: 5
-
-# gurobi parameter
-gurobi_n_sol: 8
-gurobi_fidelity: 1
-
 # constraints to check after running the solver
 test:
     logic: True
@@ -65,11 +66,22 @@ test:
     max_thr: True
     homogeneity: True
 
+# exact dwave parameter
+#sol_limit: 100                     # number of suboptimal solutions we consider
+
+# annealer parameters
+shots: 10000
+reads: 5
+
+# gurobi parameters
+gurobi_n_sol: 20
+gurobi_fidelity: 1
+
 # solver to run
 solvers:
     brute_force: False
-    dwave_exact: False
-    annealing: True
+    dwave_exact: True
+    annealing: False
     gurobi: False
 
 
