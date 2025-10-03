@@ -7,6 +7,8 @@ import time
 import itertools
 import gurobipy as gpy
 from gurobipy import GRB
+from sklearn import metrics
+import matplotlib.pyplot as plt
 
 # penalty: "first counterpart in first class"
 def first_counterpart_const(m, n, mu=1):
@@ -501,7 +503,7 @@ def main():
     config = read_config()
 
     # generate a random dataset or select data from the dataset
-    dataset = generate_or_load_dataset(config)# if config['random_data'] == 'yes' else load_data(config)
+    dataset = generate_or_load_dataset(config)
 
     #n = len(dataset) not working if loading ISP dataset
     n = config['n_counterpart']
@@ -509,12 +511,11 @@ def main():
     default = dataset['default'].to_numpy().reshape(n,1)
 
     #default.T.squeeze()
-    #if np.all(default==0) or np.all(default==1):
     
     print("\nSELECTED INSTANCE:")
     print("Number of counterparts: ", n)
     print("Number of grades: ", m)
-    print(f"The number of default is {np.sum(default)}")
+    print(f"The number of defaults is {np.sum(default)}")
     print("Dataset:")
     print(dataset.reset_index(drop=True))
 
@@ -576,6 +577,8 @@ def main():
 
     # Solving with brute force
     if config['solvers']['brute_force']:
+        print("\n")
+        print("RESULTS OBTAINED THROUGH THE BRUTE FORCE SOLVER")
         start_time = time.perf_counter_ns()
         (result_bf, cost) = brute_force_solver(Q,c,Q.shape[0])
         end_time = time.perf_counter_ns()
@@ -585,40 +588,116 @@ def main():
         print(result_bf.reshape(n,m))
         print(f"\nTime of solution: {(end_time - start_time)/10e9} s\n")
         dataset["Brute_force_rating"] = np.argmax(result_bf.reshape(n,m), axis=1) + 1
-
-        print("The rate is:")
+        print("Dataset endowed with rating obtained through brute force solver:")
         print(dataset[["counterpart_id", "default", "score", "Brute_force_rating"]])
+        print("\n")
 
     #-------------------------------
 
     # Solving exactly with dwave
     if config['solvers']['dwave_exact']:
+        criterion = []
+        monotonicity = []
+        v_energies = []
+        v_energies_viol = []
+        print("\n")
+        print("RESULTS OBTAINED THROUGH THE DWAVE EXACT SOLVER")
         start_time = time.perf_counter_ns()
         e_result = exact_solver(bqm)
-        df_result = e_result.lowest().to_pandas_dataframe()
+        df = e_result.to_pandas_dataframe()
+        #df_result = e_result.lowest().to_pandas_dataframe()
         end_time = time.perf_counter_ns()
         elapsed_time_ns = end_time - start_time
-        # Print all the solutions
-        result_exact_solver = df_result.iloc[:, :m*n].to_numpy()
-        # print(f"All exact solutions:\n{df_result}")
-        energies = df_result['energy'].to_numpy()
-        print("energies: ", energies)
+        print(f"\nTime of solution: {(elapsed_time_ns)/10e9} s\n")
 
-        print(f"\nBinary staircase matrices obtained with the brute force approach: {int(result_exact_solver.size/(m*n))}")
-        for sol in result_exact_solver[:]:
-            print(f"solution:\n{sol.reshape(n, m)}")            
+        #df_sorted = df.sort_values(by="energy", ascending=True)  # lowest energy first
+        #print("sampleset dataframe sorted by energy")
+        #print(df_sorted)
+        min_en = df["energy"].min()
+        #print("minimal energy: ",min_en)
 
-        print(f"\nTime to compute all exact solutions: {elapsed_time_ns/10e9} s")
-        # print(f"First solution:\n{result_exact_solver[0].reshape(n, m)}")
+        df_opt = df[df["energy"] == min_en]
+        df_sub_opt = df[df["energy"] > min_en]
+
+        opt_sol = df_opt.iloc[:,:n*m]
+        opt_sol_np = opt_sol.to_numpy()
+        print(f"Optimal solutions, i. e. those with minimal energy {min_en}:")
+        for ind, item_opt_sol_np in enumerate(opt_sol_np):
+            matrix = item_opt_sol_np.reshape(n, m)
+            if check_staircase(matrix) == True:
+                print(f"solution index: {ind}")
+                print(matrix)
+                criterion.append(True)
+                if check_monotonicity(matrix, default) == True:
+                    monotonicity.append(True)
+                    v_energies.append(float(min_en))
+                else:
+                    monotonicity.append(False)
+                    v_energies_viol.append(float(min_en))
+
+        sub_opt_sol = df_sub_opt.iloc[:,:n*m]
+        sub_opt_sol_np = sub_opt_sol.to_numpy()
+        sub_opt_energy = df_sub_opt["energy"]
+        sub_opt_energy_np = sub_opt_energy.to_numpy()
+        sub_opt = zip(sub_opt_sol_np, sub_opt_energy_np)
+        print(f"Suboptimal binary staircase matrices, i. e. those with energies higher than the minimal energy {min_en}:")
+        for ind, item_sub_opt in enumerate(sub_opt):
+            matrix = item_sub_opt[0].reshape(n, m)
+            if check_staircase(matrix) == True:
+                print(f"solution index: {ind}, energy: {item_sub_opt[1]}")
+                print(matrix)
+                criterion.append(False)
+                if check_monotonicity(matrix, default) == True:
+                    monotonicity.append(True)
+                    v_energies.append(float(item_sub_opt[1]))
+                else:
+                    monotonicity.append(False)
+                    v_energies_viol.append(float(item_sub_opt[1]))
 
         # Add the first solution to the dataset
-        dataset["DWave_Brute_force_rating"] = np.argmax(result_exact_solver[0].reshape(n,m), axis=1) + 1
-        print(dataset[["counterpart_id", "default", "score", "DWave_Brute_force_rating"]])
+        dataset["Exact_DWave_rating"] = np.argmax(opt_sol_np[0].reshape([n,m]), axis=1) + 1
+        print("Dataset endowed with rating obtained through exact dwave solver (first optimal solution):")
+        print(dataset[["counterpart_id", "default", "score", "Exact_DWave_rating"]])
+        print("\n")
+        #confusion_matrix = metrics.confusion_matrix(monotonicity, criterion)
+        tn, fp, fn, tp = metrics.confusion_matrix(monotonicity, criterion).ravel().tolist()
+        print("tn, fp, fn, tp")
+        print((tn, fp, fn, tp))
+        print("energies of the binary staircase matrices that fulfill the monot. constr.:")
+        print(v_energies)
+
+        #printing energies
+        def_v = default.ravel().tolist()
+        def_v_str = f"[{' , '.join(map(str, def_v))}]"
+        title1 = "Energies of the opt and subopt BSMs fulfilling the monot. constraint"
+        title2 = f"solver: exact dwave; n,m=({n},{m}), d_vec={def_v_str}\n"
+        title3_1 = f"mu_one_class={config['mu']['one_class']} "
+        title3_2 = f"mu_logic={config['mu']['logic']} "
+        title3_3 = f"mu_monot={config['mu']['monotonicity']}"
+        title23 = title2 + title3_1 + title3_2 + title3_3
+        v_energies = np.array(np.array(v_energies))
+        #plt.figure(figsize=(8, 5))
+        plt.plot(v_energies_viol, marker='o', linestyle='', label='mon not ful')
+        plt.plot(v_energies, marker='x', linestyle='', label='mon fulf')
+        plt.suptitle(title1, fontsize=10)
+        plt.title(title23, fontsize=10)
+        plt.xlabel("Index", fontsize=10)
+        plt.xticks(range(0,len(v_energies)))
+        plt.ylabel("Energy", fontsize=10)
+        plt.grid(True, linestyle='--', alpha=0.6)
+        plt.legend()
+        plt.tight_layout()
+        current_time = time.ctime()
+        print(f"The current time is: {current_time}")
+        plt.savefig(f"output/folder_en/figure,(n,m)=({n},{m}),d_vec={def_v_str},{current_time}.png")
+        plt.show()
 
     #-------------------------------
 
     # Solving with annealing 
     if config['solvers']['annealing']:
+        print("\n")
+        print("RESULTS OBTAINED THROUGH THE ANNEALING SOLVER")
         start_time = time.perf_counter_ns()
         result = annealer_solver(Q.shape[0], bqm, reads, shots, n, m)
         end_time = time.perf_counter_ns()
@@ -628,6 +707,7 @@ def main():
         print(f"\nTime to compute the annealing solution: {(end_time - start_time)/10e9} s\n")
 
         dataset["Annealing_rating"] = np.argmax(annealing_matrix, axis=1) + 1
+        print("Dataset endowed with rating obtained through dwave annealing:")
         print(dataset[["counterpart_id", "default", "score", "Annealing_rating"]])
 
         print("\nResult validation of the annealing result:")
@@ -637,6 +717,8 @@ def main():
     #-------------------------------
     # Solving with Gurobi
     if config['solvers']['gurobi']:
+        print("\n")
+        print("RESULTS OBTAINED THROUGH THE GUROBI SOLVER")
         np_sol = gurobi_solver(m, n, Q, c, config['gurobi_n_sol'], config['gurobi_fidelity'])
         #print(gurobi_sol)
         print("\nResult validation of the gurobi result:")
