@@ -1,5 +1,5 @@
 # dataset
-data_source: 'd_screen_input'
+data_source: 'd_conf_input'
 # select from:
 # 1) ISPdataset:
 # it loads the stored dataset
@@ -16,16 +16,17 @@ data_source: 'd_screen_input'
 # 7) real_dist:
 # it generates a random default vector with a probability of having d = 1 increasing w. r. t. the index of counterparts
 
-n_counterpart: 6                    # n
-grades: 3                           # m
+n_counterpart: 4                    # n
+grades: 2                           # m
 
 default_prob: 0.1                   # valid only if data_source: 'random_uniform'
                                     # default_prob is the probability of default (range: 0 - 1) per counterpart
 default_module: 1                   # valid only if data_source: 'random_num_def' (range: 1 - n-2)
                                     # default_module is the number of counterparts in default
-one_indices: [3,5]                  # valid only if data_source: 'd_conf_input'
+one_indices: [0]                    # valid only if data_source: 'd_conf_input'
                                     # one_indices is the list of the 0-based indices (range: 0 - n-1)
                                     # having default equal to 1
+gen_conf: True                      # if true it shows the plot of energies and the confusion matrix of dwave exact results
 
 data_path: 'data/dataset-ispq.csv'  # ISP dataset, if absent, it returns an error
 attributes:                         # select optional attributes from ISP dataset
