@@ -164,9 +164,11 @@ def analyse_dwave_exact_results(n,m,min_en,opt_sol_np,sub_opt,default,mu_one_cla
 def conf_matrix(m, n, dr, verbose=False):
     if verbose:
         print(f"Testing {m ** n} combinations...")
-    real = []
-    costs = []
+
+    # instantiate lists
     bsm = []
+    exact = []
+    costs = []
 
     # build QUBO matrix with only monotonicity constraint
     mu_monoton = 1
@@ -186,17 +188,17 @@ def conf_matrix(m, n, dr, verbose=False):
             # add staircase matrix in the vector
             bsm.append(matrix)
 
-            # compute "real" value
-            real.append(check_monotonicity(matrix, dr))
+            # compute "exact" value
+            exact.append(check_monotonicity(matrix, dr))
 
             # compute the cost of the BS matrix
             x = matrix.reshape(1,m*n).squeeze()
             costs.append((x.dot(Q).dot(x.transpose()))+c)
 
     min_cost = min(costs)
-    predicted = [el == min_cost for el in costs]
+    approx = [el == min_cost for el in costs]
 
-    tn, fp, fn, tp = metrics.confusion_matrix(real, predicted).ravel().tolist()
+    tn, fp, fn, tp = metrics.confusion_matrix(exact, approx).ravel().tolist()
 
     if verbose:
         print("DEFAULT")
@@ -206,10 +208,10 @@ def conf_matrix(m, n, dr, verbose=False):
         for i, el in enumerate(bsm):
             print("MATRIX ", i+1)
             print(el)
-            print("Exact monoton fulfilled: ", real[i])
-            print("Approx monoton fulfilled: ", predicted[i], " cost = ", costs[i])
+            print("Exact monoton fulfilled: ", exact[i])
+            print("Approx monoton fulfilled: ", approx[i], " cost = ", costs[i])
 
-    return
+    return (tn, fp, fn, tp)
 
 def stat_conf_matrix(n_trials):
 
