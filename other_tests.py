@@ -6,7 +6,7 @@ from scipy import stats
 from sklearn import metrics
 from src.select_data import *
 from src.check_constraints import *
-from cost_function import compute_upper_thrs, compute_lower_thrs
+from cost_function import compute_upper_thrs, compute_lower_thrs, monotonicity_constr_appr, from_matrix_to_bqm
 import time
 
 def print_config():
@@ -161,42 +161,55 @@ def analyse_dwave_exact_results(n,m,min_en,opt_sol_np,sub_opt,default,mu_one_cla
     
     plotting_energies(n,m,default,mu_one_class_constr,mu_staircase_constr,mu_monotonicity,v_energies,v_energies_viol)
 
-def conf_matrix(grades, n, dr, verbose=False):
-    #print(f"Testing {grades ** n} combinations...")
+def conf_matrix(m, n, dr, verbose=False):
+    if verbose:
+        print(f"Testing {m ** n} combinations...")
     real = []
-    summ_list = []
+    costs = []
+    bsm = []
 
-    for vec in itertools.product(range(grades), repeat=n):
+    # build QUBO matrix with only monotonicity constraint
+    mu_monoton = 1
+    Q = np.zeros([m*n, m*n])
+    c = 0
+    (Q,c) = monotonicity_constr_appr(m, n, dr.T.squeeze(), mu_monoton)
+
+    # iteration on all the possible combinations
+    for vec in itertools.product(range(m), repeat=n):
         # build matrix
-        matrix = np.zeros([n,grades])
+        matrix = np.zeros([n,m])
         for i, el in enumerate(vec):
             matrix[i][el] = 1  # counterpart i in the el-th grade
        
         # matrices that fullfilled logic constraint
         if check_staircase(matrix):
+            # add staircase matrix in the vector
+            bsm.append(matrix)
 
             # compute "real" value
             real.append(check_monotonicity(matrix, dr))
 
-            # compute "predicted" value
-            summ = 0
-            for j in range(grades-1):
-                for i_1 in range(n):
-                    for i_2 in range(n):
-                        summ+=(dr[i_1].item()-dr[i_2].item())*matrix[i_1,j]*matrix[i_2,j+1]
-            summ_list.append(summ)
+            # compute the cost of the BS matrix
+            x = matrix.reshape(1,m*n).squeeze()
+            costs.append((x.dot(Q).dot(x.transpose()))+c)
 
-    test_min = min(summ_list)
-    predicted = [el == test_min for el in summ_list]
+    min_cost = min(costs)
+    predicted = [el == min_cost for el in costs]
 
-    # print(dr.T)
-    # print(real)
-    # print(predicted)
-    confusion_matrix = metrics.confusion_matrix(real, predicted)
+    tn, fp, fn, tp = metrics.confusion_matrix(real, predicted).ravel().tolist()
+
     if verbose:
-        print(confusion_matrix)
+        print("DEFAULT")
+        print(dr.T)
+        print("CONFUSION MATRIX")
+        print("tn, fp, fn, tp = ", tn, fp, fn, tp)
+        for i, el in enumerate(bsm):
+            print("MATRIX ", i+1)
+            print(el)
+            print("Exact monoton fulfilled: ", real[i])
+            print("Approx monoton fulfilled: ", predicted[i], " cost = ", costs[i])
 
-    return confusion_matrix
+    return
 
 def stat_conf_matrix(n_trials):
 
@@ -266,27 +279,27 @@ def main():
 
     #--------------------------------------
 
-    # TEST ONE RANDOM SETUP
-    # generate a staircase matrix and test if the other constraints are fullfilled
-    print("Testing one random setup...")
-    matrix = generate_staircase_matrix(grades, n)
-    # print("default:")
-    # print(np.array(default).T)
-    # print("matrix:")
-    # print(matrix)
-    test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, True)
+    # # TEST ONE RANDOM SETUP
+    # # generate a staircase matrix and test if the other constraints are fullfilled
+    # print("Testing one random setup...")
+    # matrix = generate_staircase_matrix(grades, n)
+    # # print("default:")
+    # # print(np.array(default).T)
+    # # print("matrix:")
+    # # print(matrix)
+    # test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, True)
 
-    # connect to the database
-    new_df = from_random_to_databse(config, default.flatten().tolist())
-    new_df.drop("year", axis=1, inplace=True)
-    new_df = new_df[['counterpart_id', 'score', 'default']]
-    new_df.to_csv("data/selected_counterparts.csv", index=False)
-    # print(new_df)
+    # # connect to the database
+    # new_df = from_random_to_databse(config, default.flatten().tolist())
+    # new_df.drop("year", axis=1, inplace=True)
+    # new_df = new_df[['counterpart_id', 'score', 'default']]
+    # new_df.to_csv("data/selected_counterparts.csv", index=False)
+    # # print(new_df)
 
     #--------------------------------------
 
     # TEST ON CONFUSION MATRIX
-    # conf_matrix(grades, n, default, True)
+    conf_matrix(grades, n, default, True)
     # stat_conf_matrix(50)
 
 if __name__ == '__main__':
