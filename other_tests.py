@@ -78,6 +78,89 @@ def test_submatrix_penalties():
         print(f"a={a}, b={b}, c={c}, d={d}")
     return
 
+def plotting_energies(n,m,default,mu_one_class,mu_logic,mu_monot,v_energies,v_energies_viol):
+    #printing energies
+    print("energies of the BSMs that fulfill the monot. constr.:")
+    print(v_energies)
+    print("energies of the BSMs that do not fulfill the monot. constr.:")
+    print(v_energies_viol)
+    #creating plot
+    def_v = default.ravel().tolist()
+    def_v_str = f"[{' , '.join(map(str, def_v))}]"
+    title1 = "Energies of the opt and subopt BSMs"
+    title2 = f"solver: exact dwave; n,m=({n},{m}), d_vec={def_v_str}\n"
+    title3_1 = f"mu_one_class={mu_one_class}, "
+    title3_2 = f"mu_logic={mu_logic}, "
+    title3_3 = f"mu_monot={mu_monot}"
+    title23 = title2 + title3_1 + title3_2 + title3_3
+    #v_energies = np.array(np.array(v_energies))
+    #plt.figure(figsize=(8, 5))
+    plt.plot(v_energies_viol, marker='o', linestyle='', label='mon not fulf')
+    plt.plot(v_energies, marker='x', linestyle='', label='mon fulf')
+    plt.suptitle(title1, fontsize=10)
+    plt.title(title23, fontsize=10)
+    plt.xlabel("Index", fontsize=10)
+    plt.xticks(range(0,max(len(v_energies),len(v_energies_viol))))
+    plt.ylabel("Energy", fontsize=10)
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.legend()
+    plt.tight_layout()
+    current_time = time.ctime()
+    #print(f"The current time is: {current_time}")
+    plt.savefig(f"output/plots/figure,(n,m)=({n},{m}),d_vec={def_v_str},{current_time}.png")
+    plt.show()
+
+def analyse_dwave_exact_results(n,m,min_en,opt_sol_np,sub_opt,default,mu_one_class_constr,mu_staircase_constr,mu_monotonicity):
+    criterion = []          # it will contain the boolean values of the monotonicity criterion (optimal solution of QUBO problem)
+    monotonicity = []       # it will contain the boolean values of the monotonicity constraint
+    v_energies = []         # it will contain the energies (float values) of BSMs having monotonicity constraint fulfilled
+    v_energies_viol = []    # it will contain the energies (float values) of BSMs having monotonicity constraint violated
+    print(f"Optimal binary staircase matrices, i. e. those with minimal energy {min_en}:")
+    for ind, item_opt_sol_np in enumerate(opt_sol_np):
+        matrix = item_opt_sol_np.reshape(n, m)
+        if check_staircase(matrix) == True:
+            print(f"solution index: {ind}")
+            criterion.append(True)
+            if check_monotonicity(matrix, default) == True:
+                monotonicity.append(True)
+                v_energies.append(float(min_en))
+                print("monotonicity constraint fulfilled")
+            else:
+                monotonicity.append(False)
+                v_energies_viol.append(float(min_en))
+                print("monotonicity constraint not fulfilled")
+            #print(matrix)
+            nj_notation = np.sum(matrix, axis = 0)
+            print('BSM in N_j notation (cardinality per grade):')
+            print(nj_notation)
+            print("\n")
+
+    print(f"Suboptimal binary staircase matrices, i. e. those with energies higher than the minimal energy {min_en}:")
+    for ind, item_sub_opt in enumerate(sub_opt):
+        matrix = item_sub_opt[0].reshape(n, m)
+        if check_staircase(matrix) == True:
+            print(f"solution index: {ind}, energy: {item_sub_opt[1]}")
+            criterion.append(False)
+            if check_monotonicity(matrix, default) == True:
+                monotonicity.append(True)
+                v_energies.append(float(item_sub_opt[1]))
+                print("monotonicity constraint fulfilled")
+            else:
+                monotonicity.append(False)
+                v_energies_viol.append(float(item_sub_opt[1]))
+                print("monotonicity constraint not fulfilled")
+            #print(matrix)
+            nj_notation = np.sum(matrix, axis = 0)
+            print('BSM in N_j notation (cardinality per grade):')
+            print(nj_notation)
+            print("\n")
+    
+    print("confusion matrix")
+    tn, fp, fn, tp = metrics.confusion_matrix(monotonicity, criterion).ravel().tolist()
+    print("tn, fp, fn, tp = ", tn, fp, fn, tp)
+    
+    plotting_energies(n,m,default,mu_one_class_constr,mu_staircase_constr,mu_monotonicity,v_energies,v_energies_viol)
+
 def conf_matrix(grades, n, dr, verbose=False):
     #print(f"Testing {grades ** n} combinations...")
     real = []
