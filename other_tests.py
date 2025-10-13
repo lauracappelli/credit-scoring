@@ -34,27 +34,8 @@ def test_submatrix_penalties():
         print(f"a={a}, b={b}, c={c}, d={d}")
     return
 
-def plotting_costs(n, m, dr, mu_monoton, bsm, costs, exact, approx):
+def plotting_costs(n, m, dr, mu_monoton, costs, exact, approx):
    
-    # # Plot 1
-    # mask = np.array([exact[i]==approx[i] for i in range(len(exact))])
-    # correct_guess = costs[mask]
-    # wrong_guess = costs[~mask]
-
-    # plt.figure(figsize=(8,5))
-    # plt.plot(correct_guess, marker='x', linestyle='', label='Correct guess')
-    # plt.plot(wrong_guess, marker='o', linestyle='', label='Wrong guess')
-    # plt.suptitle("Costs of BSMs", fontsize=10)
-    # plt.title(f"n={n}, m={m}, mu={mu_monoton}, d_vec={dr}", fontsize=10)
-    # plt.xlabel("Index of BSMs", fontsize=10)
-    # plt.xticks(range(0,max(len(correct_guess), len(wrong_guess))))
-    # plt.ylabel("Energy", fontsize=10)
-    # plt.grid(True, linestyle='--', alpha=0.6)
-    # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    # plt.tight_layout()
-    # plt.savefig(f"output/plots/fig-m={n}-m={m}-d_vec={dr}.png")
-
-    # Plot 2
     tp_costs = costs[np.array([exact[i] and approx[i] for i in range(len(exact))])]
     tn_costs = costs[np.array([(not exact[i]) and (not approx[i]) for i in range(len(exact))])]
     fp_costs = costs[np.array([(not exact[i]) and approx[i] for i in range(len(exact))])]
@@ -130,7 +111,7 @@ def conf_matrix(m, n, dr, verbose=False):
             print("Approx monoton fulfilled: ", approx[i])
             print("Cost (approx method): ", costs[i])
 
-    plotting_costs(n, m, np.array(dr.T.squeeze()), mu_monoton, bsm, np.array(costs), np.array(exact), np.array(approx))
+    plotting_costs(n, m, np.array(dr.T.squeeze()), mu_monoton, np.array(costs), np.array(exact), np.array(approx))
 
     return (tn, fp, fn, tp)
 
