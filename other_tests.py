@@ -6,53 +6,9 @@ from scipy import stats
 from sklearn import metrics
 from src.select_data import *
 from src.check_constraints import *
-from cost_function import compute_upper_thrs, compute_lower_thrs, monotonicity_constr_appr, from_matrix_to_bqm
+from cost_function import compute_upper_thrs, compute_lower_thrs, monotonicity_constr_appr
 import time
-
-def print_config():
-    print('PRINTING CONFIGURATIONS: ')
-    config = read_config()
-    n = config['n_counterpart']
-    m =  config['grades']
-    data_source = config['data_source']
-    default_prob = config['default_module']
-    default_module = config['default_prob']
-    solver = config['solvers']
-    shots = config['shots']
-    #'constraint' == config['constraints']
-    #'mu' == config['mu']
-    print("number of counterparts:", n)
-    print("number of grades:", m)
-
-    if data_source == 'random_uniform':
-        print("generating a random default vector where each element has probabibility of being 1 equal to ", default_prob)
-    if data_source == 'random_incr':
-        print("generating random default vector where the i-th (zero-based) element has probabibility of being 1 equal to i/n")
-    if data_source == 'random_incr':
-        print("generating a default vector having d = 1 a number of times equal to", default_module)
-    if data_source == 'ISPdataset':
-        print("loading the dataset with the following attributes:")
-    if solver['brute_force'] == True:
-        print("solver: brute force")
-    elif solver['dwave_exact'] == True:
-        print("solver: exact dwave")
-    elif solver['annealing'] == True:
-        print("solver: annealing with number of shots equal to", shots)
-    elif solver['gurobi'] == True:
-        print("solver: gurobi")
-
-    if config['constraints']['one_class'] == True:
-        print("mu of uniqueness", config['mu']['one_class'])
-    if config['constraints']['logic'] == True:
-        print("mu of logical", config['mu']['logical'])
-    if config['constraints']['one_class'] == True:
-        print("mu of monotonicity", config['mu']['monotonicity'])
-    if config['constraints']['concentration'] == True:
-        print("mu of uniqueness", config['mu']['concentration'])
-    if config['constraints']['min_thr'] == True:
-        print("mu of lower card threshold", config['mu']['min_thr'])
-    if config['constraints']['max_thr'] == True:
-        print("mu of upper card threshold",config['mu']['max_thr'])
+import matplotlib.pyplot as plt
 
 def check_concentration_approx(matrix, verbose=False):
     ones_per_column = np.sum(matrix == 1, axis=0)
@@ -78,88 +34,46 @@ def test_submatrix_penalties():
         print(f"a={a}, b={b}, c={c}, d={d}")
     return
 
-def plotting_energies(n,m,default,mu_one_class,mu_logic,mu_monot,v_energies,v_energies_viol):
-    #printing energies
-    print("energies of the BSMs that fulfill the monot. constr.:")
-    print(v_energies)
-    print("energies of the BSMs that do not fulfill the monot. constr.:")
-    print(v_energies_viol)
-    #creating plot
-    def_v = default.ravel().tolist()
-    def_v_str = f"[{' , '.join(map(str, def_v))}]"
-    title1 = "Energies of the opt and subopt BSMs"
-    title2 = f"solver: exact dwave; n,m=({n},{m}), d_vec={def_v_str}\n"
-    title3_1 = f"mu_one_class={mu_one_class}, "
-    title3_2 = f"mu_logic={mu_logic}, "
-    title3_3 = f"mu_monot={mu_monot}"
-    title23 = title2 + title3_1 + title3_2 + title3_3
-    #v_energies = np.array(np.array(v_energies))
-    #plt.figure(figsize=(8, 5))
-    plt.plot(v_energies_viol, marker='o', linestyle='', label='mon not fulf')
-    plt.plot(v_energies, marker='x', linestyle='', label='mon fulf')
-    plt.suptitle(title1, fontsize=10)
-    plt.title(title23, fontsize=10)
-    plt.xlabel("Index", fontsize=10)
-    plt.xticks(range(0,max(len(v_energies),len(v_energies_viol))))
-    plt.ylabel("Energy", fontsize=10)
-    plt.grid(True, linestyle='--', alpha=0.6)
-    plt.legend()
+def plotting_costs(n, m, dr, mu_monoton, bsm, costs, exact, approx):
+   
+    # # Plot 1
+    # mask = np.array([exact[i]==approx[i] for i in range(len(exact))])
+    # correct_guess = costs[mask]
+    # wrong_guess = costs[~mask]
+
+    # plt.figure(figsize=(8,5))
+    # plt.plot(correct_guess, marker='x', linestyle='', label='Correct guess')
+    # plt.plot(wrong_guess, marker='o', linestyle='', label='Wrong guess')
+    # plt.suptitle("Costs of BSMs", fontsize=10)
+    # plt.title(f"n={n}, m={m}, mu={mu_monoton}, d_vec={dr}", fontsize=10)
+    # plt.xlabel("Index of BSMs", fontsize=10)
+    # plt.xticks(range(0,max(len(correct_guess), len(wrong_guess))))
+    # plt.ylabel("Energy", fontsize=10)
+    # plt.grid(True, linestyle='--', alpha=0.6)
+    # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    # plt.tight_layout()
+    # plt.savefig(f"output/plots/fig-m={n}-m={m}-d_vec={dr}.png")
+
+    # Plot 2
+    tp_costs = costs[np.array([exact[i] and approx[i] for i in range(len(exact))])]
+    tn_costs = costs[np.array([(not exact[i]) and (not approx[i]) for i in range(len(exact))])]
+    fp_costs = costs[np.array([(not exact[i]) and approx[i] for i in range(len(exact))])]
+    fn_costs = costs[np.array([exact[i] and (not approx[i]) for i in range(len(exact))])]
+
+    data = [tp_costs, tn_costs, fp_costs, fn_costs]
+    bins = np.arange(min(costs), max(costs) + 2) - 0.5
+    colors = ['palegreen', 'forestgreen', 'red', 'orange']
+    labels = ['tp', 'tn', 'fp', 'fn']
+
+    plt.figure()
+    plt.hist(data, stacked=True, bins=bins, color=colors, label=labels, edgecolor='black')
+    plt.title(f"Costs of BSMs\nn={n}, m={m}, mu={mu_monoton}, d_vec={dr}", fontsize=10)
+    plt.xlabel("Energy", fontsize=10)
+    plt.xticks(np.arange(min(costs), max(costs)+1))
+    plt.ylabel("Count", fontsize=10)
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.tight_layout()
-    current_time = time.ctime()
-    #print(f"The current time is: {current_time}")
-    plt.savefig(f"output/plots/figure,(n,m)=({n},{m}),d_vec={def_v_str},{current_time}.png")
-    plt.show()
-
-def analyse_dwave_exact_results(n,m,min_en,opt_sol_np,sub_opt,default,mu_one_class_constr,mu_staircase_constr,mu_monotonicity):
-    criterion = []          # it will contain the boolean values of the monotonicity criterion (optimal solution of QUBO problem)
-    monotonicity = []       # it will contain the boolean values of the monotonicity constraint
-    v_energies = []         # it will contain the energies (float values) of BSMs having monotonicity constraint fulfilled
-    v_energies_viol = []    # it will contain the energies (float values) of BSMs having monotonicity constraint violated
-    print(f"Optimal binary staircase matrices, i. e. those with minimal energy {min_en}:")
-    for ind, item_opt_sol_np in enumerate(opt_sol_np):
-        matrix = item_opt_sol_np.reshape(n, m)
-        if check_staircase(matrix) == True:
-            print(f"solution index: {ind}")
-            criterion.append(True)
-            if check_monotonicity(matrix, default) == True:
-                monotonicity.append(True)
-                v_energies.append(float(min_en))
-                print("monotonicity constraint fulfilled")
-            else:
-                monotonicity.append(False)
-                v_energies_viol.append(float(min_en))
-                print("monotonicity constraint not fulfilled")
-            #print(matrix)
-            nj_notation = np.sum(matrix, axis = 0)
-            print('BSM in N_j notation (cardinality per grade):')
-            print(nj_notation)
-            print("\n")
-
-    print(f"Suboptimal binary staircase matrices, i. e. those with energies higher than the minimal energy {min_en}:")
-    for ind, item_sub_opt in enumerate(sub_opt):
-        matrix = item_sub_opt[0].reshape(n, m)
-        if check_staircase(matrix) == True:
-            print(f"solution index: {ind}, energy: {item_sub_opt[1]}")
-            criterion.append(False)
-            if check_monotonicity(matrix, default) == True:
-                monotonicity.append(True)
-                v_energies.append(float(item_sub_opt[1]))
-                print("monotonicity constraint fulfilled")
-            else:
-                monotonicity.append(False)
-                v_energies_viol.append(float(item_sub_opt[1]))
-                print("monotonicity constraint not fulfilled")
-            #print(matrix)
-            nj_notation = np.sum(matrix, axis = 0)
-            print('BSM in N_j notation (cardinality per grade):')
-            print(nj_notation)
-            print("\n")
-    
-    print("confusion matrix")
-    tn, fp, fn, tp = metrics.confusion_matrix(monotonicity, criterion).ravel().tolist()
-    print("tn, fp, fn, tp = ", tn, fp, fn, tp)
-    
-    plotting_energies(n,m,default,mu_one_class_constr,mu_staircase_constr,mu_monotonicity,v_energies,v_energies_viol)
+    plt.savefig(f"output/plots/hist-m={n}-m={m}-d_vec={dr}.png")
 
 def conf_matrix(m, n, dr, verbose=False):
     if verbose:
@@ -172,9 +86,7 @@ def conf_matrix(m, n, dr, verbose=False):
 
     # build QUBO matrix with only monotonicity constraint
     mu_monoton = 1
-    Q = np.zeros([m*n, m*n])
-    c = 0
-    (Q,c) = monotonicity_constr_appr(m, n, dr.T.squeeze(), mu_monoton)
+    (Q,c) = monotonicity_constr_appr(m, n, dr, mu_monoton)
 
     # iteration on all the possible combinations
     for vec in itertools.product(range(m), repeat=n):
@@ -193,23 +105,32 @@ def conf_matrix(m, n, dr, verbose=False):
 
             # compute the cost of the BS matrix
             x = matrix.reshape(1,m*n).squeeze()
-            costs.append((x.dot(Q).dot(x.transpose()))+c)
+            costs.append(int((x.dot(Q).dot(x.transpose()))+c))
 
     min_cost = min(costs)
     approx = [el == min_cost for el in costs]
 
-    tn, fp, fn, tp = metrics.confusion_matrix(exact, approx).ravel().tolist()
+    confusion_matrix = metrics.confusion_matrix(exact, approx)
+    tn, fp, fn, tp = confusion_matrix.ravel().tolist()
+
+    print("DEFAULT")
+    print(np.array(dr.T.squeeze()))
+    print("Best solution:")
+    print(bsm[costs.index(min(costs))])
+    print("CONFUSION MATRIX")
+    print(confusion_matrix)
+    print("tn, fp, fn, tp = ", tn, fp, fn, tp)
 
     if verbose:
-        print("DEFAULT")
-        print(dr.T)
-        print("CONFUSION MATRIX")
-        print("tn, fp, fn, tp = ", tn, fp, fn, tp)
+        print()
         for i, el in enumerate(bsm):
             print("MATRIX ", i+1)
             print(el)
             print("Exact monoton fulfilled: ", exact[i])
-            print("Approx monoton fulfilled: ", approx[i], " cost = ", costs[i])
+            print("Approx monoton fulfilled: ", approx[i])
+            print("Cost (approx method): ", costs[i])
+
+    plotting_costs(n, m, np.array(dr.T.squeeze()), mu_monoton, bsm, np.array(costs), np.array(exact), np.array(approx))
 
     return (tn, fp, fn, tp)
 
@@ -301,7 +222,7 @@ def main():
     #--------------------------------------
 
     # TEST ON CONFUSION MATRIX
-    conf_matrix(grades, n, default, True)
+    conf_matrix(grades, n, default, False)
     # stat_conf_matrix(50)
 
 if __name__ == '__main__':
