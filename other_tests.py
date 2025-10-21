@@ -54,7 +54,7 @@ def plotting_costs(n, m, dr, mu_monoton, costs, exact, approx):
     plt.ylabel("Count", fontsize=10)
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.tight_layout()
-    plt.savefig(f"output/plots/hist-m={n}-m={m}-d_vec={dr}.png")
+    plt.savefig(f"output/plots/hist-n{n}-m{m}-dvec{''.join(map(str, dr))}.png")
 
 def conf_matrix(m, n, dr, verbose=False):
     if verbose:
