@@ -10,8 +10,8 @@ from gurobipy import GRB
 from sklearn import metrics
 import matplotlib.pyplot as plt
 
-# penalty: "first counterpart in first class"
 def first_counterpart_const(m, n, mu=1):
+    # penalty: "first counterpart in first class"
     Q = np.zeros([n*m, n*m])
     
     for jj in range(1, m):
@@ -20,8 +20,8 @@ def first_counterpart_const(m, n, mu=1):
         Q[jj][0] -= 0.5
     return mu*Q
 
-# penalty: "last counterpart in the last class"
 def last_counterpart_const(m, n, mu=1):
+    # penalty: "last counterpart in the last class"
     Q = np.zeros([n*m, n*m])
 
     for jj in range(m-1):
@@ -31,8 +31,8 @@ def last_counterpart_const(m, n, mu=1):
         Q[tt][(n*m)-1] -= 0.5
     return mu*Q
 
-# penalty: "one class per counterpart"
 def one_class_const(m, n, mu=1):
+    # penalty: "one class per counterpart"
     Q = np.zeros([n*m, n*m])
     c = 0
 
@@ -49,8 +49,8 @@ def one_class_const(m, n, mu=1):
         c += 1
     return (mu*Q, mu*c)
 
-# penalty: "staircase matrix"
 def staircase_constr(m, n, mu=1):
+    # penalty: "staircase matrix"
     Q = first_counterpart_const(m,n) + last_counterpart_const(m,n)
 
     # penalize not permitted submatrix, where a submatrix is
@@ -295,9 +295,9 @@ def monotonicity_constr(m, n, default, offset, mu=1):
     return Q
 
 def concentration_constr(m, n, mu=1):
+    # penalty: "concentration"
     Q = np.zeros([n*m, n*m])
 
-    # penalty: "concentration"
     c = 1/(1-m)
     gamma = m/(m-1)
     
@@ -310,6 +310,7 @@ def concentration_constr(m, n, mu=1):
                     Q[u1][u2] += gamma
                 else:
                     Q[u1][u2] += gamma/2
+                    Q[u2][u1] += gamma/2
 
     return (mu*Q, mu*c)
 
@@ -391,19 +392,11 @@ def brute_force_solver(Q, c, dim):
             Cmin = Cy
             Ymin = Y.copy()
 
-    # alternative approach:
-    # for ii, item in enumerate(itertools.product([0, 1], repeat=n*m)):
-    #     Y = np.array(item)
-    #     Cy=np.einsum('i,ij,j->', Y, Q, Y)+c
-    #     if ( Cy < Cmin ):
-    #         Cmin = Cy
-    #         Ymin = Y.copy()
-
     return (np.array(Ymin), Cmin)
 
 def from_matrix_to_bqm(matrix, c):
     
-    Q_dict = {(i, j): matrix[i, j] for i in range(matrix.shape[0]) for j in range(matrix.shape[1])}# if matrix[i, j] != 0}
+    Q_dict = {(i, j): matrix[i, j] for i in range(matrix.shape[0]) for j in range(matrix.shape[1]) if matrix[i, j] != 0}
     bqm = dimod.BinaryQuadraticModel.from_qubo(Q_dict, c)
 
     return bqm
@@ -424,19 +417,11 @@ def annealer_solver(dim, bqm, reads, shots, n, m):
     sampler = hybrid.SimulatedAnnealingProblemSampler(num_reads=reads, num_sweeps=shots, beta_range=(0.1, 5.0), beta_schedule_type='geometric')
     sample_set = sampler.run(state).result()
 
-    # data analysis
-    # sample_df = sample_set.samples.to_pandas_dataframe()
-    # for i, sample in sample_df.iterrows():
-    #     print(f"Soluzione {i}:")
-    #     print("  energia:", sample.energy)   # energia associata
-    #     print(sample_df.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m))
-
     return sample_set
     
 def gurobi_solver(m, n, matrix, c, gurobi_n_sol, gurobi_fidelity):
-    print()
+
     size = matrix.shape[0]
-    # model definition
     qubo_model = gpy.Model("QCS")
     qubo_vars = qubo_model.addVars(size, vtype=GRB.BINARY, name="x")
 
@@ -499,7 +484,9 @@ def gurobi_solver(m, n, matrix, c, gurobi_n_sol, gurobi_fidelity):
         print("No solutions found")
 
 def main():
+
     config = read_config()
+    
     # generate a random dataset or select data from the dataset
     dataset = generate_or_load_dataset(config)
     n = config['n_counterpart']
@@ -513,6 +500,7 @@ def main():
     print("Dataset:")
     print(dataset.reset_index(drop=True))
 
+    # set input
     alpha_conc = config['alpha_concentration']
     alpha_het = config['alpha_heterogeneity']
     alpha_hom = config['alpha_homogeneity']
@@ -528,7 +516,7 @@ def main():
 
     #-------------------------------
 
-    # generate the appropriate Q matrix
+    # generate Q matrix
     start_time = time.perf_counter_ns()
     Q = np.zeros([m*n, m*n])
     c = 0
@@ -565,26 +553,26 @@ def main():
     bqm = from_matrix_to_bqm(Q, c)
 
     print(f"\nThe QUBO problem has {Q.shape[0]} variables")
-    print(f"\nThe time spent to generate the QUBO matrix is: {(end_time - start_time)/10e9} s")
+    print(f"Time spent for the generation: {(end_time - start_time)/10e9} s")
 
     #-------------------------------
 
     # Solving with brute force
     if config['solvers']['brute_force']:
-        print("\n")
-        print("RESULTS OBTAINED THROUGH THE BRUTE FORCE SOLVER")
         start_time = time.perf_counter_ns()
         (result_bf, cost) = brute_force_solver(Q,c,Q.shape[0])
         end_time = time.perf_counter_ns()
-        if config['constraints']['min_thr'] == True:
-            result_bf = result_bf[:m*n]
-        print(f"\nBinary staircase matrix obtained with the brute force approach:")
+        result_bf = result_bf[:m*n]
+
+        print("\nRESULTS OBTAINED THROUGH THE BRUTE FORCE SOLVER")
+        print(f"\nBinary staircase matrix:")
         print(result_bf.reshape(n,m))
         print(f"\nTime of solution: {(end_time - start_time)/10e9} s\n")
+        
+        # Add brute force solution to the dataset
         dataset["Brute_force_rating"] = np.argmax(result_bf.reshape(n,m), axis=1) + 1
-        print("Dataset endowed with rating obtained through brute force solver:")
+        print("Rating scale:")
         print(dataset[["counterpart_id", "default", "score", "Brute_force_rating"]])
-        print("\n")
 
     #-------------------------------
 
@@ -594,42 +582,46 @@ def main():
         e_result = exact_solver(bqm)
         end_time = time.perf_counter_ns()
         elapsed_time_ns = end_time - start_time
-        # Print all the solutions
-        df_result = e_result.lowest().to_pandas_dataframe()
-        result_exact_solver = df_result.iloc[:, :m*n].to_numpy()
-        # print(f"All exact solutions:\n{df_result}")
-
-        print(f"\nBinary staircase matrices obtained with the brute force approach: {int(result_exact_solver.size/(m*n))}")
-        for sol in result_exact_solver[:]:
-            print(f"solution:\n{sol.reshape(n, m)}")
+        result_exact_solver = e_result.lowest().to_pandas_dataframe().iloc[:, :m*n].to_numpy()
+        
+        # print all the solutions
+        print("\nRESULTS OBTAINED THROUGH THE DWAVE EXACT SOLVER")
+        print(f"\nBinary staircase matrices: {int(result_exact_solver.size/(m*n))}\n")
+        for i, sol in enumerate(result_exact_solver[:]):
+            print(f"solution {i+1}:\n{sol.reshape(n, m)}")
 
         print(f"\nTime to compute all exact solutions: {elapsed_time_ns/10e9} s")
-        # print(f"First solution:\n{result_exact_solver[0].reshape(n, m)}")
 
         # Add the first solution to the dataset
         dataset["DWave_Brute_force_rating"] = np.argmax(result_exact_solver[0].reshape(n,m), axis=1) + 1
+        print("Rating scale:")
         print(dataset[["counterpart_id", "default", "score", "DWave_Brute_force_rating"]])
 
     #-------------------------------
     # Solving with annealing
     if config['solvers']['annealing']:
-        print("\n")
-        print("RESULTS OBTAINED THROUGH THE ANNEALING SOLVER")
         start_time = time.perf_counter_ns()
         result = annealer_solver(Q.shape[0], bqm, reads, shots, n, m)
         end_time = time.perf_counter_ns()
-        result_ann = np.array([int(x) for x in result.samples.first.sample.values()])[:m*n]
-        annealing_matrix = result_ann.reshape(n, m)
-        print(f"\nBinary staircase matrix obtained with the annealing solver:\n{annealing_matrix}")
+        annealing_matrix = np.array([int(x) for x in result.samples.first.sample.values()])[:m*n].reshape(n, m)
+
+        print("\nRESULTS OBTAINED THROUGH THE SIMULATING ANNEALER SOLVER")
+        print(f"\nBinary staircase matrix:\n{annealing_matrix}")
         print(f"\nTime to compute the annealing solution: {(end_time - start_time)/10e9} s\n")
 
         dataset["Annealing_rating"] = np.argmax(annealing_matrix, axis=1) + 1
-        print("Dataset endowed with rating obtained through dwave annealing:")
+        print("Rating scale:")
         print(dataset[["counterpart_id", "default", "score", "Annealing_rating"]])
 
-        print("\nResult validation of the annealing result:")
-        verbose = True
-        is_valid = test_one_solution(annealing_matrix, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), verbose)
+        print("\nResult validation:")
+        is_valid = test_one_solution(annealing_matrix, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
+
+        # data analysis: print all the annealer results
+        sample_df = result.samples.to_pandas_dataframe()
+        for i, sample in sample_df.iterrows():
+            print(f"Soluzione {i}:")
+            print("  energia:", sample.energy)   # energia associata
+            print(sample_df.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m))
 
     #-------------------------------
     # Solving with Gurobi
