@@ -16,14 +16,14 @@ data_source: 'd_conf_input'
 # 7) real_dist:
 # it generates a random default vector with a probability of having d = 1 increasing w. r. t. the index of counterparts
 
-n_counterpart: 4                    # n
-grades: 2                           # m
+n_counterpart: 8                    # n
+grades: 3                           # m
 
 default_prob: 0.1                   # valid only if data_source: 'random_uniform'
                                     # default_prob is the probability of default (range: 0 - 1) per counterpart
 default_module: 1                   # valid only if data_source: 'random_num_def' (range: 1 - n-2)
                                     # default_module is the number of counterparts in default
-one_indices: [0]                    # valid only if data_source: 'd_conf_input'
+one_indices: [5,7]                    # valid only if data_source: 'd_conf_input'
                                     # one_indices is the list of the 0-based indices (range: 0 - n-1)
                                     # having default equal to 1
 gen_conf: True                      # if true it shows the plot of energies and the confusion matrix of dwave exact results
@@ -43,14 +43,14 @@ alpha_homogeneity: 0.05             # range: 0 - 1, threshold of the gaussian pr
 constraints:
     one_class: True
     logic: True
-    monotonicity: True
-    concentration: False             # soft constraint
+    monotonicity: False
+    concentration: True             # soft constraint
     min_thr: False
     max_thr: False
 
 # QUBO coefficients
 mu: 
-    one_class: 150
+    one_class: 200
     logic: 150
     monotonicity: 40
     concentration: 1
@@ -61,17 +61,17 @@ mu:
 test:
     logic: True
     monotonicity: True
-    heterogeneity: True
+    heterogeneity: False
     concentration: True
     min_thr: True
     max_thr: True
-    homogeneity: True
+    homogeneity: False
 
 # exact dwave parameter
 #sol_limit: 100                     # number of suboptimal solutions we consider
 
 # annealer parameters
-shots: 10000
+shots: 1000000
 reads: 5
 
 # gurobi parameters
@@ -81,8 +81,8 @@ gurobi_fidelity: 1
 # solver to run
 solvers:
     brute_force: False
-    dwave_exact: True
+    dwave_exact: False
     annealing: False
-    gurobi: False
+    gurobi: True
 
 

@@ -1,6 +1,7 @@
 from src.select_data import *
 from src.check_constraints import *
 from cost_function import compute_lower_thrs, compute_upper_thrs
+from math import comb
 import itertools
 import time
 
@@ -47,18 +48,22 @@ def main():
     # list of valid solutions
     valid_solutions = []
 
-    print(f"Testing {grades ** n} combinations...")
+    print(f"\nTesting {comb(n-1, grades-1)} combinations...\n")
 
     start_time = time.perf_counter_ns()    
 
-    # loop over all the possible combinations of the counterparts in the grades
-    for sol in itertools.product(range(grades), repeat=n):
+    # loop over all the possible partitions
+    for partition in itertools.combinations(range(1,n), grades-1):
         
         # from itertools to numpy matrix
         matrix = np.zeros([n,grades])
-        for i, el in enumerate(sol):
-            # set the element [i][el] to 1 if the counterpart i is in the el-th grade
-            matrix[i][el] = 1
+
+        split_points = (0,) + partition + (n,)
+        # print(split_points)
+        for grade in range(grades):
+            matrix[split_points[grade]:split_points[grade+1], grade] = 1
+        # print(matrix)
+        # print()
 
         # execute tests: run each test only if
         #  - the test is required in the config file
@@ -82,14 +87,18 @@ def main():
 
         # If all the tests are completed, the solution is valid
         if flag:
-            valid_solutions.append(sol)
+            valid_solutions.append(partition)
 
     end_time = time.perf_counter_ns()
-    print(f"{len(valid_solutions)} solutions found in {(end_time-start_time)/10e9} s")
+
+    print(f"Number of solutions: {len(valid_solutions)} - Time {(end_time-start_time)/10e9} s\n")
     if len(valid_solutions) > 0:
-        print(f"Solutions:")
-        for i, sol in enumerate(valid_solutions):
-            dataset["sol_" + str(i+1)] = np.array(sol)+1
+        for i, partition in enumerate(valid_solutions):
+            split_points = (0,) + partition + (n,)
+            rating_scale = np.ones(n)
+            for grade in range(grades):
+                rating_scale[split_points[grade]:split_points[grade+1]] = int(grade+1)
+            dataset["sol_" + str(i+1)] = np.array(rating_scale, dtype=int)
         print(dataset)
 
 if __name__ == '__main__':
