@@ -93,7 +93,8 @@ def main():
 
     print(f"Number of solutions: {len(valid_solutions)} - Time {(end_time-start_time)/10e9} s\n")
     if len(valid_solutions) > 0:
-        for i, partition in enumerate(valid_solutions):
+        sol_to_print = random.sample(valid_solutions, min(3, len(valid_solutions)))
+        for i, partition in enumerate(sol_to_print):
             split_points = (0,) + partition + (n,)
             rating_scale = np.ones(n)
             for grade in range(grades):
