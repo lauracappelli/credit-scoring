@@ -2,7 +2,6 @@ from src.select_data import *
 from src.check_constraints import *
 from cost_function import compute_lower_thrs, compute_upper_thrs
 import itertools
-import math
 import time
 
 def main():

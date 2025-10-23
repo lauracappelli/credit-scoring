@@ -1,14 +1,13 @@
-import numpy as np
-import math
-import itertools
-import pandas as pd
-from scipy import stats
-from sklearn import metrics
 from src.select_data import *
 from src.check_constraints import *
 from cost_function import compute_upper_thrs, compute_lower_thrs, monotonicity_constr_appr
-import time
+import numpy as np
+import itertools
+import pandas as pd
+from sklearn import metrics
 import matplotlib.pyplot as plt
+import gurobipy as gpy
+from gurobipy import GRB
 
 def check_concentration_approx(matrix, verbose=False):
     ones_per_column = np.sum(matrix == 1, axis=0)
@@ -33,6 +32,75 @@ def test_submatrix_penalties():
         print(np.array(tuple(itertools.islice(x, 4))).reshape(2, 2))
         print(f"a={a}, b={b}, c={c}, d={d}")
     return
+
+def gurobi_solver(config, matrix, c, default):
+
+    m = config['grades']
+    n = config['n_counterpart']
+    gurobi_n_sol = config['gurobi_n_sol']
+    gurobi_fidelity = config['gurobi_fidelity']
+
+    size = matrix.shape[0]
+    qubo_model = gpy.Model("QCS")
+    qubo_vars = qubo_model.addVars(size, vtype=GRB.BINARY, name="x")
+    sol_set = []
+
+    # cost function definition
+    qubo_expr = gpy.QuadExpr()
+    row_idxs, col_idxs = np.nonzero(matrix)
+    for ii, jj in zip(row_idxs, col_idxs):
+        qubo_expr.add(matrix[ii, jj] * qubo_vars[ii] * qubo_vars[jj])
+    qubo_expr.addConstant(c)
+
+    # add const function to the model
+    qubo_model.setObjective(qubo_expr, GRB.MINIMIZE)
+
+    # Setting solver parameters
+    qubo_model.setParam("OutputFlag", 1) # verbosity
+    qubo_model.setParam("Seed", 0)  # fix seed
+    # qubo_model.setParam("TimeLimit", timelimit)
+    
+    # Search more than 1 solution
+    num_max_solutions = gurobi_n_sol
+    if num_max_solutions > 1:
+        qubo_model.setParam("PoolSolutions", num_max_solutions)
+        qubo_model.setParam("PoolSearchMode", 2)
+        qubo_model.setParam("PoolGap", gurobi_fidelity)
+
+    # Run the Gurobi QUBO optimization
+    qubo_model.optimize()
+
+    # Print result
+    if qubo_model.Status in {GRB.OPTIMAL, GRB.SUBOPTIMAL}:
+        if num_max_solutions == 1:
+            solution = [int(qubo_vars[i].X) for i in range(size)]
+            if len(solution) > m*n:
+                solution = solution[:m*n]
+            np_sol = np.array(solution).reshape(n, m)
+            sol_set.append(np_sol)
+            print("\nBest solution:\n", np_sol)
+            print("Cost of the function:", qubo_model.ObjVal)
+        
+        else:
+            # select all the solutions or num_max_solutions solutions
+            nfound = min(qubo_model.SolCount, num_max_solutions)
+            for sol_idx in range(nfound):
+                qubo_model.setParam(GRB.Param.SolutionNumber, sol_idx)
+                qubo_bitstring = np.array(
+                    [int(qubo_vars[jj].Xn) for jj in range(size)]
+                )
+                if qubo_bitstring.shape[0] > m*n:
+                    qubo_bitstring = qubo_bitstring[:m*n]
+                np_sol = qubo_bitstring.reshape(n,m)
+                sol_set.append(np_sol)
+                print(f"solution {sol_idx+1}:\n{np_sol}")
+                print("Cost of the function:", qubo_model.PoolObjVal)
+        
+        print("\nValidation of the gurobi result:")
+        for np_sol_item in sol_set:
+            is_valid = test_one_solution(np_sol_item, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
+    else:
+        print("No solutions found")
 
 def plotting_costs(n, m, dr, mu_monoton, costs, exact, approx):
    

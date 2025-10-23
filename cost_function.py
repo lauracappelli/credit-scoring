@@ -5,10 +5,6 @@ import hybrid
 import math
 import time
 import itertools
-import gurobipy as gpy
-from gurobipy import GRB
-from sklearn import metrics
-import matplotlib.pyplot as plt
 
 def first_counterpart_const(m, n, mu=1):
     # penalty: "first counterpart in first class"
@@ -419,70 +415,6 @@ def annealer_solver(dim, bqm, reads, shots, n, m):
 
     return sample_set
     
-def gurobi_solver(m, n, matrix, c, gurobi_n_sol, gurobi_fidelity):
-
-    size = matrix.shape[0]
-    qubo_model = gpy.Model("QCS")
-    qubo_vars = qubo_model.addVars(size, vtype=GRB.BINARY, name="x")
-
-    # cost function definition
-    qubo_expr = gpy.QuadExpr()
-    row_idxs, col_idxs = np.nonzero(matrix)
-    for ii, jj in zip(row_idxs, col_idxs):
-        qubo_expr.add(matrix[ii, jj] * qubo_vars[ii] * qubo_vars[jj])
-    qubo_expr.addConstant(c)
-
-    # add const function to the model
-    qubo_model.setObjective(qubo_expr, GRB.MINIMIZE)
-
-    # Setting solver parameters
-    qubo_model.setParam("OutputFlag", 1) # verbosity
-    qubo_model.setParam("Seed", 0)  # fix seed
-    # qubo_model.setParam("TimeLimit", timelimit)
-    
-    # Search more than 1 solution
-    num_max_solutions = gurobi_n_sol
-    if num_max_solutions > 1:
-        qubo_model.setParam("PoolSolutions", num_max_solutions)
-        qubo_model.setParam("PoolSearchMode", 2)
-        qubo_model.setParam("PoolGap", gurobi_fidelity)
-
-    # Run the Gurobi QUBO optimization
-    qubo_model.optimize()
-
-    # Print result
-    if qubo_model.Status in {GRB.OPTIMAL, GRB.SUBOPTIMAL}:
-        if num_max_solutions == 1:
-            solution = [int(qubo_vars[i].X) for i in range(size)]
-            if len(solution) > m*n:
-                solution = solution[:m*n]
-            np_sol = np.array(solution).reshape(n, m)
-            print("\nBest solution:\n", np_sol)
-            print("Cost of the function:", qubo_model.ObjVal)
-
-            return [np_sol]
-        
-        else:
-            # select all the solutions or num_max_solutions solutions
-            nfound = min(qubo_model.SolCount, num_max_solutions)
-            list_sol = []
-            for sol_idx in range(nfound):
-                qubo_model.setParam(GRB.Param.SolutionNumber, sol_idx)
-                qubo_bitstring = np.array(
-                    [int(qubo_vars[jj].Xn) for jj in range(size)]
-                )
-                if qubo_bitstring.shape[0] > m*n:
-                    qubo_bitstring = qubo_bitstring[:m*n]
-                np_sol = qubo_bitstring.reshape(n,m)
-                print(f"solution {sol_idx+1}:\n{np_sol}")
-                print("Cost of the function:", qubo_model.PoolObjVal)
-                list_sol.append(np_sol)
-            
-            return list_sol
-        
-    else:
-        print("No solutions found")
-
 def main():
 
     config = read_config()
@@ -573,6 +505,13 @@ def main():
         dataset["Brute_force_rating"] = np.argmax(result_bf.reshape(n,m), axis=1) + 1
         print("Rating scale:")
         print(dataset[["counterpart_id", "default", "score", "Brute_force_rating"]])
+    
+    #-------------------------------
+    # Solving with Gurobi
+    if config['solvers']['gurobi']:
+        from other_tests import gurobi_solver
+        print("\nRESULTS OBTAINED THROUGH THE GUROBI SOLVER")
+        gurobi_solver(config, Q, c, default)
 
     #-------------------------------
 
@@ -622,22 +561,6 @@ def main():
             print(f"Soluzione {i}:")
             print("  energia:", sample.energy)   # energia associata
             print(sample_df.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m))
-
-    #-------------------------------
-    # Solving with Gurobi
-    if config['solvers']['gurobi']:
-        print("\n")
-        print("RESULTS OBTAINED THROUGH THE GUROBI SOLVER")
-        np_sol = gurobi_solver(m, n, Q, c, config['gurobi_n_sol'], config['gurobi_fidelity'])
-        #print(gurobi_sol)
-        print("\nResult validation of the gurobi result:")
-        verbose = True
-        for np_sol_item in np_sol:
-            is_valid = test_one_solution(np_sol_item, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), verbose)
-        print("default:", default.flatten().tolist())
-
-    #-------------------------------
-
 
 if __name__ == '__main__':
     main()
