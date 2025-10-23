@@ -162,7 +162,7 @@ def generate_or_load_dataset(config):
         'score': truncnorm.rvs(-4/1.5, 4, loc=-4, scale=1.5, size=n)
     })
     dataset = dataset.sort_values(by='score')
-    dataset['default']=default_vec
+    dataset['default']=np.array(default_vec, dtype=int)
     return dataset
 
 def generate_staircase_matrix(m, n):
