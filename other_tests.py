@@ -183,23 +183,6 @@ def conf_matrix(m, n, dr, verbose=False):
 
     return (tn, fp, fn, tp)
 
-def stat_conf_matrix(n_trials):
-
-    config = read_config()
-
-    n = config['n_counterpart']
-    grades = config['grades']
-
-    dataset = generate_or_load_dataset_incr_def_prob(config) if config['random_data'] == 'yes' else load_data(config)    
-    default = dataset['default'].to_numpy().reshape(n,1)
-
-    cum = conf_matrix(grades, n, default)
-    for i in range(n_trials-1):
-        dataset = generate_or_load_dataset_incr_def_prob(config) if config['random_data'] == 'yes' else load_data(config)    
-        default = dataset['default'].to_numpy().reshape(n,1)
-        cum += conf_matrix(grades, n, default)
-    print(cum)
-
 def from_random_to_databse(config, default):
 
     # read dataset
@@ -272,7 +255,6 @@ def main():
 
     # TEST ON CONFUSION MATRIX
     conf_matrix(grades, n, default, False)
-    # stat_conf_matrix(50)
 
 if __name__ == '__main__':
     main()
