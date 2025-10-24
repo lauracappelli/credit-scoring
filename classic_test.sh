@@ -13,7 +13,7 @@ for i in "${!counterparts[@]}"; do
     sed -i "20s/.*/grades: $m/" "$file"
 
     for run in {1..3}; do
-        python classical_approach.py config.yaml > "output/output_${n}_${m}_run${run}.txt" 2>&1 &
+        python classical_approach.py config.yaml > "output/classic_test/output_${n}_${m}_run${run}.txt" 2>&1 &
     done
     wait
 done
