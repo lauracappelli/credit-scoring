@@ -266,38 +266,35 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     all_ann_bsm = annealing_result.samples.to_pandas_dataframe()
     # best_ann_bsm = np.array([int(x) for x in annealing_result.samples.first.sample.values()])[:m*n].reshape(n, m) 
 
-    valid_sol = []
-    grad_cardinality = []
-    num_of_default = []
-
+    valid_sol = 0
     for i, sample in all_ann_bsm.iterrows():
         bsm = all_ann_bsm.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m)
         check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), False)
 
         if check_constr:
             dataset[f"Ann_rating_{i+1}"] = np.argmax(bsm, axis=1) + 1
-            valid_sol.append(i)
-            grad_cardinality.append(np.sum(bsm, axis=0))
-            num_of_default.append(np.sum(bsm*default, axis=0))
+            valid_sol = valid_sol+1
+            grad_cardinality = np.sum(bsm, axis=0)
+            num_of_default = np.sum(bsm*default, axis=0)
+            stats = pd.DataFrame({
+                "Grade ID": range(1, m+1),
+                "Cardinality": grad_cardinality,
+                "Defaults": num_of_default,
+                "Default rate": num_of_default / grad_cardinality
+            })
 
         print(f"Solution {i+1}:")
         print(f"Energy: {sample.energy}")
         print(f"The solution is correct: {check_constr}")
+        if check_constr:
+            print(f"Statistics:\n{stats}")
         if verbose:
             print(f"Result matrix: \n{bsm}")
         print("--------------")
 
-    print(f"\nValid solutions found: {len(valid_sol)}/{config['reads']}")
+    print(f"\nValid solutions found: {valid_sol}/{config['reads']}")
     print("\nRating scale:")
     print(dataset.to_string(index=False))
-
-    print("Statistics:")
-    for i in range(len(valid_sol)):
-        print(f"Solution {valid_sol[i]+1}:")
-        print(f"Grades cardinality:\n{grad_cardinality[i]}")
-        print(f"Defaults per grade:\n{num_of_default[i]}")
-        print(f"Default rate per grade:\n{num_of_default[i]/grad_cardinality[i]}")
-        print("--------------")
 
 def main():
 
