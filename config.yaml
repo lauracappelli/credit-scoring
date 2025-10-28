@@ -23,10 +23,10 @@ default_prob: 0.1                   # valid only if data_source: 'random_uniform
                                     # default_prob is the probability of default (range: 0 - 1) per counterpart
 default_module: 1                   # valid only if data_source: 'random_num_def' (range: 1 - n-2)
                                     # default_module is the number of counterparts in default
-one_indices: [5,7]                    # valid only if data_source: 'd_conf_input'
+one_indices: [7]                  
+                                    # valid only if data_source: 'd_conf_input'
                                     # one_indices is the list of the 0-based indices (range: 0 - n-1)
                                     # having default equal to 1
-gen_conf: True                      # if true it shows the plot of energies and the confusion matrix of dwave exact results
 
 data_path: 'data/dataset-ispq.csv'  # ISP dataset, if absent, it returns an error
 attributes:                         # select optional attributes from ISP dataset
@@ -34,6 +34,13 @@ attributes:                         # select optional attributes from ISP datase
     sector: 'no'
     revenue: 'no'
     geo_area: 'no'
+
+# solvers
+solvers:
+    brute_force: False
+    dwave_exact: False
+    annealing: True
+    gurobi: False
 
 alpha_concentration: 0.05           # range: 0 - 1, threshold of the adjust Herf index
 alpha_heterogeneity: 0.01           # range: 0 - 1, threshold of the gaussian probability
@@ -43,32 +50,29 @@ alpha_homogeneity: 0.05             # range: 0 - 1, threshold of the gaussian pr
 constraints:
     one_class: True
     logic: True
-    monotonicity: False
-    concentration: True             # soft constraint
-    min_thr: False
-    max_thr: False
+    monotonicity: True
+    concentration: True
+    min_thr: True
+    max_thr: True
 
 # QUBO coefficients
 mu: 
     one_class: 200
     logic: 150
-    monotonicity: 40
+    monotonicity: 1
     concentration: 1
     min_thr: 10
     max_thr: 10
 
-# constraints to check after running the solver
+# constraints to check for each solution
 test:
     logic: True
     monotonicity: True
-    heterogeneity: False
+    heterogeneity: True
     concentration: True
     min_thr: True
     max_thr: True
-    homogeneity: False
-
-# exact dwave parameter
-#sol_limit: 100                     # number of suboptimal solutions we consider
+    homogeneity: True
 
 # annealer parameters
 shots: 1000000
@@ -77,12 +81,3 @@ reads: 5
 # gurobi parameters
 gurobi_n_sol: 20
 gurobi_fidelity: 1
-
-# solver to run
-solvers:
-    brute_force: False
-    dwave_exact: False
-    annealing: False
-    gurobi: True
-
-
