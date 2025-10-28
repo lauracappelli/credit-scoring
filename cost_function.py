@@ -246,7 +246,47 @@ def annealer_solver(dim, bqm, reads, shots, n, m):
     sample_set = sampler.run(state).result()
 
     return sample_set
+
+def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
+
+    # define the initial state (all elements = 0 or random elements)
+    state = hybrid.core.State.from_sample({i: 0 for i in range(Q_size)}, bqm)
+    # state = hybrid.core.State.from_sample({i: np.random.randint(0, 2) for i in range(Q_size)}, bqm)
+
+    # Solve the problem with the annealer simulator
+    start_time = time.perf_counter_ns()
+    sampler = hybrid.SimulatedAnnealingProblemSampler(num_reads=config['reads'], num_sweeps=config['shots'])
+    annealing_result = sampler.run(state).result()
+    end_time = time.perf_counter_ns()
     
+    # Collect results
+    print("\nRESULTS OBTAINED THROUGH THE SIMULATING ANNEALER SOLVER")
+    print(f"\nTime to compute the solution: {(end_time - start_time)/10e9} s\n")
+    
+    all_ann_bsm = annealing_result.samples.to_pandas_dataframe()
+    # best_ann_bsm = np.array([int(x) for x in annealing_result.samples.first.sample.values()])[:m*n].reshape(n, m) 
+
+    valid_sol = []
+
+    for i, sample in all_ann_bsm.iterrows():
+        bsm = all_ann_bsm.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m)
+        check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
+
+        if check_constr:
+            dataset[f"Ann_rating_{i+1}"] = np.argmax(bsm, axis=1) + 1
+            valid_sol.append((i, bsm))
+
+        print(f"Solution {i+1}:")
+        print(f"Energy: {sample.energy}")
+        print(f"The solution is correct: {check_constr}")
+        if verbose:
+            print(f"Result matrix: \n{bsm}")
+        print("--------------")
+
+    print(f"\nValid solutions found: {len(valid_sol)}/{config['reads']}")
+    print("\nRating scale:")
+    print(dataset.to_string(index=False))
+
 def main():
 
     config = read_config()
@@ -368,28 +408,7 @@ def main():
     #-------------------------------
     # Solving with annealing
     if config['solvers']['annealing']:
-        start_time = time.perf_counter_ns()
-        result = annealer_solver(Q.shape[0], bqm, reads, shots, n, m)
-        end_time = time.perf_counter_ns()
-        annealing_matrix = np.array([int(x) for x in result.samples.first.sample.values()])[:m*n].reshape(n, m)
-
-        print("\nRESULTS OBTAINED THROUGH THE SIMULATING ANNEALER SOLVER")
-        print(f"\nBinary staircase matrix:\n{annealing_matrix}")
-        print(f"\nTime to compute the annealing solution: {(end_time - start_time)/10e9} s\n")
-
-        dataset["Annealing_rating"] = np.argmax(annealing_matrix, axis=1) + 1
-        print("Rating scale:")
-        print(dataset[["counterpart_id", "default", "score", "Annealing_rating"]])
-
-        print("\nResult validation:")
-        is_valid = test_one_solution(annealing_matrix, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
-
-        # data analysis: print all the annealer results
-        sample_df = result.samples.to_pandas_dataframe()
-        for i, sample in sample_df.iterrows():
-            print(f"Soluzione {i}:")
-            print("  energia:", sample.energy)   # energia associata
-            print(sample_df.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m))
+        annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, True)
 
 if __name__ == '__main__':
     main()
