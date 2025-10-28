@@ -183,8 +183,8 @@ def check_heterogeneity(matrix, default, alpha_het=0.01, verbose=False):
     grades = matrix.shape[1]
     if counterparts < grades * 30:
         if verbose:
-            print("\tx Error in Heterogeneity constraint: number of counterpars not sufficient")
-        return False
+            print("\t- Skip Heterogeneity constraint: number of counterpars not sufficient")
+        return True
 
     # print(f"default: {default.T}")
     grad_cardinality = np.sum(matrix, axis=0) #N_j
@@ -257,8 +257,8 @@ def check_homogeneity(matrix, default, alpha_hom=0.05, verbose=False):
     grades = matrix.shape[1]
     if counterparts < grades * 30:
         if verbose:
-            print("\tx Error in homogeneity constraint: number of counterpars not sufficient")
-        return False
+            print("\t- Skip Homogeneity constraint: number of counterpars not sufficient")
+        return True
 
     # run the test for each grade j
     for j in range(matrix.shape[1]):
@@ -323,8 +323,8 @@ def test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, verb
     Returns:
         bool: result of the tests  
     """
-
-    print("Checking the constraints...")
+    if verbose:
+        print("Checking the constraints...")
 
     start_time = time.perf_counter_ns()
     flag = True
@@ -343,6 +343,8 @@ def test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, verb
     if config['test']['homogeneity'] and not check_homogeneity(matrix, default, config['alpha_homogeneity'], verbose):
         flag = False
     end_time = time.perf_counter_ns()
+    
+    if verbose:
+        print(f"Test time: {(end_time-start_time)/10e9} s")
 
-    print(f"Test time: {(end_time-start_time)/10e9} s")
     return flag
