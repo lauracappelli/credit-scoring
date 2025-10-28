@@ -267,14 +267,18 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     # best_ann_bsm = np.array([int(x) for x in annealing_result.samples.first.sample.values()])[:m*n].reshape(n, m) 
 
     valid_sol = []
+    grad_cardinality = []
+    num_of_default = []
 
     for i, sample in all_ann_bsm.iterrows():
         bsm = all_ann_bsm.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m)
-        check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
+        check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), False)
 
         if check_constr:
             dataset[f"Ann_rating_{i+1}"] = np.argmax(bsm, axis=1) + 1
-            valid_sol.append((i, bsm))
+            valid_sol.append(i)
+            grad_cardinality.append(np.sum(bsm, axis=0))
+            num_of_default.append(np.sum(bsm*default, axis=0))
 
         print(f"Solution {i+1}:")
         print(f"Energy: {sample.energy}")
@@ -286,6 +290,14 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     print(f"\nValid solutions found: {len(valid_sol)}/{config['reads']}")
     print("\nRating scale:")
     print(dataset.to_string(index=False))
+
+    print("Statistics:")
+    for i in range(len(valid_sol)):
+        print(f"Solution {valid_sol[i]+1}:")
+        print(f"Grades cardinality:\n{grad_cardinality[i]}")
+        print(f"Defaults per grade:\n{num_of_default[i]}")
+        print(f"Default rate per grade:\n{num_of_default[i]/grad_cardinality[i]}")
+        print("--------------")
 
 def main():
 
@@ -408,7 +420,7 @@ def main():
     #-------------------------------
     # Solving with annealing
     if config['solvers']['annealing']:
-        annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, True)
+        annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, False)
 
 if __name__ == '__main__':
     main()
