@@ -16,14 +16,14 @@ data_source: 'd_conf_input'
 # 7) real_dist:
 # it generates a random default vector with a probability of having d = 1 increasing w. r. t. the index of counterparts
 
-n_counterpart: 8                    # n
-grades: 3                           # m
+n_counterpart: 8
+grades: 3
 
 default_prob: 0.1                   # valid only if data_source: 'random_uniform'
                                     # default_prob is the probability of default (range: 0 - 1) per counterpart
 default_module: 1                   # valid only if data_source: 'random_num_def' (range: 1 - n-2)
                                     # default_module is the number of counterparts in default
-one_indices: [7]                  
+one_indices: [4,7]                  
                                     # valid only if data_source: 'd_conf_input'
                                     # one_indices is the list of the 0-based indices (range: 0 - n-1)
                                     # having default equal to 1
@@ -57,10 +57,10 @@ constraints:
 
 # QUBO coefficients
 mu: 
-    one_class: 200
+    one_class: 150
     logic: 150
     monotonicity: 1
-    concentration: 1
+    concentration: 10
     min_thr: 10
     max_thr: 10
 
@@ -75,8 +75,8 @@ test:
     homogeneity: True
 
 # annealer parameters
-shots: 1000000
-reads: 5
+shots: 100000
+reads: 10
 
 # gurobi parameters
 gurobi_n_sol: 20
