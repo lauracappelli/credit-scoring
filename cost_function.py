@@ -126,8 +126,8 @@ def concentration_constr(m, n, mu=1):
     # penalty: "concentration"
     Q = np.zeros([n*m, n*m])
 
-    c = 1/(1-m)
-    gamma = m/(m-1)
+    c = -1/(1-m)
+    gamma = m/((m-1)*n*n)
     
     for i1 in range(n):
         for i2 in range(n):
@@ -236,17 +236,6 @@ def exact_solver(bqm):
 
     return sampleset
 
-def annealer_solver(dim, bqm, reads, shots, n, m):
-
-    # define the initial state (all elements = 0 or random elements)
-    state = hybrid.core.State.from_sample({i: 0 for i in range(dim)}, bqm)
-    # state = hybrid.core.State.from_sample({i: np.random.randint(0, 2) for i in range(dim)}, bqm)
-
-    sampler = hybrid.SimulatedAnnealingProblemSampler(num_reads=reads, num_sweeps=shots, beta_range=(0.1, 5.0), beta_schedule_type='geometric')
-    sample_set = sampler.run(state).result()
-
-    return sample_set
-
 def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
 
     # define the initial state (all elements = 0 or random elements)
@@ -269,7 +258,7 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     valid_sol = 0
     for i, sample in all_ann_bsm.iterrows():
         bsm = all_ann_bsm.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m)
-        check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), False)
+        check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
 
         if check_constr:
             dataset[f"Ann_rating_{i+1}"] = np.argmax(bsm, axis=1) + 1
@@ -293,8 +282,8 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
         print("--------------")
 
     print(f"\nValid solutions found: {valid_sol}/{config['reads']}")
-    print("\nRating scale:")
-    print(dataset.to_string(index=False))
+    # print("\nRating scale:")
+    # print(dataset.to_string(index=False))
 
 def main():
 
