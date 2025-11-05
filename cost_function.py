@@ -222,13 +222,6 @@ def brute_force_solver(Q, c, dim):
 
     return (np.array(Ymin), Cmin)
 
-def from_matrix_to_bqm(matrix, c):
-    
-    Q_dict = {(i, j): matrix[i, j] for i in range(matrix.shape[0]) for j in range(matrix.shape[1]) if matrix[i, j] != 0}
-    bqm = dimod.BinaryQuadraticModel.from_qubo(Q_dict, c)
-
-    return bqm
-
 def exact_solver(bqm):
     
     sampler = dimod.ExactSolver()
@@ -349,7 +342,7 @@ def main():
     end_time = time.perf_counter_ns()
 
     # generate the BMQ
-    bqm = from_matrix_to_bqm(Q, c)
+    bqm = dimod.BinaryQuadraticModel.from_qubo(Q, c)
 
     print(f"\nThe QUBO problem has {Q.shape[0]} variables")
     print(f"Time spent for the generation: {(end_time - start_time)/10e9} s")
