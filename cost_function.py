@@ -83,21 +83,21 @@ def staircase_constr(m, n, mu=1):
             Q[x3][x4] += 0.5
             Q[x4][x3] += 0.5
 
-        # penalize restarting from class 0
+        # penalize restarting from class 0 (strong penalization --> added *2)
         x1 = ii*m
         x2 = x1+1
         x3 = (ii+1)*m
 
-        Q[x3][x3] += 1
+        Q[x3][x3] += 1 * 2
 
-        Q[x1][x3] -= 0.5
-        Q[x3][x1] -= 0.5
+        Q[x1][x3] -= 0.5 * 2
+        Q[x3][x1] -= 0.5 * 2
 
-        Q[x2][x3] -= 0.5
-        Q[x3][x2] -= 0.5
+        Q[x2][x3] -= 0.5 * 2
+        Q[x3][x2] -= 0.5 * 2
 
-        Q[x1][x2] += 0.5
-        Q[x2][x1] += 0.5
+        Q[x1][x2] += 0.5 * 2
+        Q[x2][x1] += 0.5 * 2
 
     return mu*Q
 
@@ -399,7 +399,7 @@ def main():
     #-------------------------------
     # Solving with annealing
     if config['solvers']['annealing']:
-        annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, False)
+        annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, True)
 
 if __name__ == '__main__':
     main()
