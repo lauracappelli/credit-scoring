@@ -6,27 +6,6 @@ import math
 import time
 import itertools
 
-def first_counterpart_const(m, n, mu=1):
-    # penalty: "first counterpart in first class"
-    Q = np.zeros([n*m, n*m])
-    
-    for jj in range(1, m):
-        Q[jj][jj] += 1
-        Q[0][jj] -= 0.5
-        Q[jj][0] -= 0.5
-    return mu*Q
-
-def last_counterpart_const(m, n, mu=1):
-    # penalty: "last counterpart in the last class"
-    Q = np.zeros([n*m, n*m])
-
-    for jj in range(m-1):
-        tt = (n-1)*m+jj
-        Q[tt][tt] += 1
-        Q[(n*m)-1][tt] -= 0.5
-        Q[tt][(n*m)-1] -= 0.5
-    return mu*Q
-
 def one_class_const(m, n, mu=1):
     # penalty: "one class per counterpart"
     Q = np.zeros([n*m, n*m])
@@ -47,57 +26,73 @@ def one_class_const(m, n, mu=1):
 
 def staircase_constr(m, n, mu=1):
     # penalty: "staircase matrix"
-    Q = first_counterpart_const(m,n) + last_counterpart_const(m,n)
+    Q = np.zeros([n*m, n*m])
+
+    # penalty: "first counterpart in first class"
+    for jj in range(1, m):
+        Q[jj][jj] += 1
+        Q[0][jj] -= 0.5
+        Q[jj][0] -= 0.5
+    
+    # penalty: "last counterpart in the last class"
+    for jj in range(m-1):
+        tt = (n-1)*m+jj
+        Q[tt][tt] += 1
+        Q[(n*m)-1][tt] -= 0.5
+        Q[tt][(n*m)-1] -= 0.5
 
     # penalize not permitted submatrix, where a submatrix is
     # [[x1, x1], [x3, x4]]
     for ii in range(n-1):
-
-        # penalize: [[1 0],[0 0]], [[0 0],[0 1]], [[0 1],[1 0]]
         for jj in range(m-1):
             x1 = ii*m+jj
             x2 = x1+1
             x3 = (ii+1)*m+jj
             x4 = x3+1
 
-            # add linear terms
+            # penalize: [[1 0],[0 0]]
             Q[x1][x1] += 1
-            Q[x4][x4] += 1
-
-            # add quadratic terms
-            Q[x1][x2] += 0.5
-            Q[x2][x1] += 0.5
 
             Q[x1][x3] -= 0.5
             Q[x3][x1] -= 0.5
 
-            Q[x1][x4] -= 1
-            Q[x4][x1] -= 1
+            Q[x1][x4] -= 0.5
+            Q[x4][x1] -= 0.5
+            
+            Q[x3][x4] += 0.5
+            Q[x4][x3] += 0.5
 
-            Q[x2][x3] += 0.5
-            Q[x3][x2] += 0.5
+            # penalize: [[0 0],[0 1]]
+            Q[x4][x4] += 1
+
+            Q[x1][x4] -= 0.5
+            Q[x4][x1] -= 0.5
 
             Q[x2][x4] -= 0.5
             Q[x4][x2] -= 0.5
 
-            Q[x3][x4] += 0.5
-            Q[x4][x3] += 0.5
+            Q[x1][x2] += 0.5
+            Q[x2][x1] += 0.5
 
-        # penalize restarting from class 0 (strong penalization --> added *2)
+            # penalize: [[0 1],[1 0]]
+            Q[x2][x3] += 0.5
+            Q[x3][x2] += 0.5
+
+        # penalize restarting from class 0
         x1 = ii*m
         x2 = x1+1
         x3 = (ii+1)*m
 
-        Q[x3][x3] += 1 * 2
+        Q[x3][x3] += 1
 
-        Q[x1][x3] -= 0.5 * 2
-        Q[x3][x1] -= 0.5 * 2
+        Q[x1][x3] -= 0.5
+        Q[x3][x1] -= 0.5
 
-        Q[x2][x3] -= 0.5 * 2
-        Q[x3][x2] -= 0.5 * 2
+        Q[x2][x3] -= 0.5
+        Q[x3][x2] -= 0.5
 
-        Q[x1][x2] += 0.5 * 2
-        Q[x2][x1] += 0.5 * 2
+        Q[x1][x2] += 0.5
+        Q[x2][x1] += 0.5
 
     return mu*Q
 
@@ -234,6 +229,12 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     # define the initial state (all elements = 0 or random elements)
     state = hybrid.core.State.from_sample({i: 0 for i in range(Q_size)}, bqm)
     # state = hybrid.core.State.from_sample({i: np.random.randint(0, 2) for i in range(Q_size)}, bqm)
+    # starting from a bsm
+    # mystate = generate_staircase_matrix(m, n).flatten()
+    # if len(mystate) < Q_size:
+    #     mystate = np.concatenate([mystate, np.zeros(Q_size-len(mystate))])
+    # state = hybrid.core.State.from_sample({i: int(mystate[i]) for i in range(Q_size)}, bqm)
+
 
     # Solve the problem with the annealer simulator
     start_time = time.perf_counter_ns()
