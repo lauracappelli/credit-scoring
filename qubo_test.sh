@@ -22,8 +22,8 @@ while IFS=";" read -r n m def1 def2 def3 sweeps; do
         # mu_logic=$((n * m * 10))
         # mu_1c=$((n * m * 10))
         mu_logic=$(((n * m / 2) ** 2 / 2))        
-        if (( mu_logic >= 1300 )); then
-            mu_logic=1300
+        if (( mu_logic >= 15000 )); then
+            mu_logic=15000
         fi
         mu_1c=$mu_logic
         mu_mon=$((def_number * 10))
@@ -43,7 +43,7 @@ while IFS=";" read -r n m def1 def2 def3 sweeps; do
         sed -i "78s/.*/shots: $sweeps/" "$config_copy"
 
         echo "n: $n, m: $m, run $((run+1)), default=${default[run]}"
-        python cost_function.py "$config_copy" > "output/qubo_test/test11_${n}_${m}_run${run}.txt" 2>&1 &
+        python cost_function.py "$config_copy" > "output/qubo_test/test11_${n}_${m}_shots${sweeps}_run${run}.txt" 2>&1 &
         # python cost_function.py "$config_copy" > "output/qubo_test/test2_${n}_${m}_shots${shots}_run${run}.txt" 2>&1 &
     done
     wait
