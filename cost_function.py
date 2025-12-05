@@ -24,25 +24,29 @@ def one_class_const(m, n, mu=1):
         c += 1
     return (mu*Q, mu*c)
 
-def staircase_constr(m, n, mu=1):
-    # penalty: "staircase matrix"
+def first_last_class_constr(m, n, mu=1):
+    # penalty: "first counterpart in first class & last counterpart in the last class"
     Q = np.zeros([n*m, n*m])
 
-    # penalty: "first counterpart in first class"
     for jj in range(1, m):
         Q[jj][jj] += 1
         Q[0][jj] -= 0.5
         Q[jj][0] -= 0.5
-    
-    # penalty: "last counterpart in the last class"
+
     for jj in range(m-1):
         tt = (n-1)*m+jj
         Q[tt][tt] += 1
         Q[(n*m)-1][tt] -= 0.5
         Q[tt][(n*m)-1] -= 0.5
 
-    # penalize not permitted submatrix, where a submatrix is
-    # [[x1, x1], [x3, x4]]
+    return mu*Q
+
+def unpermitted_subm_constr(m,n,mu_1=1,mu_2=1,mu_3=1,mu_4=1):
+    # penalty: penalize not permitted submatrix, where a submatrix is
+    # [[x1, x2],
+    #  [x3, x4]]
+    Q = np.zeros([n*m, n*m])
+
     for ii in range(n-1):
         for jj in range(m-1):
             x1 = ii*m+jj
@@ -51,50 +55,69 @@ def staircase_constr(m, n, mu=1):
             x4 = x3+1
 
             # penalize: [[1 0],[0 0]]
-            Q[x1][x1] += 1
-
-            Q[x1][x3] -= 0.5
-            Q[x3][x1] -= 0.5
-
-            Q[x1][x4] -= 0.5
-            Q[x4][x1] -= 0.5
-            
-            Q[x3][x4] += 0.5
-            Q[x4][x3] += 0.5
+            Q[x1][x1] += 1 * mu_1
+            Q[x1][x3] -= 0.5 * mu_1
+            Q[x3][x1] -= 0.5 * mu_1
+            Q[x1][x4] -= 0.5 * mu_1
+            Q[x4][x1] -= 0.5 * mu_1
+            Q[x3][x4] += 0.5 * mu_1
+            Q[x4][x3] += 0.5 * mu_1
 
             # penalize: [[0 0],[0 1]]
-            Q[x4][x4] += 1 *2
-
-            Q[x1][x4] -= 0.5 *2
-            Q[x4][x1] -= 0.5 *2
-
-            Q[x2][x4] -= 0.5 *2 
-            Q[x4][x2] -= 0.5 *2 
-
-            Q[x1][x2] += 0.5 *2 
-            Q[x2][x1] += 0.5 *2
+            Q[x4][x4] += 1 * mu_2
+            Q[x1][x4] -= 0.5 * mu_2
+            Q[x4][x1] -= 0.5 * mu_2
+            Q[x2][x4] -= 0.5 * mu_2 
+            Q[x4][x2] -= 0.5 * mu_2 
+            Q[x1][x2] += 0.5 * mu_2 
+            Q[x2][x1] += 0.5 * mu_2
 
             # penalize: [[0 1],[1 0]]
-            Q[x2][x3] += 0.5
-            Q[x3][x2] += 0.5
+            Q[x2][x3] += 0.5 * mu_3
+            Q[x3][x2] += 0.5 * mu_3
 
         # penalize restarting from class 0
         x1 = ii*m
         x2 = x1+1
         x3 = (ii+1)*m
 
-        Q[x3][x3] += 1 *2
+        Q[x3][x3] += 1 * mu_4
+        Q[x1][x3] -= 0.5 * mu_4
+        Q[x3][x1] -= 0.5 * mu_4
+        Q[x2][x3] -= 0.5 * mu_4
+        Q[x3][x2] -= 0.5 * mu_4
+        Q[x1][x2] += 0.5 * mu_4
+        Q[x2][x1] += 0.5 * mu_4
 
-        Q[x1][x3] -= 0.5 *2
-        Q[x3][x1] -= 0.5 *2
+    return Q
 
-        Q[x2][x3] -= 0.5 *2
-        Q[x3][x2] -= 0.5 *2
+def global_logic_constr(m, n, mu_1=1, mu_2=1):
+    Q = np.zeros([n*m, n*m])
 
-        Q[x1][x2] += 0.5 *2
-        Q[x2][x1] += 0.5 *2
+    # vincolo sulle colonne
+    for ii in range(n-1):
+        for jj in range(m):
+            tt = ii*m+jj
+            Q[tt][tt+m] += -0.5*mu_1
+            Q[tt+m][tt] += -0.5*mu_1
 
-    return mu*Q
+    # vincolo sui cambi di classe
+    for ii in range(n-1):
+        for jj in range(m-1):
+            tt = ii*m+jj
+            Q[tt][tt+m+1] += -0.5*mu_2
+            Q[tt+m+1][tt] += -0.5*mu_2
+
+    return Q
+
+def staircase_constr(m, n, mu_1, mu_2, mu_3, mu_4, mu_5, mu_6, mu_7):
+    Q = np.zeros([n*m, n*m])
+
+    Q = Q + first_last_class_constr(m,n,mu_1)
+    Q = Q + unpermitted_subm_constr(m,n,mu_2,mu_3,mu_4,mu_5)
+    Q = Q + global_logic_constr(m,n,mu_6,mu_7)
+
+    return Q
 
 def monotonicity_constr(m, n, default, mu=1):
     # penalty: "monotonicity"
@@ -304,7 +327,14 @@ def main():
     reads = config['reads']
 
     mu_one_class_constr = config['mu']['one_class']
-    mu_staircase_constr = config['mu']['logic']
+    mu_sc_first_last_class = config['mu']['logic']['first_last_class']
+    mu_sc_subm_1000 = config['mu']['logic']['subm_1000']
+    mu_sc_subm_0001 = config['mu']['logic']['subm_0001']
+    mu_sc_subm_0110 = config['mu']['logic']['subm_0110']
+    mu_sc_restart = config['mu']['logic']['restart']
+    mu_sc_column_one = config['mu']['logic']['column_one']
+    mu_sc_change_class = config['mu']['logic']['change_class']
+
     mu_concentration_constr = config['mu']['concentration']
     mu_min_thr_constr = config['mu']['min_thr']
     mu_max_thr_constr = config['mu']['max_thr']
@@ -321,7 +351,7 @@ def main():
         Q = Q + Q_one_class
         c = c + c_one_class
     if config['constraints']['logic'] == True:
-        Q = Q + staircase_constr(m,n,mu_staircase_constr)
+        Q = Q + staircase_constr(m,n,mu_sc_first_last_class,mu_sc_subm_1000,mu_sc_subm_0001,mu_sc_subm_0110,mu_sc_restart,mu_sc_column_one,mu_sc_change_class)
     if config['constraints']['concentration'] == True:
         (Q_conc,c_conc) = concentration_constr(m, n, mu_concentration_constr)
         Q = Q + Q_conc

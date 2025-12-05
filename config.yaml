@@ -16,14 +16,14 @@ data_source: 'd_conf_input'
 # 7) real_dist:
 # it generates a random default vector with a probability of having d = 1 increasing w. r. t. the index of counterparts
 
-n_counterpart: 8
+n_counterpart: 5
 grades: 3
 
 default_prob: 0.1                   # valid only if data_source: 'random_uniform'
                                     # default_prob is the probability of default (range: 0 - 1) per counterpart
 default_module: 1                   # valid only if data_source: 'random_num_def' (range: 1 - n-2)
                                     # default_module is the number of counterparts in default
-one_indices: [4,7]                  
+one_indices: [4]                  
                                     # valid only if data_source: 'd_conf_input'
                                     # one_indices is the list of the 0-based indices (range: 0 - n-1)
                                     # having default equal to 1
@@ -38,8 +38,8 @@ attributes:                         # select optional attributes from ISP datase
 # solvers
 solvers:
     brute_force: False
-    dwave_exact: False
-    annealing: True
+    dwave_exact: True
+    annealing: False
     gurobi: False
 
 alpha_concentration: 0.05           # range: 0 - 1, threshold of the adjust Herf index
@@ -50,15 +50,22 @@ alpha_homogeneity: 0.05             # range: 0 - 1, threshold of the gaussian pr
 constraints:
     one_class: True
     logic: True
-    monotonicity: True
-    concentration: True
-    min_thr: True
-    max_thr: True
+    monotonicity: False
+    concentration: False
+    min_thr: False
+    max_thr: False
 
 # QUBO coefficients
 mu: 
-    one_class: 150
-    logic: 150
+    one_class: 15
+    logic:
+        first_last_class: 5
+        subm_1000: 5 
+        subm_0001: 5 
+        subm_0110: 5 
+        restart: 5 
+        column_one: 5
+        change_class: 5
     monotonicity: 1
     concentration: 10
     min_thr: 10
@@ -67,12 +74,12 @@ mu:
 # constraints to check for each solution
 test:
     logic: True
-    monotonicity: True
-    heterogeneity: True
-    concentration: True
-    min_thr: True
-    max_thr: True
-    homogeneity: True
+    monotonicity: False
+    heterogeneity: False
+    concentration: False
+    min_thr: False
+    max_thr: False
+    homogeneity: False
 
 # annealer parameters
 shots: 100000
