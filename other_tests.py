@@ -8,6 +8,7 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 import gurobipy as gpy
 from gurobipy import GRB
+from gurobi_optimods.qubo import solve_qubo
 import optuna
 
 def check_concentration_approx(matrix, verbose=False):
@@ -34,7 +35,10 @@ def test_submatrix_penalties():
         print(f"a={a}, b={b}, c={c}, d={d}")
     return
 
-def gurobi_solver(config, matrix, c, default):
+def gurobiop_solver(matrix, m, n):
+    return solve_qubo(matrix)
+
+def gurobipy_solver(config, matrix, c, default):
 
     m = config['grades']
     n = config['n_counterpart']

@@ -400,9 +400,36 @@ def main():
     #-------------------------------
     # Solving with Gurobi
     if config['solvers']['gurobi']:
-        from other_tests import gurobi_solver
+        from other_tests import gurobiop_solver, gurobipy_solver
         print("\nRESULTS OBTAINED THROUGH THE GUROBI SOLVER")
-        gurobi_solver(config, Q, c, default)
+        start_time = time.perf_counter_ns()
+        gurobi_result = gurobiop_solver(Q, m, n)
+        # gurobipy_solver(config, Q, c, default)
+        end_time = time.perf_counter_ns()
+
+        energy = gurobi_result.objective_value
+        solution = gurobi_result.solution[:n*m].reshape(n,m).astype(int)
+
+        print(f"\nTime to compute the solution: {(end_time-start_time)/10e9} s")
+        print(f"Energy: {energy}")
+        print(f"Result matrix: \n{solution}")
+
+        check_constr = test_one_solution(solution, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
+        if check_constr:
+            dataset[f"Gurobi_rating"] = np.argmax(solution, axis=1) + 1
+            grad_cardinality = np.sum(solution, axis=0)
+            num_of_default = np.sum(solution*default, axis=0)
+            stats = pd.DataFrame({
+                "Grade ID": range(1, m+1),
+                "Cardinality": grad_cardinality,
+                "Defaults": num_of_default,
+                "Default rate": num_of_default / grad_cardinality
+            })
+
+
+        print(f"The solution is correct: {check_constr}")
+        if check_constr:
+            print(f"Statistics:\n{stats}")
 
     #-------------------------------
 
