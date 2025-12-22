@@ -36,7 +36,7 @@ def test_submatrix_penalties():
     return
 
 def gurobiop_solver(matrix, m, n):
-    return solve_qubo(matrix)
+    return solve_qubo(matrix, time_limit=180)
 
 def gurobipy_solver(config, matrix, c, default):
 
