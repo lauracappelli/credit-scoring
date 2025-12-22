@@ -345,6 +345,6 @@ def test_one_solution(matrix, config, n, grades, default, max_thr, min_thr, verb
     end_time = time.perf_counter_ns()
     
     if verbose:
-        print(f"Test time: {(end_time-start_time)/10e9} s")
+        print(f"Test time: {(end_time-start_time)/1e9} s")
 
     return flag

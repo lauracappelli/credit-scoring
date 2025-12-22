@@ -267,7 +267,7 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     
     # Collect results
     print("\nRESULTS OBTAINED THROUGH THE SIMULATING ANNEALER SOLVER")
-    print(f"\nTime to compute the solution: {(end_time - start_time)/10e9} s\n")
+    print(f"\nTime to compute the solution: {(end_time - start_time)/1e9} s\n")
     
     all_ann_bsm = annealing_result.samples.to_pandas_dataframe()
     # best_ann_bsm = np.array([int(x) for x in annealing_result.samples.first.sample.values()])[:m*n].reshape(n, m) 
@@ -376,7 +376,7 @@ def main():
     bqm = dimod.BinaryQuadraticModel.from_qubo(Q, c)
 
     print(f"\nThe QUBO problem has {Q.shape[0]} variables")
-    print(f"Time spent for the generation: {(end_time - start_time)/10e9} s")
+    print(f"Time spent for the generation: {(end_time - start_time)/1e9} s")
 
     #-------------------------------
 
@@ -390,7 +390,7 @@ def main():
         print("\nRESULTS OBTAINED THROUGH THE BRUTE FORCE SOLVER")
         print(f"\nBinary staircase matrix:")
         print(result_bf.reshape(n,m))
-        print(f"\nTime of solution: {(end_time - start_time)/10e9} s\n")
+        print(f"\nTime of solution: {(end_time - start_time)/1e9} s\n")
         
         # Add brute force solution to the dataset
         dataset["Brute_force_rating"] = np.argmax(result_bf.reshape(n,m), axis=1) + 1
@@ -410,7 +410,7 @@ def main():
         energy = gurobi_result.objective_value
         solution = gurobi_result.solution[:n*m].reshape(n,m).astype(int)
 
-        print(f"\nTime to compute the solution: {(end_time-start_time)/10e9} s")
+        print(f"\nTime to compute the solution: {(end_time-start_time)/1e9} s")
         print(f"Energy: {energy}")
         print(f"Result matrix: \n{solution}")
 
@@ -447,7 +447,7 @@ def main():
         for i, sol in enumerate(result_exact_solver[:]):
             print(f"solution {i+1}:\n{sol.reshape(n, m)}")
 
-        print(f"\nTime to compute all exact solutions: {elapsed_time_ns/10e9} s")
+        print(f"\nTime to compute all exact solutions: {elapsed_time_ns/1e9} s")
 
         # Add the first solution to the dataset
         dataset["DWave_Brute_force_rating"] = np.argmax(result_exact_solver[0].reshape(n,m), axis=1) + 1

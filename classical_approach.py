@@ -91,7 +91,7 @@ def main():
 
     end_time = time.perf_counter_ns()
 
-    print(f"Number of solutions: {len(valid_solutions)} - Time {(end_time-start_time)/10e9} s\n")
+    print(f"Number of solutions: {len(valid_solutions)} - Time {(end_time-start_time)/1e9} s\n")
     if len(valid_solutions) > 0:
         sol_to_print = random.sample(valid_solutions, min(3, len(valid_solutions)))
         for i, partition in enumerate(sol_to_print):
