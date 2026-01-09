@@ -63,6 +63,7 @@ def gurobipy_solver(config, matrix, c, default):
     # Setting solver parameters
     qubo_model.setParam("OutputFlag", 1) # verbosity
     qubo_model.setParam("Seed", 0)  # fix seed
+    qubo_model.setParam("TimeLimit", 300.0)
     # qubo_model.setParam("TimeLimit", timelimit)
     
     # Search more than 1 solution
