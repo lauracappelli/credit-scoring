@@ -28,18 +28,11 @@ def first_last_class_constr(m, n, mu=1):
     # penalty: "first counterpart in first class & last counterpart in the last class"
     Q = np.zeros([n*m, n*m])
 
-    for jj in range(1, m):
-        Q[jj][jj] += 1
-        Q[0][jj] -= 0.5
-        Q[jj][0] -= 0.5
+    Q[0,0] = -1
+    Q[-1,-1] = -1
+    c = 2
 
-    for jj in range(m-1):
-        tt = (n-1)*m+jj
-        Q[tt][tt] += 1
-        Q[(n*m)-1][tt] -= 0.5
-        Q[tt][(n*m)-1] -= 0.5
-
-    return mu*Q
+    return (mu*Q, mu*c)
 
 def unpermitted_subm_constr(m,n,mu_1=1,mu_2=1,mu_3=1,mu_4=1):
     # penalty: penalize not permitted submatrix, where a submatrix is
@@ -112,12 +105,13 @@ def global_logic_constr(m, n, mu_1=1, mu_2=1):
 
 def staircase_constr(m, n, mu_1, mu_2, mu_3, mu_4, mu_5, mu_6, mu_7):
     Q = np.zeros([n*m, n*m])
-
-    Q = Q + first_last_class_constr(m,n,mu_1)
+    
+    (Q1, c1) = first_last_class_constr(m,n,mu_1)
+    Q = Q + Q1
     Q = Q + unpermitted_subm_constr(m,n,mu_2,mu_3,mu_4,mu_5)
     Q = Q + global_logic_constr(m,n,mu_6,mu_7)
 
-    return Q
+    return (Q,c1)
 
 def monotonicity_constr(m, n, default, mu=1):
     # penalty: "monotonicity"
@@ -351,7 +345,9 @@ def main():
         Q = Q + Q_one_class
         c = c + c_one_class
     if config['constraints']['logic'] == True:
-        Q = Q + staircase_constr(m,n,mu_sc_first_last_class,mu_sc_subm_1000,mu_sc_subm_0001,mu_sc_subm_0110,mu_sc_restart,mu_sc_column_one,mu_sc_change_class)
+        (Q_logic,c_logic) = staircase_constr(m,n,mu_sc_first_last_class,mu_sc_subm_1000,mu_sc_subm_0001,mu_sc_subm_0110,mu_sc_restart,mu_sc_column_one,mu_sc_change_class)
+        Q = Q + Q_logic
+        c = c + c_logic
     if config['constraints']['concentration'] == True:
         (Q_conc,c_conc) = concentration_constr(m, n, mu_concentration_constr)
         Q = Q + Q_conc
