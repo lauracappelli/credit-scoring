@@ -1,0 +1,63 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 70
+ - grades: 6
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [50, 59, 66, 67, 69]
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': True, 'gurobi': False}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': True, 'logic': True, 'monotonicity': True, 'concentration': True, 'min_thr': True, 'max_thr': True}
+ - mu: {'one_class': 264, 'logic': 264, 'monotonicity': 10, 'concentration': 30, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 10000
+ - reads: 10
+ - gurobi_n_sol: 20
+ - gurobi_fidelity: 1
+
+SELECTED INSTANCE:
+Number of counterparts:  70
+Number of grades:  6
+The number of default is 5
+Dataset:
+    counterpart_id     score  default
+0               21 -7.112192        0
+1               61 -6.545157        0
+2               28 -6.544186        0
+3               22 -6.402523        0
+4               17 -6.399959        0
+..             ...       ...      ...
+65              46 -1.609037        0
+66               6 -1.041979        1
+67              27 -1.033327        1
+68              66 -0.391809        0
+69              60 -0.381161        1
+
+[70 rows x 3 columns]
+
+Number of counterpars not sufficient for homogeneity and heterogeneity constraints.
+These two tests won't be performed.
+
+
+Testing 11238513 combinations...
+
+Number of solutions: 1092498 - Time 10518.4265257609 s
+
+    counterpart_id     score  default  sol_1  sol_2  sol_3
+20              21 -7.112192        0      1      1      1
+60              61 -6.545157        0      1      1      1
+27              28 -6.544186        0      1      1      1
+21              22 -6.402523        0      1      1      1
+16              17 -6.399959        0      1      1      1
+..             ...       ...      ...    ...    ...    ...
+45              46 -1.609037        0      6      6      6
+5                6 -1.041979        1      6      6      6
+26              27 -1.033327        1      6      6      6
+65              66 -0.391809        0      6      6      6
+59              60 -0.381161        1      6      6      6
+
+[70 rows x 6 columns]

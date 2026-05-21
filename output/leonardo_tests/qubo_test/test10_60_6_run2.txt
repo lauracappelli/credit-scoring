@@ -1,0 +1,847 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 60
+ - grades: 6
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [45, 50, 57, 59]
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': True, 'gurobi': False}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': True, 'logic': True, 'monotonicity': True, 'concentration': True, 'min_thr': True, 'max_thr': True}
+ - mu: {'one_class': 1300, 'logic': 1300, 'monotonicity': 20, 'concentration': 100, 'min_thr': 50, 'max_thr': 50}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 1000000
+ - reads: 10
+ - gurobi_n_sol: 20
+ - gurobi_fidelity: 1
+
+SELECTED INSTANCE:
+Number of counterparts:  60
+Number of grades:  6
+The number of defaults is 4
+Dataset:
+    counterpart_id     score  default
+0               33 -7.946060        0
+1                1 -7.465371        0
+2               52 -7.215661        0
+3               31 -7.034209        0
+4                3 -6.092984        0
+5               58 -5.875828        0
+6               27 -5.868838        0
+7               10 -5.827416        0
+8               37 -5.818740        0
+9               15 -5.589784        0
+10              46 -5.540585        0
+11              51 -5.472625        0
+12              11 -5.270611        0
+13              32 -5.203360        0
+14              28 -5.143612        0
+15               9 -4.963763        0
+16              23 -4.819618        0
+17              41 -4.802653        0
+18              34 -4.490253        0
+19              29 -4.400245        0
+20               4 -4.370711        0
+21              47 -4.364425        0
+22              16 -4.362960        0
+23              40 -4.304847        0
+24              24 -4.195475        0
+25              48 -4.046012        0
+26              50 -4.043743        0
+27               6 -4.039505        0
+28               5 -4.037918        0
+29              13 -4.018488        0
+30               7 -4.016752        0
+31              57 -4.016043        0
+32              19 -3.947338        0
+33              36 -3.885215        0
+34              20 -3.858350        0
+35              43 -3.754773        0
+36              42 -3.746576        0
+37              12 -3.742803        0
+38              38 -3.609058        0
+39              45 -3.462685        0
+40              25 -3.437627        0
+41              59 -3.370829        0
+42              55 -3.249675        0
+43              18 -3.236884        0
+44              26 -3.221497        0
+45              14 -3.192016        1
+46              21 -3.054861        0
+47              22 -2.866637        0
+48               2 -2.626352        0
+49              56 -2.561249        0
+50              53 -2.501597        1
+51              17 -2.449288        0
+52               8 -2.440443        0
+53              44 -2.414380        0
+54              60 -2.076934        0
+55              49 -1.989565        0
+56              35 -1.879007        0
+57              54 -1.824836        1
+58              30 -1.079541        0
+59              39 -1.047677        1
+
+The QUBO problem has 432 variables
+Time spent for the generation: 0.0063732172 s
+
+RESULTS OBTAINED THROUGH THE SIMULATING ANNEALER SOLVER
+
+Time to compute the solution: 19.7989993993 s
+
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0006891317 s
+Solution 1:
+Energy: 579760.2666659551
+The solution is correct: False
+Result matrix: 
+[[1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 1 0 0]
+ [0 0 0 1 1 0]
+ [0 0 0 0 1 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0007082129 s
+Solution 2:
+Energy: 581820.0666659558
+The solution is correct: False
+Result matrix: 
+[[1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000672613 s
+Solution 3:
+Energy: 580060.0666659558
+The solution is correct: False
+Result matrix: 
+[[1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0006729739 s
+Solution 4:
+Energy: 580080.0666659558
+The solution is correct: False
+Result matrix: 
+[[1 0 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 0 1]
+ [0 1 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0006607669 s
+Solution 5:
+Energy: 580498.7666659532
+The solution is correct: False
+Result matrix: 
+[[1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 0 1]
+ [1 0 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 1 0 0]
+ [0 0 0 1 1 0]
+ [0 0 0 0 1 0]
+ [0 0 0 0 1 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0006706739 s
+Solution 6:
+Energy: 578880.1333326222
+The solution is correct: False
+Result matrix: 
+[[1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0007113315 s
+Solution 7:
+Energy: 582358.8333326196
+The solution is correct: False
+Result matrix: 
+[[1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 1 0 0]
+ [0 0 0 1 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 1 0 0]
+ [0 0 0 1 1 0]
+ [0 0 0 0 1 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0006696016 s
+Solution 8:
+Energy: 580480.0666659558
+The solution is correct: False
+Result matrix: 
+[[1 0 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0007043425 s
+Solution 9:
+Energy: 579238.7666659532
+The solution is correct: False
+Result matrix: 
+[[1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 1 0 0]
+ [0 0 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 1 0 0]
+ [0 0 0 1 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0006605711 s
+Solution 10:
+Energy: 580040.0666659558
+The solution is correct: False
+Result matrix: 
+[[1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 1 1 0 0]
+ [0 0 0 1 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 0 1 0 1 0]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 1 0 1 0 0]
+ [0 1 0 1 0 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 1 0 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [1 0 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 1 0 0]
+ [0 0 0 1 1 0]
+ [0 1 0 0 1 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 1 0 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 1 0 0 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 1]]
+--------------
+
+Valid solutions found: 0/10

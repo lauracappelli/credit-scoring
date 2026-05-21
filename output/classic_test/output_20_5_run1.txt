@@ -1,0 +1,78 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 20
+ - grades: 5
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [15, 19]
+ - gen_conf: True
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': False, 'logic': False, 'monotonicity': True, 'concentration': False, 'min_thr': False, 'max_thr': False}
+ - mu: {'one_class': 200, 'logic': 150, 'monotonicity': 1, 'concentration': 1, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 1000000
+ - reads: 5
+ - gurobi_n_sol: 20
+ - gurobi_fidelity: 1
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': False, 'gurobi': False}
+
+SELECTED INSTANCE:
+Number of counterparts:  20
+Number of grades:  5
+The number of default is 2
+Dataset:
+    counterpart_id     score  default
+0                9 -5.502155        0
+1                3 -5.321750        0
+2               16 -4.959264        0
+3                2 -4.923433        0
+4               19 -4.724109        0
+5               17 -4.309809        0
+6               20 -4.139211        0
+7               13 -3.922441        0
+8               10 -3.656678        0
+9               12 -3.385539        0
+10               8 -3.366860        0
+11              14 -3.307688        0
+12               7 -3.183303        0
+13               1 -3.058456        0
+14              15 -2.836691        0
+15              18 -2.831410        1
+16               5 -2.737814        0
+17               6 -2.402483        0
+18               4 -2.309857        0
+19              11 -1.459647        1
+
+Number of counterpars not sufficient for homogeneity and heterogeneity constraints.
+These two tests won't be performed.
+
+
+Testing 3876 combinations...
+
+Number of solutions: 575 - Time 0.2905104594 s
+
+    counterpart_id     score  default  sol_1  sol_2  sol_3
+8                9 -5.502155        0      1      1      1
+2                3 -5.321750        0      1      1      1
+15              16 -4.959264        0      1      1      1
+1                2 -4.923433        0      2      2      1
+18              19 -4.724109        0      2      2      2
+16              17 -4.309809        0      2      2      2
+19              20 -4.139211        0      3      2      2
+12              13 -3.922441        0      3      2      2
+9               10 -3.656678        0      4      3      2
+11              12 -3.385539        0      4      3      3
+7                8 -3.366860        0      4      3      3
+13              14 -3.307688        0      4      3      3
+6                7 -3.183303        0      4      3      4
+0                1 -3.058456        0      4      4      4
+14              15 -2.836691        0      4      4      4
+17              18 -2.831410        1      5      5      4
+4                5 -2.737814        0      5      5      4
+5                6 -2.402483        0      5      5      4
+3                4 -2.309857        0      5      5      5
+10              11 -1.459647        1      5      5      5

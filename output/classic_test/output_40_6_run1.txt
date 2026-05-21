@@ -1,0 +1,118 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 40
+ - grades: 6
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [36, 39]
+ - gen_conf: True
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': False, 'logic': False, 'monotonicity': True, 'concentration': False, 'min_thr': False, 'max_thr': False}
+ - mu: {'one_class': 200, 'logic': 150, 'monotonicity': 1, 'concentration': 1, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 1000000
+ - reads: 5
+ - gurobi_n_sol: 20
+ - gurobi_fidelity: 1
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': False, 'gurobi': False}
+
+SELECTED INSTANCE:
+Number of counterparts:  40
+Number of grades:  6
+The number of default is 2
+Dataset:
+    counterpart_id     score  default
+0               14 -6.878522        0
+1               11 -6.825597        0
+2               12 -6.604004        0
+3               21 -6.265346        0
+4                2 -5.935519        0
+5               17 -5.687971        0
+6               23 -5.526447        0
+7               37 -5.422645        0
+8               18 -5.194742        0
+9               39 -5.050883        0
+10              38 -4.757002        0
+11              35 -4.642091        0
+12              15 -4.553411        0
+13              20 -4.506861        0
+14              40 -4.441055        0
+15              32 -4.346127        0
+16              22 -4.307193        0
+17              19 -4.108254        0
+18               8 -3.949879        0
+19               6 -3.932588        0
+20              26 -3.854892        0
+21              13 -3.452839        0
+22              10 -3.380295        0
+23              24 -3.367372        0
+24              28 -3.227830        0
+25               1 -3.154928        0
+26              16 -2.967786        0
+27               7 -2.946171        0
+28               4 -2.772164        0
+29              33 -2.618874        0
+30               5 -2.616175        0
+31              29 -2.345101        0
+32              30 -1.853107        0
+33              25 -1.720601        0
+34              27 -1.490937        0
+35              36 -1.379609        0
+36              34 -1.376383        1
+37               9 -0.684413        0
+38               3 -0.511750        0
+39              31  0.732578        1
+
+Number of counterpars not sufficient for homogeneity and heterogeneity constraints.
+These two tests won't be performed.
+
+
+Testing 575757 combinations...
+
+Number of solutions: 74473 - Time 179.4708385552 s
+
+    counterpart_id     score  default  sol_1  sol_2  sol_3
+13              14 -6.878522        0      1      1      1
+10              11 -6.825597        0      1      1      1
+11              12 -6.604004        0      1      1      1
+20              21 -6.265346        0      1      1      1
+1                2 -5.935519        0      1      1      1
+16              17 -5.687971        0      1      1      2
+22              23 -5.526447        0      2      1      2
+36              37 -5.422645        0      2      1      2
+17              18 -5.194742        0      2      1      2
+38              39 -5.050883        0      2      2      2
+37              38 -4.757002        0      2      2      2
+34              35 -4.642091        0      2      2      2
+14              15 -4.553411        0      3      2      3
+19              20 -4.506861        0      3      2      3
+39              40 -4.441055        0      3      2      3
+31              32 -4.346127        0      3      2      3
+21              22 -4.307193        0      3      2      3
+18              19 -4.108254        0      3      2      3
+7                8 -3.949879        0      3      3      3
+5                6 -3.932588        0      4      3      3
+25              26 -3.854892        0      4      4      3
+12              13 -3.452839        0      4      4      4
+9               10 -3.380295        0      4      4      4
+23              24 -3.367372        0      5      4      4
+27              28 -3.227830        0      5      4      4
+0                1 -3.154928        0      5      4      4
+15              16 -2.967786        0      5      4      4
+6                7 -2.946171        0      5      4      4
+3                4 -2.772164        0      5      4      5
+32              33 -2.618874        0      5      5      5
+4                5 -2.616175        0      5      5      5
+28              29 -2.345101        0      6      5      5
+29              30 -1.853107        0      6      5      5
+24              25 -1.720601        0      6      6      5
+26              27 -1.490937        0      6      6      6
+35              36 -1.379609        0      6      6      6
+33              34 -1.376383        1      6      6      6
+8                9 -0.684413        0      6      6      6
+2                3 -0.511750        0      6      6      6
+30              31  0.732578        1      6      6      6

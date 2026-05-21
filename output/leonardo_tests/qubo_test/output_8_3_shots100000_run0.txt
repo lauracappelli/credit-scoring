@@ -1,0 +1,136 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 8
+ - grades: 3
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [7]
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': True, 'gurobi': False}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': True, 'logic': True, 'monotonicity': True, 'concentration': True, 'min_thr': True, 'max_thr': True}
+ - mu: {'one_class': 150, 'logic': 150, 'monotonicity': 1, 'concentration': 10, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 100000
+ - reads: 10
+ - gurobi_n_sol: 20
+ - gurobi_fidelity: 1
+
+SELECTED INSTANCE:
+Number of counterparts:  8
+Number of grades:  3
+The number of defaults is 1
+Dataset:
+   counterpart_id     score  default
+0               5 -5.417942        0
+1               4 -5.139701        0
+2               7 -3.488988        0
+3               8 -3.437356        0
+4               2 -3.243393        0
+5               6 -2.722995        0
+6               3 -2.657565        0
+7               1 -2.035642        1
+
+The QUBO problem has 42 variables
+Time spent for the generation: 0.000120662 s
+
+RESULTS OBTAINED THROUGH THE SIMULATING ANNEALER SOLVER
+
+Time to compute the solution: 0.0749198178 s
+
+Solution 1:
+Energy: 766.0
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            3         0           0.0
+1         2            3         0           0.0
+2         3            2         1           0.5
+--------------
+Solution 2:
+Energy: 766.0
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            2         0      0.000000
+1         2            3         0      0.000000
+2         3            3         1      0.333333
+--------------
+Solution 3:
+Energy: 917.0
+The solution is correct: False
+--------------
+Solution 4:
+Energy: 767.0
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            3         0      0.000000
+1         2            2         0      0.000000
+2         3            3         1      0.333333
+--------------
+Solution 5:
+Energy: 767.0
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            3         0      0.000000
+1         2            2         0      0.000000
+2         3            3         1      0.333333
+--------------
+Solution 6:
+Energy: 766.0
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            2         0      0.000000
+1         2            3         0      0.000000
+2         3            3         1      0.333333
+--------------
+Solution 7:
+Energy: 766.0
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            2         0      0.000000
+1         2            3         0      0.000000
+2         3            3         1      0.333333
+--------------
+Solution 8:
+Energy: 766.0
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            2         0      0.000000
+1         2            3         0      0.000000
+2         3            3         1      0.333333
+--------------
+Solution 9:
+Energy: 766.0
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            2         0      0.000000
+1         2            3         0      0.000000
+2         3            3         1      0.333333
+--------------
+Solution 10:
+Energy: 837.0
+The solution is correct: False
+--------------
+
+Valid solutions found: 8/10
+
+Rating scale:
+ counterpart_id     score  default  Ann_rating_1  Ann_rating_2  Ann_rating_4  Ann_rating_5  Ann_rating_6  Ann_rating_7  Ann_rating_8  Ann_rating_9
+              5 -5.417942        0             1             1             1             1             1             1             1             1
+              4 -5.139701        0             1             1             1             1             1             1             1             1
+              7 -3.488988        0             1             2             1             1             2             2             2             2
+              8 -3.437356        0             2             2             2             2             2             2             2             2
+              2 -3.243393        0             2             2             2             2             2             2             2             2
+              6 -2.722995        0             2             3             3             3             3             3             3             3
+              3 -2.657565        0             3             3             3             3             3             3             3             3
+              1 -2.035642        1             3             3             3             3             3             3             3             3

@@ -1,0 +1,88 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 25
+ - grades: 5
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [19, 24]
+ - gen_conf: True
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': False, 'logic': False, 'monotonicity': True, 'concentration': False, 'min_thr': False, 'max_thr': False}
+ - mu: {'one_class': 200, 'logic': 150, 'monotonicity': 1, 'concentration': 1, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 1000000
+ - reads: 5
+ - gurobi_n_sol: 20
+ - gurobi_fidelity: 1
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': False, 'gurobi': False}
+
+SELECTED INSTANCE:
+Number of counterparts:  25
+Number of grades:  5
+The number of default is 2
+Dataset:
+    counterpart_id     score  default
+0                5 -6.548118        0
+1               25 -5.877345        0
+2               12 -5.534798        0
+3                2 -5.207971        0
+4               15 -5.097656        0
+5                1 -5.088823        0
+6               22 -4.750681        0
+7                6 -4.617355        0
+8               16 -4.503665        0
+9               18 -4.447138        0
+10              19 -4.240147        0
+11              11 -4.205007        0
+12              10 -4.102161        0
+13              21 -4.079591        0
+14               4 -4.067549        0
+15               9 -3.952521        0
+16              20 -3.230035        0
+17              13 -3.217338        0
+18              24 -2.863363        0
+19               7 -2.354303        1
+20               3 -2.346227        0
+21               8 -2.332519        0
+22              17 -2.271041        0
+23              23 -2.171328        0
+24              14 -0.683671        1
+
+Number of counterpars not sufficient for homogeneity and heterogeneity constraints.
+These two tests won't be performed.
+
+
+Testing 10626 combinations...
+
+Number of solutions: 1187 - Time 1.1894486904 s
+
+    counterpart_id     score  default  sol_1  sol_2  sol_3
+4                5 -6.548118        0      1      1      1
+24              25 -5.877345        0      1      1      1
+11              12 -5.534798        0      2      1      1
+1                2 -5.207971        0      2      1      1
+14              15 -5.097656        0      2      1      2
+0                1 -5.088823        0      3      1      2
+21              22 -4.750681        0      3      2      2
+5                6 -4.617355        0      3      2      3
+15              16 -4.503665        0      3      2      3
+17              18 -4.447138        0      3      3      3
+18              19 -4.240147        0      3      3      3
+10              11 -4.205007        0      3      3      3
+9               10 -4.102161        0      3      3      3
+20              21 -4.079591        0      4      3      3
+3                4 -4.067549        0      4      3      3
+8                9 -3.952521        0      4      3      4
+19              20 -3.230035        0      4      4      4
+12              13 -3.217338        0      4      4      4
+23              24 -2.863363        0      4      4      4
+6                7 -2.354303        1      5      4      5
+2                3 -2.346227        0      5      4      5
+7                8 -2.332519        0      5      4      5
+16              17 -2.271041        0      5      5      5
+22              23 -2.171328        0      5      5      5
+13              14 -0.683671        1      5      5      5

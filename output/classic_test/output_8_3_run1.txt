@@ -1,0 +1,54 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 8
+ - grades: 3
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [6]
+ - gen_conf: True
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': False, 'logic': False, 'monotonicity': True, 'concentration': False, 'min_thr': False, 'max_thr': False}
+ - mu: {'one_class': 200, 'logic': 150, 'monotonicity': 1, 'concentration': 1, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 1000000
+ - reads: 5
+ - gurobi_n_sol: 20
+ - gurobi_fidelity: 1
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': False, 'gurobi': False}
+
+SELECTED INSTANCE:
+Number of counterparts:  8
+Number of grades:  3
+The number of default is 1
+Dataset:
+   counterpart_id     score  default
+0               2 -5.197967        0
+1               6 -5.188785        0
+2               5 -4.802731        0
+3               3 -4.734083        0
+4               8 -4.567088        0
+5               4 -4.230080        0
+6               7 -3.991187        1
+7               1 -2.485136        0
+
+Number of counterpars not sufficient for homogeneity and heterogeneity constraints.
+These two tests won't be performed.
+
+
+Testing 21 combinations...
+
+Number of solutions: 3 - Time 0.0001999887 s
+
+   counterpart_id     score  default  sol_1  sol_2  sol_3
+1               2 -5.197967        0      1      1      1
+5               6 -5.188785        0      1      1      1
+4               5 -4.802731        0      1      2      1
+2               3 -4.734083        0      2      2      2
+7               8 -4.567088        0      2      2      2
+3               4 -4.230080        0      2      3      3
+6               7 -3.991187        1      3      3      3
+0               1 -2.485136        0      3      3      3
