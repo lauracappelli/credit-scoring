@@ -10,6 +10,7 @@ import gurobipy as gpy
 from gurobipy import GRB
 from gurobi_optimods.qubo import solve_qubo
 import optuna
+import random
 
 def check_concentration_approx(matrix, verbose=False):
     ones_per_column = np.sum(matrix == 1, axis=0)
@@ -283,6 +284,18 @@ def find_mu_optuna(config, n, m, default):
     study.optimize(objective, n_trials=100)
     return study
 
+def my_def_gen():
+    quarters = [(0, 49), (50, 99), (100, 149), (150, 199)]
+    
+    cardinalities = [0,2,6,12]
+       
+    series = []
+    for (low, high), size in zip(quarters, cardinalities):
+        numbers = random.sample(range(low, high+1), size)
+        series.append(numbers)
+    
+    return series
+
 def main():
 
     config = read_config()
@@ -324,16 +337,20 @@ def main():
     #--------------------------------------
 
     # OPTUNA
-    study = find_mu_optuna(config, n, grades, default)
-    best_value = study.best_value
-    print(study.best_params, best_value)
+    # study = find_mu_optuna(config, n, grades, default)
+    # best_value = study.best_value
+    # print(study.best_params, best_value)
 
-    best_trials = [t for t in study.trials if abs(t.value - best_value) < 1e-9]
+    # best_trials = [t for t in study.trials if abs(t.value - best_value) < 1e-9]
 
-    print(f"\nNumero di configurazioni equivalenti: {len(best_trials)}\n")
+    # print(f"\nNumero di configurazioni equivalenti: {len(best_trials)}\n")
 
-    for i, t in enumerate(best_trials, 1):
-        print(f"Configurazione #{i}: value={t.value}, params={t.params}")
+    # for i, t in enumerate(best_trials, 1):
+    #     print(f"Configurazione #{i}: value={t.value}, params={t.params}")
+
+    for i in range(3):
+        s = my_def_gen()
+        print(f"Serie {i+1}: {s}")
 
 if __name__ == '__main__':
     main()
