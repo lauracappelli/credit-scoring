@@ -6,6 +6,7 @@ import math
 import time
 import itertools
 from dwave.samplers import PathIntegralAnnealingSampler
+from concurrent.futures import ProcessPoolExecutor
 
 def one_class_const(m, n, mu=1):
     # penalty: "one class per counterpart"
@@ -297,31 +298,51 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     # print("\nRating scale:")
     # print(dataset.to_string(index=False))
 
+def reads_chunk(bqm, hp_schedule, hd_schedule, beta, num_reads):
+
+    sampler = PathIntegralAnnealingSampler()
+    
+    return sampler.sample(
+        bqm,
+        beta_schedule_type="custom",
+        Hp_field=hp_schedule,
+        Hd_field=hd_schedule,
+        num_trotters=3,
+        beta=beta,
+        num_reads=num_reads,
+        num_sweeps=None
+    )
+
 def quantum_annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
 
-    sampler = PathIntegralAnnealingSampler()  # or RotorModelAnnealingSampler()
-
+    # set parameters
     S = max(abs(val) for val in itertools.chain(bqm.linear.values(), bqm.quadratic.values()))
     tot_sweeps = config['shots']
     hp_schedule = [i / (tot_sweeps - 1) for i in range(tot_sweeps)]
     hd_schedule = [(10.0 * S) * (1 - (i / (tot_sweeps - 1))) for i in range(tot_sweeps)]
     beta = 20.0 / S
 
+    # compute how many chuncks per core
+    n_core = os.cpu_count()
+    reads_per_core = config['reads'] // n_core
+    residual = config['reads'] % n_core
+    chunks = [reads_per_core] * n_core
+    for i in range(residual):
+        chunks[i] += 1
+    chunks = [c for c in chunks if c > 0]
+    print(f"Using {len(chunks)} core...")
+
     start_time = time.perf_counter_ns()
-
-    sampleset = sampler.sample(
-        bqm,
-        beta_schedule_type="custom",
-        Hp_field=hp_schedule,
-        Hd_field=hd_schedule,
-        num_trotters=2,
-        beta=beta,
-        num_reads=config['reads'],
-        num_sweeps=config['shots']
-    )
-
-    # sampleset = sampler.sample(bqm, beta_schedule_type="custom", Hp_field=[0,1,2,3,4,5,6,7,8,9,10],  Hd_field=[10,9,8,7,6,5,4,3,2,1,0], num_reads=config['reads'], num_sweeps=config['shots'])
-    # sampleset = sampler.sample(bqm, beta_schedule_type="geometric", num_reads=config['reads'], num_sweeps=config['shots'], num_trotters=32, beta=3)   
+    results = []
+    with ProcessPoolExecutor(max_workers=len(chunks)) as executor:
+        for chunk in chunks:
+            f = executor.submit(
+                reads_chunk, 
+                bqm, hp_schedule, hd_schedule, beta, chunk
+            )
+            results.append(f)
+    partial_samplesets = [f.result() for f in results]
+    sampleset = dimod.concatenate(partial_samplesets)
     end_time = time.perf_counter_ns()
 
     # Collect results
