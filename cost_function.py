@@ -35,7 +35,7 @@ def first_last_class_constr(m, n, mu=1):
 
     return (mu*Q, mu*c)
 
-def unpermitted_subm_constr(m,n,mu_1=1,mu_2=1,mu_3=1,mu_4=1):
+def local_logic_constr(m,n,mu_1=1,mu_2=1,mu_3=1,mu_4=1):
     # penalty: penalize not permitted submatrix, where a submatrix is
     # [[x1, x2],
     #  [x3, x4]]
@@ -88,14 +88,14 @@ def unpermitted_subm_constr(m,n,mu_1=1,mu_2=1,mu_3=1,mu_4=1):
 def global_logic_constr(m, n, mu_1=1, mu_2=1):
     Q = np.zeros([n*m, n*m])
 
-    # vincolo sulle colonne
+    # column constraint
     for ii in range(n-1):
         for jj in range(m):
             tt = ii*m+jj
             Q[tt][tt+m] += -0.5*mu_1
             Q[tt+m][tt] += -0.5*mu_1
 
-    # vincolo sui cambi di classe
+    # change class constraint
     for ii in range(n-1):
         for jj in range(m-1):
             tt = ii*m+jj
@@ -104,13 +104,13 @@ def global_logic_constr(m, n, mu_1=1, mu_2=1):
 
     return Q
 
-def staircase_constr(m, n, mu_1, mu_2, mu_3, mu_4, mu_5, mu_6, mu_7):
+def staircase_constr(m, n, mu):
     Q = np.zeros([n*m, n*m])
     
-    (Q1, c1) = first_last_class_constr(m,n,mu_1)
+    (Q1, c1) = first_last_class_constr(m,n,mu['first_last_class'])
     Q = Q + Q1
-    Q = Q + unpermitted_subm_constr(m,n,mu_2,mu_3,mu_4,mu_5)
-    Q = Q + global_logic_constr(m,n,mu_6,mu_7)
+    # Q = Q + local_logic_constr(m,n,mu['subm_1000'],mu['subm_0001'],mu['subm_0110'],mu['restart'])
+    Q = Q + global_logic_constr(m,n,mu['column_one'],mu['change_class'])
 
     return (Q,c1)
 
@@ -367,11 +367,11 @@ def main():
     n = config['n_counterpart']
     m = config['grades']
     default = dataset['default'].to_numpy().reshape(n,1)
-    
+    num_of_default = np.sum(default)
     print("\nSELECTED INSTANCE:")
     print("Number of counterparts: ", n)
     print("Number of grades: ", m)
-    print(f"The number of defaults is {np.sum(default)}")
+    print(f"The number of defaults is {num_of_default}")
     print("Dataset:")
     print(dataset.reset_index(drop=True))
 
@@ -382,19 +382,25 @@ def main():
     shots = config['shots']
     reads = config['reads']
 
-    mu_one_class_constr = config['mu']['one_class']
-    mu_sc_first_last_class = config['mu']['logic']['first_last_class']
-    mu_sc_subm_1000 = config['mu']['logic']['subm_1000']
-    mu_sc_subm_0001 = config['mu']['logic']['subm_0001']
-    mu_sc_subm_0110 = config['mu']['logic']['subm_0110']
-    mu_sc_restart = config['mu']['logic']['restart']
-    mu_sc_column_one = config['mu']['logic']['column_one']
-    mu_sc_change_class = config['mu']['logic']['change_class']
+    # set mu
+    if config['mu_table'] == 'static':
+        mu = config['mu']
 
-    mu_concentration_constr = config['mu']['concentration']
-    mu_min_thr_constr = config['mu']['min_thr']
-    mu_max_thr_constr = config['mu']['max_thr']
-    mu_monotonicity = config['mu']['monotonicity']
+    elif config['mu_table'] == 'generated':
+        mu = {
+            'one_class': pow(n*m, 2),
+            'first_last_class': 5*n*m,
+            'column_one': 40*n*m,
+            'change_class': 40*n*m,
+            'monotonicity': 5*num_of_default,
+            'concentration': 10*(n//m),
+            'min_thr': 5*(n//m),
+            'max_thr': 5*(n//m),
+        }
+
+    print('\nValues of mu:')   
+    for name, value in mu.items():
+        print(f"{name:25s} = {value}")
 
     #-------------------------------
 
@@ -403,28 +409,28 @@ def main():
     Q = np.zeros([m*n, m*n])
     c = 0
     if config['constraints']['one_class'] == True:
-        (Q_one_class,c_one_class) = one_class_const(m,n,mu_one_class_constr)
+        (Q_one_class,c_one_class) = one_class_const(m,n,mu['one_class'])
         Q = Q + Q_one_class
         c = c + c_one_class
     if config['constraints']['logic'] == True:
-        (Q_logic,c_logic) = staircase_constr(m,n,mu_sc_first_last_class,mu_sc_subm_1000,mu_sc_subm_0001,mu_sc_subm_0110,mu_sc_restart,mu_sc_column_one,mu_sc_change_class)
+        (Q_logic,c_logic) = staircase_constr(m,n,mu)
         Q = Q + Q_logic
         c = c + c_logic
     if config['constraints']['concentration'] == True:
-        (Q_conc,c_conc) = concentration_constr(m, n, mu_concentration_constr)
+        (Q_conc,c_conc) = concentration_constr(m, n, mu['concentration'])
         Q = Q + Q_conc
         c = c + c_conc
     if config['constraints']['monotonicity'] == True:
-        (Q_monoton, c_monoton) = monotonicity_constr(m, n, default.T.squeeze(), mu_monotonicity)
+        (Q_monoton, c_monoton) = monotonicity_constr(m, n, default.T.squeeze(), mu['monotonicity'])
         Q = Q + Q_monoton
         c = c + c_monoton
     if config['constraints']['min_thr'] == True:
-        (Q_min_thr, c_min_thr) = threshold_constr(m, n, Q.shape[0], 'min', mu_min_thr_constr)
+        (Q_min_thr, c_min_thr) = threshold_constr(m, n, Q.shape[0], 'min', mu['min_thr'])
         pad = Q_min_thr.shape[0] - Q.shape[0]
         Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_min_thr
         c = c + c_min_thr
     if config['constraints']['max_thr'] == True:
-        (Q_max_thr, c_max_thr) = threshold_constr(m, n, Q.shape[0], 'max', mu_max_thr_constr)
+        (Q_max_thr, c_max_thr) = threshold_constr(m, n, Q.shape[0], 'max', mu['max_thr'])
         pad = Q_max_thr.shape[0] - Q.shape[0]
         Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_max_thr
         c = c + c_max_thr
