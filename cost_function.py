@@ -5,6 +5,7 @@ import hybrid
 import math
 import time
 import itertools
+from dwave.samplers import PathIntegralAnnealingSampler
 
 def one_class_const(m, n, mu=1):
     # penalty: "one class per counterpart"
@@ -296,6 +297,67 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     # print("\nRating scale:")
     # print(dataset.to_string(index=False))
 
+def quantum_annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
+
+    sampler = PathIntegralAnnealingSampler()  # or RotorModelAnnealingSampler()
+
+    S = max(abs(val) for val in itertools.chain(bqm.linear.values(), bqm.quadratic.values()))
+    tot_sweeps = config['shots']
+    hp_schedule = [i / (tot_sweeps - 1) for i in range(tot_sweeps)]
+    hd_schedule = [(10.0 * S) * (1 - (i / (tot_sweeps - 1))) for i in range(tot_sweeps)]
+    beta = 20.0 / S
+
+    start_time = time.perf_counter_ns()
+
+    sampleset = sampler.sample(
+        bqm,
+        beta_schedule_type="custom",
+        Hp_field=hp_schedule,
+        Hd_field=hd_schedule,
+        num_trotters=2,
+        beta=beta,
+        num_reads=config['reads'],
+        num_sweeps=config['shots']
+    )
+
+    # sampleset = sampler.sample(bqm, beta_schedule_type="custom", Hp_field=[0,1,2,3,4,5,6,7,8,9,10],  Hd_field=[10,9,8,7,6,5,4,3,2,1,0], num_reads=config['reads'], num_sweeps=config['shots'])
+    # sampleset = sampler.sample(bqm, beta_schedule_type="geometric", num_reads=config['reads'], num_sweeps=config['shots'], num_trotters=32, beta=3)   
+    end_time = time.perf_counter_ns()
+
+    # Collect results
+    print("\nRESULTS OBTAINED THROUGH THE QUANTUM SIMULATING ANNEALER SOLVER")
+    print(f"\nTime to compute the solution: {(end_time - start_time)/1e9} s\n")
+    
+    all_ann_bsm = sampleset.to_pandas_dataframe()
+    
+    valid_sol = 0
+    for i, sample in all_ann_bsm.iterrows():
+        bsm = all_ann_bsm.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m)
+        check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
+
+        if check_constr:
+            dataset[f"Ann_rating_{i+1}"] = np.argmax(bsm, axis=1) + 1
+            valid_sol = valid_sol+1
+            grad_cardinality = np.sum(bsm, axis=0)
+            num_of_default = np.sum(bsm*default, axis=0)
+            stats = pd.DataFrame({
+                "Grade ID": range(1, m+1),
+                "Cardinality": grad_cardinality,
+                "Defaults": num_of_default,
+                "Default rate": num_of_default / grad_cardinality
+            })
+
+        print(f"Solution {i+1}:")
+        print(f"Energy: {sample.energy}")
+        print(f"The solution is correct: {check_constr}")
+        if check_constr:
+            print(f"Statistics:\n{stats}")
+        if verbose:
+            print(f"Result matrix: \n{bsm}")
+        print("--------------")
+
+    print(f"\nValid solutions found: {valid_sol}/{config['reads']}")
+
 def main():
 
     config = read_config()
@@ -454,6 +516,11 @@ def main():
     # Solving with annealing
     if config['solvers']['annealing']:
         annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, True)
+
+    #-------------------------------
+    # Solving with quantum annealing
+    if config['solvers']['quantum_annealing']:
+        quantum_annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, True)
 
 if __name__ == '__main__':
     main()
