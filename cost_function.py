@@ -320,7 +320,7 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     # print("\nRating scale:")
     # print(dataset.to_string(index=False))
 
-def run_qsa_chunk(bqm, hp_schedule, hd_schedule, beta, num_reads):
+def run_qsa_chunk(bqm, hp_schedule, hd_schedule, beta, num_trott, num_reads):
 
     sampler = PathIntegralAnnealingSampler()
     
@@ -329,7 +329,7 @@ def run_qsa_chunk(bqm, hp_schedule, hd_schedule, beta, num_reads):
         beta_schedule_type="custom",
         Hp_field=hp_schedule,
         Hd_field=hd_schedule,
-        num_trotters=3,
+        num_trotters=num_trott,
         beta=beta,
         num_reads=num_reads,
         num_sweeps=None
@@ -359,7 +359,7 @@ def quantum_annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose
     results = []
     with ProcessPoolExecutor(max_workers=len(chunks)) as executor:
         for chunk in chunks:
-            f = executor.submit(run_qsa_chunk, bqm, hp_schedule, hd_schedule, beta, chunk)
+            f = executor.submit(run_qsa_chunk, bqm, hp_schedule, hd_schedule, beta, config['num_trotters'], chunk)
             results.append(f)
     partial_samplesets = [f.result() for f in results]
     sampleset = dimod.concatenate(partial_samplesets)
@@ -429,10 +429,10 @@ def main():
 
     elif config['mu_table'] == 'generated':
         mu = {
-            'one_class': pow(n*m, 2),
-            'first_last_class': 5*n*m,
-            'column_one': 40*n*m,
-            'change_class': 40*n*m,
+            'one_class': pow(n*m, 2)*3,
+            'first_last_class': 10*n*m,
+            'column_one': 60*n*m,
+            'change_class': 60*n*m,
             'monotonicity': 5*num_of_default,
             'concentration': 10*(n//m),
             'min_thr': 5*(n//m),
