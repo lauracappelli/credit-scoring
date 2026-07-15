@@ -339,11 +339,11 @@ def quantum_annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose
 
     # set parameters
     # bqm.normalize()
-    S = max(abs(val) for val in itertools.chain(bqm.linear.values(), bqm.quadratic.values()))
+    # S = max(abs(val) for val in itertools.chain(bqm.linear.values(), bqm.quadratic.values()))
     tot_sweeps = config['shots']
-    hp_schedule = [i / (tot_sweeps - 1) for i in range(tot_sweeps)]
-    hd_schedule = [(10.0 * S) * (1 - (i / (tot_sweeps - 1))) for i in range(tot_sweeps)]
-    beta = 20.0 / S
+    hp_schedule = [i / (tot_sweeps - 1) for i in range(tot_sweeps)] # grows linearly from ~0 to 1
+    hd_schedule = [1 - (i / (tot_sweeps - 1)) for i in range(tot_sweeps)]
+    beta = 30
 
     # compute how many chuncks per core
     n_core = os.cpu_count()
@@ -429,14 +429,14 @@ def main():
 
     elif config['mu_table'] == 'generated':
         mu = {
-            'one_class': pow(n*m, 2)*3,
-            'first_last_class': 10*n*m,
-            'column_one': 60*n*m,
-            'change_class': 60*n*m,
-            'monotonicity': 5*num_of_default,
-            'concentration': 10*(n//m),
-            'min_thr': 5*(n//m),
-            'max_thr': 5*(n//m),
+            'one_class': n*m*0.75,
+            'first_last_class': n*m*0.05,
+            'column_one': n*m*0.2,
+            'change_class': n*m*0.2,
+            'monotonicity': num_of_default*0.3,
+            'concentration': (n//m)*0.2,
+            'min_thr': (n//m)*0.2,
+            'max_thr': (n//m)*0.2,
         }
 
     print('\nValues of mu:')   
