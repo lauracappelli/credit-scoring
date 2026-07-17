@@ -413,7 +413,7 @@ def main():
     print("Number of counterparts: ", n)
     print("Number of grades: ", m)
     print(f"The number of defaults is {num_of_default}")
-    print("Dataset:")
+    print("\nDataset:")
     print(dataset.reset_index(drop=True))
 
     # set input
@@ -428,20 +428,23 @@ def main():
         mu = config['mu']
 
     elif config['mu_table'] == 'generated':
-        mu = {
-            'one_class': n*m*0.75,
-            'first_last_class': n*m*0.05,
-            'column_one': n*m*0.2,
-            'change_class': n*m*0.2,
-            'monotonicity': num_of_default*0.3,
-            'concentration': (n//m)*0.2,
-            'min_thr': (n//m)*0.2,
-            'max_thr': (n//m)*0.2,
+        mu_formulas = {
+            'one_class': 'n*m*0.75',
+            'first_last_class': 'n*m*0.05',
+            'column_one': 'n*m*0.2',
+            'change_class': 'n*m*0.2',
+            'monotonicity': 'num_of_default*0.3',
+            'concentration': '(n//m)*0.2',
+            'min_thr': '(n//m)*0.2',
+            'max_thr': '(n//m)*0.2',
         }
 
     print('\nValues of mu:')   
-    for name, value in mu.items():
-        print(f"{name:25s} = {value}")
+    mu = {}
+    for name, formula in mu_formulas.items():
+        value = eval(formula)
+        mu[name] = value
+        print(f"{name:20s} = {formula:20s} -> {value}")
 
     #-------------------------------
 
