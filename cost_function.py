@@ -243,6 +243,38 @@ def exact_solver(bqm):
 
     return sampleset
 
+def print_annealing_result(all_ann_bsm, config, n, m, default, dataset, verbose):
+    
+    valid_sol = 0
+    for i, sample in all_ann_bsm.iterrows():
+        bsm = all_ann_bsm.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m)
+        check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
+
+        if check_constr:
+            dataset[f"Ann_rating_{i+1}"] = np.argmax(bsm, axis=1) + 1
+            valid_sol = valid_sol+1
+            grad_cardinality = np.sum(bsm, axis=0)
+            num_of_default = np.sum(bsm*default, axis=0)
+            stats = pd.DataFrame({
+                "Grade ID": range(1, m+1),
+                "Cardinality": grad_cardinality,
+                "Defaults": num_of_default,
+                "Default rate": num_of_default / grad_cardinality
+            })
+
+        print(f"Solution {i+1}:")
+        print(f"Energy: {sample.energy}")
+        print(f"The solution is correct: {check_constr}")
+        if check_constr:
+            print(f"Statistics:\n{stats}")
+        if verbose:
+            print(f"Result matrix: \n{bsm}")
+        print("--------------")
+
+    print(f"\nValid solutions found: {valid_sol}/{config['reads']}")
+    # print("\nRating scale:")
+    # print(dataset.to_string(index=False))
+    
 def run_sa_chunk(bqm, Q_size, num_reads, num_sweeps, seed):
     np.random.seed(seed)
     random.seed(seed)
@@ -290,39 +322,9 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     # Collect results
     print("\nRESULTS OBTAINED THROUGH THE SIMULATING ANNEALER SOLVER")
     print(f"\nTime to compute the solution: {(end_time - start_time)/1e9} s\n")
-    
-    all_ann_bsm = annealing_result.samples.to_pandas_dataframe()
     # best_ann_bsm = np.array([int(x) for x in annealing_result.samples.first.sample.values()])[:m*n].reshape(n, m) 
-
-    valid_sol = 0
-    for i, sample in all_ann_bsm.iterrows():
-        bsm = all_ann_bsm.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m)
-        check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
-
-        if check_constr:
-            dataset[f"Ann_rating_{i+1}"] = np.argmax(bsm, axis=1) + 1
-            valid_sol = valid_sol+1
-            grad_cardinality = np.sum(bsm, axis=0)
-            num_of_default = np.sum(bsm*default, axis=0)
-            stats = pd.DataFrame({
-                "Grade ID": range(1, m+1),
-                "Cardinality": grad_cardinality,
-                "Defaults": num_of_default,
-                "Default rate": num_of_default / grad_cardinality
-            })
-
-        print(f"Solution {i+1}:")
-        print(f"Energy: {sample.energy}")
-        print(f"The solution is correct: {check_constr}")
-        if check_constr:
-            print(f"Statistics:\n{stats}")
-        if verbose:
-            print(f"Result matrix: \n{bsm}")
-        print("--------------")
-
-    print(f"\nValid solutions found: {valid_sol}/{config['reads']}")
-    # print("\nRating scale:")
-    # print(dataset.to_string(index=False))
+    best_ann_bsm = annealing_result.samples.to_pandas_dataframe()
+    print_annealing_result(best_ann_bsm, config, n, m, default, dataset, verbose)
 
 def run_qsa_chunk(bqm, hp_schedule, hd_schedule, beta, num_trott, num_reads, seed):
     np.random.seed(seed)
@@ -378,34 +380,7 @@ def quantum_annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose
     print(f"\nTime to compute the solution: {(end_time - start_time)/1e9} s\n")
     
     all_ann_bsm = sampleset.to_pandas_dataframe()
-    
-    valid_sol = 0
-    for i, sample in all_ann_bsm.iterrows():
-        bsm = all_ann_bsm.iloc[i, :m*n].to_numpy().astype(int).reshape(n, m)
-        check_constr = test_one_solution(bsm, config, n, m, default, compute_upper_thrs(n,m), compute_lower_thrs(n), True)
-
-        if check_constr:
-            dataset[f"Ann_rating_{i+1}"] = np.argmax(bsm, axis=1) + 1
-            valid_sol = valid_sol+1
-            grad_cardinality = np.sum(bsm, axis=0)
-            num_of_default = np.sum(bsm*default, axis=0)
-            stats = pd.DataFrame({
-                "Grade ID": range(1, m+1),
-                "Cardinality": grad_cardinality,
-                "Defaults": num_of_default,
-                "Default rate": num_of_default / grad_cardinality
-            })
-
-        print(f"Solution {i+1}:")
-        print(f"Energy: {sample.energy}")
-        print(f"The solution is correct: {check_constr}")
-        if check_constr:
-            print(f"Statistics:\n{stats}")
-        if verbose:
-            print(f"Result matrix: \n{bsm}")
-        print("--------------")
-
-    print(f"\nValid solutions found: {valid_sol}/{config['reads']}")
+    print_annealing_result(all_ann_bsm, config, n, m, default, dataset, verbose)
 
 def main():
 
