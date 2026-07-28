@@ -346,13 +346,14 @@ def run_qsa_chunk(bqm, hp_schedule, hd_schedule, beta, num_trott, num_reads, see
 
 def quantum_annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
 
-    # set parameters
-    # bqm.normalize()
-    # S = max(abs(val) for val in itertools.chain(bqm.linear.values(), bqm.quadratic.values()))
-    tot_sweeps = config['shots']
-    hp_schedule = [i / (tot_sweeps - 1) for i in range(tot_sweeps)] # grows linearly from ~0 to 1
-    hd_schedule = [1 - (i / (tot_sweeps - 1)) for i in range(tot_sweeps)]
-    beta = 30
+    # computing quantum annealer simulator parameters
+    graph_degree = compute_bqm_stats(bqm)['avg_degree']
+    max_val = max(abs(val) for val in itertools.chain(bqm.linear.values(), bqm.quadratic.values()))
+    sweeps = config['shots']
+    beta = 25
+    init_state = np.pad(generate_staircase_matrix(m, n).ravel(), (0, max(0, Q_size-(n*m))), mode='constant', constant_values=0)
+    hp_schedule = [i / (sweeps - 1) for i in range(sweeps)]
+    hd_schedule = [1 - val for val in hp_schedule]
 
     # compute how many chuncks per core
     n_core = os.cpu_count()
