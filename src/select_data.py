@@ -204,3 +204,22 @@ def gen_random_Q(size, c):
     bqm = BinaryQuadraticModel.from_qubo(Q_dict, c)
 
     return bqm
+
+def compute_bqm_stats(bqm):
+    N = bqm.num_variables
+    E = bqm.num_interactions
+
+    degree = {v: len(neighbors) for v, neighbors in bqm.adj.items()}
+
+    avg_degree = (2.0 * E) / N
+    density = (2.0 * E) / (N * (N - 1))
+    
+    return {
+        "num_variables": N,
+        "num_interactions": E,
+        "avg_degree": avg_degree,
+        "density_percent": density * 100,
+        "max_degree": max(degree.values()),
+        "min_degree": min(degree.values()),
+        "degree_per_vars": degree
+    }
