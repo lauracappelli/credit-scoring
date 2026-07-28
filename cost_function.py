@@ -243,8 +243,9 @@ def exact_solver(bqm):
 
     return sampleset
 
-def run_sa_chunk(bqm, Q_size, num_reads, num_sweeps):
-
+def run_sa_chunk(bqm, Q_size, num_reads, num_sweeps, seed):
+    np.random.seed(seed)
+    random.seed(seed)
     state = hybrid.core.State.from_sample({i: 0 for i in range(Q_size)}, bqm)
     sampler = hybrid.SimulatedAnnealingProblemSampler(num_reads=num_reads, num_sweeps=num_sweeps)
     result_state = sampler.run(state).result()
@@ -271,10 +272,13 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     print(f"\nComputing using {len(chunks)} core...")
 
     start_time = time.perf_counter_ns()
+    # sampler = hybrid.SimulatedAnnealingProblemSampler(num_reads=config['reads'], num_sweeps=config['shots'])
+    # annealing_result = sampler.run(state).result()
     futures = []
     with ProcessPoolExecutor(max_workers=len(chunks)) as executor:
-        for chunk_reads in chunks:
-            f = executor.submit(run_sa_chunk, bqm, Q_size, chunk_reads, config["shots"])
+        for idx, chunk_reads in enumerate(chunks):
+            chunk_seed = idx
+            f = executor.submit(run_sa_chunk, bqm, Q_size, chunk_reads, config["shots"], chunk_seed)
             futures.append(f)
 
     partial_samplesets = [f.result() for f in futures]
@@ -320,7 +324,9 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     # print("\nRating scale:")
     # print(dataset.to_string(index=False))
 
-def run_qsa_chunk(bqm, hp_schedule, hd_schedule, beta, num_trott, num_reads):
+def run_qsa_chunk(bqm, hp_schedule, hd_schedule, beta, num_trott, num_reads, seed):
+    np.random.seed(seed)
+    random.seed(seed)
 
     sampler = PathIntegralAnnealingSampler()
     
@@ -333,6 +339,7 @@ def run_qsa_chunk(bqm, hp_schedule, hd_schedule, beta, num_trott, num_reads):
         beta=beta,
         num_reads=num_reads,
         num_sweeps=None
+        # initial_states={i: int(val) for i, val in enumerate(bsm)}  #{i: 0 for i in range(Q_size)}, {i: np.random.randint(0, 2) for i in range(Q_size)}, {i: val for i, val in enumerate(bsm)}
     )
 
 def quantum_annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
@@ -358,8 +365,9 @@ def quantum_annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose
     start_time = time.perf_counter_ns()
     results = []
     with ProcessPoolExecutor(max_workers=len(chunks)) as executor:
-        for chunk in chunks:
-            f = executor.submit(run_qsa_chunk, bqm, hp_schedule, hd_schedule, beta, config['num_trotters'], chunk)
+        for idx, chunk_reads in enumerate(chunks):
+            chunk_seed = idx
+            f = executor.submit(run_qsa_chunk, bqm, hp_schedule, hd_schedule, beta, config['num_trotters'], chunk_reads, chunk_seed)
             results.append(f)
     partial_samplesets = [f.result() for f in results]
     sampleset = dimod.concatenate(partial_samplesets)
