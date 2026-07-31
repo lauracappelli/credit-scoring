@@ -275,10 +275,9 @@ def print_annealing_result(all_ann_bsm, config, n, m, default, dataset, verbose)
     # print("\nRating scale:")
     # print(dataset.to_string(index=False))
     
-def run_sa_chunk(bqm, Q_size, num_reads, num_sweeps, seed):
+def run_sa_chunk(bqm, Q_size, num_reads, num_sweeps, seed, state):
     np.random.seed(seed)
     random.seed(seed)
-    state = hybrid.core.State.from_sample({i: 0 for i in range(Q_size)}, bqm)
     sampler = hybrid.SimulatedAnnealingProblemSampler(num_reads=num_reads, num_sweeps=num_sweeps)
     result_state = sampler.run(state).result()
     return result_state.samples
@@ -295,6 +294,7 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     # state = hybrid.core.State.from_sample({i: int(mystate[i]) for i in range(Q_size)}, bqm)
 
     n_core = os.cpu_count()
+    n_core = 10
     reads_per_core = config['reads'] // n_core
     residual = config['reads'] % n_core
     chunks = [reads_per_core] * n_core
@@ -310,7 +310,7 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     with ProcessPoolExecutor(max_workers=len(chunks)) as executor:
         for idx, chunk_reads in enumerate(chunks):
             chunk_seed = idx
-            f = executor.submit(run_sa_chunk, bqm, Q_size, chunk_reads, config["shots"], chunk_seed)
+            f = executor.submit(run_sa_chunk, bqm, Q_size, chunk_reads, config["shots"], chunk_seed, state)
             futures.append(f)
 
     partial_samplesets = [f.result() for f in futures]
@@ -347,16 +347,15 @@ def run_qsa_chunk(bqm, hp_schedule, hd_schedule, beta, num_trott, num_reads, see
 def quantum_annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
 
     # computing quantum annealer simulator parameters
-    graph_degree = compute_bqm_stats(bqm)['avg_degree']
-    max_val = max(abs(val) for val in itertools.chain(bqm.linear.values(), bqm.quadratic.values()))
+    # init_state = np.pad(generate_staircase_matrix(m, n).ravel(), (0, max(0, Q_size-(n*m))), mode='constant', constant_values=0)
     sweeps = config['shots']
     beta = 25
-    init_state = np.pad(generate_staircase_matrix(m, n).ravel(), (0, max(0, Q_size-(n*m))), mode='constant', constant_values=0)
     hp_schedule = [i / (sweeps - 1) for i in range(sweeps)]
     hd_schedule = [1 - val for val in hp_schedule]
 
     # compute how many chuncks per core
-    n_core = os.cpu_count()
+    # n_core = os.cpu_count()
+    n_core = 10
     reads_per_core = config['reads'] // n_core
     residual = config['reads'] % n_core
     chunks = [reads_per_core] * n_core
@@ -411,7 +410,7 @@ def main():
     if config['mu_table'] == 'static':
         mu = config['mu']
 
-    elif config['mu_table'] == 'generated':
+    elif config['mu_table'] == 'small':
         mu_formulas = {
             'one_class': 'n*m*0.75',
             'first_last_class': 'n*m*0.05',
@@ -420,9 +419,33 @@ def main():
             'monotonicity': 'num_of_default*0.3',
             'concentration': '(n//m)*0.2',
             'min_thr': '(n//m)*0.2',
-            'max_thr': '(n//m)*0.2',
+            'max_thr': '(n//m)*0.2'
         }
-
+    
+    elif config['mu_table'] == 'medium':
+        mu_formulas = {
+            'one_class': 'n*m*0.6',
+            'first_last_class': 'n*m*0.05',
+            'column_one': 'n*m*0.2',
+            'change_class': 'n*m*0.2',
+            'monotonicity': 'num_of_default*0.15',
+            'concentration': '(n//m)*0.2',
+            'min_thr': '(n//m)*0.1',
+            'max_thr': '(n//m)*0.1'
+        }
+    
+    elif config['mu_table'] == 'generated':
+        mu_formulas = {
+            'one_class': 'int(n*m*0.45)',
+            'first_last_class': 'int(n*m*0.03)',
+            'column_one': 'int(n*m*0.18)',
+            'change_class': 'int(n*m*0.18)',
+            'monotonicity': 'num_of_default*0.05',
+            'concentration': '(n//m)*0.5',
+            'min_thr': '(n//m)*0.01',
+            'max_thr': '(n//m)*0.01'
+        }
+    
     print('\nValues of mu:')   
     mu = {}
     for name, formula in mu_formulas.items():
@@ -549,12 +572,12 @@ def main():
     #-------------------------------
     # Solving with annealing
     if config['solvers']['annealing']:
-        annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, True)
+        annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, False)
 
     #-------------------------------
     # Solving with quantum annealing
     if config['solvers']['quantum_annealing']:
-        quantum_annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, True)
+        quantum_annealer_solver(config, n, m, default, dataset, Q.shape[0], bqm, False)
 
 if __name__ == '__main__':
     main()
