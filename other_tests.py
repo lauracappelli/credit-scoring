@@ -225,31 +225,33 @@ def from_random_to_databse(config, default):
 
     return result
 
-def find_sol_annealing(config, default, n, m, mu_one_class, mu_sc_first_last_class, mu_sc_subm_1000, mu_sc_subm_0001, mu_sc_subm_0110, mu_sc_restart, mu_sc_column_one, mu_sc_change_class, mu_mon, mu_conc, mu_thr):
+def find_sol_annealing(config, default, n, m, mu):
 
     Q = np.zeros([m*n, m*n])
     c = 0
     if config['constraints']['one_class'] == True:
-        (Q_one_class,c_one_class) = one_class_const(m,n,mu_one_class)
+        (Q_one_class,c_one_class) = one_class_const(m,n,mu['one_class'])
         Q = Q + Q_one_class
         c = c + c_one_class
     if config['constraints']['logic'] == True:
-        Q = Q + staircase_constr(m,n,mu_sc_first_last_class,mu_sc_subm_1000,mu_sc_subm_0001,mu_sc_subm_0110,mu_sc_restart,mu_sc_column_one,mu_sc_change_class)
+        (Q_logic,c_logic) = staircase_constr(m,n,mu)
+        Q = Q + Q_logic
+        c = c + c_logic
     if config['constraints']['concentration'] == True:
-        (Q_conc,c_conc) = concentration_constr(m, n, mu_conc)
+        (Q_conc,c_conc) = concentration_constr(m, n, mu['concentration'])
         Q = Q + Q_conc
         c = c + c_conc
     if config['constraints']['monotonicity'] == True:
-        (Q_monoton, c_monoton) = monotonicity_constr(m, n, default.T.squeeze(), mu_mon)
+        (Q_monoton, c_monoton) = monotonicity_constr(m, n, default.T.squeeze(), mu['monotonicity'])
         Q = Q + Q_monoton
         c = c + c_monoton
     if config['constraints']['min_thr'] == True:
-        (Q_min_thr, c_min_thr) = threshold_constr(m, n, Q.shape[0], 'min', mu_thr)
+        (Q_min_thr, c_min_thr) = threshold_constr(m, n, Q.shape[0], 'min', mu['mu_thr'])
         pad = Q_min_thr.shape[0] - Q.shape[0]
         Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_min_thr
         c = c + c_min_thr
     if config['constraints']['max_thr'] == True:
-        (Q_max_thr, c_max_thr) = threshold_constr(m, n, Q.shape[0], 'max', mu_thr)
+        (Q_max_thr, c_max_thr) = threshold_constr(m, n, Q.shape[0], 'max', mu['mu_thr'])
         pad = Q_max_thr.shape[0] - Q.shape[0]
         Q = np.pad(Q, pad_width=((0,pad), (0, pad)), mode='constant', constant_values=0) + Q_max_thr
         c = c + c_max_thr
@@ -257,8 +259,25 @@ def find_sol_annealing(config, default, n, m, mu_one_class, mu_sc_first_last_cla
     bqm = dimod.BinaryQuadraticModel.from_qubo(Q, c)
 
     state = hybrid.core.State.from_sample({i: 0 for i in range(Q.shape[0])}, bqm)
-    sampler = hybrid.SimulatedAnnealingProblemSampler(num_reads=config['reads'], num_sweeps=config['shots'])
-    annealing_result = sampler.run(state).result()
+
+    reads_per_core = config['reads'] // 10
+    residual = config['reads'] % 10
+    chunks = [reads_per_core] * 10
+    for i in range(residual):
+        chunks[i] += 1
+    chunks = [c for c in chunks if c > 0]
+    print(f"\nComputing using {len(chunks)} core...")
+
+    futures = []
+    with ProcessPoolExecutor(max_workers=len(chunks)) as executor:
+        for idx, chunk_reads in enumerate(chunks):
+            chunk_seed = idx
+            f = executor.submit(run_sa_chunk, bqm, Q.shape[0], chunk_reads, config["shots"], chunk_seed, state)
+            futures.append(f)
+    partial_samplesets = [f.result() for f in futures]
+    merged_samples = dimod.concatenate(partial_samplesets)
+    annealing_result = hybrid.core.State(samples=merged_samples, problem=bqm)
+
     # best_ann_bsm = np.array([int(x) for x in annealing_result.samples.first.sample.values()])[:m*n].reshape(n, m) 
     best_ann_bsm = annealing_result.samples.first.energy
     return best_ann_bsm
@@ -266,19 +285,17 @@ def find_sol_annealing(config, default, n, m, mu_one_class, mu_sc_first_last_cla
 def find_mu_optuna(config, n, m, default):
 
     def objective(trial):
-        mu_one_class = trial.suggest_int("mu_one_class", 80,120)
-        mu_sc_first_last_class = trial.suggest_int("mu_sc_first_last_class", 50,60) 
-        mu_sc_subm_1000 = trial.suggest_int("mu_sc_subm_1000", 50,60)
-        mu_sc_subm_0001 = trial.suggest_int("mu_sc_subm_0001", 80,120)
-        mu_sc_subm_0110 = trial.suggest_int("mu_sc_subm_0110", 50,60)
-        mu_sc_restart = trial.suggest_int("mu_sc_restart", 100,130)
-        mu_sc_column_one = trial.suggest_int("mu_sc_column_one", 100,130)
-        mu_sc_change_class = trial.suggest_int("mu_sc_change_class", 100,130)
-        mu_mon = trial.suggest_int("mu_mon", 5,15)
-        mu_conc = trial.suggest_int("mu_conc", 5,15)
-        mu_thr = trial.suggest_int("mu_thr", 5,15)
+        mu = {
+            "one_class": trial.suggest_int("mu_one_class", 15, 20),
+            "first_last_class": trial.suggest_float("mu_sc_first_last_class", 1.0, 2.0, step=0.1),
+            "column_one": trial.suggest_float("mu_sc_column_one", 4.5, 5.0, step=0.1),
+            "change_class": trial.suggest_float("mu_sc_change_class", 4.5, 5.0, step=0.1),
+            "monotonicity": trial.suggest_float("mu_mon", 0.2, 0.5, step=0.1),
+            "concentration": trial.suggest_float("mu_conc",  0.2, 0.5, step=0.1),
+            "mu_thr": trial.suggest_float("mu_thr",  0.1, 0.4, step=0.1),
+        }
 
-        return find_sol_annealing(config, default, n, m, mu_one_class, mu_sc_first_last_class, mu_sc_subm_1000, mu_sc_subm_0001, mu_sc_subm_0110, mu_sc_restart, mu_sc_column_one, mu_sc_change_class, mu_mon, mu_conc, mu_thr)
+        return find_sol_annealing(config, default, n, m, mu)
 
     study = optuna.create_study(direction="minimize")
     study.optimize(objective, n_trials=100)
@@ -337,20 +354,23 @@ def main():
     #--------------------------------------
 
     # OPTUNA
-    # study = find_mu_optuna(config, n, grades, default)
-    # best_value = study.best_value
-    # print(study.best_params, best_value)
+    study = find_mu_optuna(config, n, grades, default)
+    best_value = study.best_value
+    print(study.best_params, best_value)
 
-    # best_trials = [t for t in study.trials if abs(t.value - best_value) < 1e-9]
+    best_trials = [t for t in study.trials if abs(t.value - best_value) < 1e-9]
 
-    # print(f"\nNumero di configurazioni equivalenti: {len(best_trials)}\n")
+    print(f"\nNumero di configurazioni equivalenti: {len(best_trials)}\n")
 
-    # for i, t in enumerate(best_trials, 1):
-    #     print(f"Configurazione #{i}: value={t.value}, params={t.params}")
+    for i, t in enumerate(best_trials, 1):
+        print(f"Configurazione #{i}: value={t.value}, params={t.params}")
 
-    for i in range(3):
-        s = my_def_gen()
-        print(f"Serie {i+1}: {s}")
+    #--------------------------------------
+
+    # DEFAULT GENERATION
+    # for i in range(3):
+    #     s = my_def_gen()
+    #     print(f"Serie {i+1}: {s}")
 
 if __name__ == '__main__':
     main()
