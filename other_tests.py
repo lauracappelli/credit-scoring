@@ -276,11 +276,13 @@ def find_sol_annealing(config, default, n, m, mu):
             futures.append(f)
     partial_samplesets = [f.result() for f in futures]
     merged_samples = dimod.concatenate(partial_samplesets)
-    annealing_result = hybrid.core.State(samples=merged_samples, problem=bqm)
 
-    # best_ann_bsm = np.array([int(x) for x in annealing_result.samples.first.sample.values()])[:m*n].reshape(n, m) 
-    best_ann_bsm = annealing_result.samples.first.energy
-    return best_ann_bsm
+    sample_set = annealing_result.samples
+    min_energy = merged_samples.first.energy
+    min_energy_mask = np.isclose(merged_samples.record.energy, min_energy, atol=1e-6)
+    num_min_energy_solutions = int(np.sum(merged_samples.record.num_occurrences[min_energy_mask]))
+
+    return min_energy, num_min_energy_solutions
 
 def find_mu_optuna(config, n, m, default):
 
@@ -295,10 +297,12 @@ def find_mu_optuna(config, n, m, default):
             "mu_thr": trial.suggest_float("mu_thr",  0.1, 0.4, step=0.1),
         }
 
-        return find_sol_annealing(config, default, n, m, mu)
+        energy, valid_solutions = find_sol_annealing(config, default, n, m, mu)
+        composite_score = energy - (0.00001 * valid_solutions)
+        return composite_score
 
     study = optuna.create_study(direction="minimize")
-    study.optimize(objective, n_trials=100)
+    study.optimize(objective, n_trials=10)
     return study
 
 def my_def_gen():
