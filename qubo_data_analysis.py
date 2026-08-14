@@ -5,14 +5,14 @@ import seaborn as sns
 from pathlib import Path
 import matplotlib.pyplot as plt
 
-def generate_lineplot_pdf(analysis_data, output_filename="lineplot_valid_solutions_vs_sweeps.pdf"):
-    df = pd.DataFrame(analysis_data)
+def solutions_vs_sweep_plot(analysis_data):
+    analysis_data = pd.DataFrame(analysis_data)
 
     sns.set_theme(style="whitegrid")
     plt.figure(figsize=(9, 6))
 
     sns.lineplot(
-        data=df,
+        data=analysis_data,
         x="sweep",
         y="valid_solutions",
         hue="variables",
@@ -30,99 +30,97 @@ def generate_lineplot_pdf(analysis_data, output_filename="lineplot_valid_solutio
     plt.legend(title="QUBO Variables", frameon=True)
     plt.tight_layout()
 
-    plt.savefig(output_filename, format="pdf", bbox_inches="tight")
+    plt.savefig("output/annealing/lineplots.pdf", format="pdf", bbox_inches="tight")
     plt.close()
     print(f"Line plot saved to '{output_filename}'")
 
-def parse_results_folder(folder_path):
+def parse_results(folder_paths):
     results = []
     
+    if isinstance(folder_paths, (str, Path)):
+        folder_paths = [folder_paths]
+
     # Regex to extract n, m, sweep, and i from filename: qsa_<n_test>_<n>_<m>_<sweep>_run<i>.txt
     filename_regex = re.compile(r"(qsa|sa)_[^_]+_(\d+)_(\d+)_(\d+)_run(\d+)\.txt")
     reads_regex = re.compile(r"-\s*reads:\s*(\d+)")
     variables_regex = re.compile(r"The QUBO problem has\s*(\d+)\s*variables")
     energy_regex = re.compile(r"Energy:\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)")
     valid_solutions_regex = re.compile(r"Valid solutions found:\s*(\d+)")
-
-    folder = Path(folder_path)
-    
-    for filepath in folder.glob("*.txt"):
-        match_filename = filename_regex.match(filepath.name)
-        if not match_filename:
+    time_regex = re.compile(r"Time to compute the solution:\s*(\d+(?:\.\d+)?)\s*s")
+      
+    for folder_path in folder_paths:
+        folder = Path(folder_path)
+        if not folder.exists():
+            print(f"Warning: directory '{folder_path}' doesn't exist.")
             continue
             
-        prefix = match_filename.group(1)  # 'qsa' o 'sa'
-        n = int(match_filename.group(2))
-        m = int(match_filename.group(3))
-        sweep = int(match_filename.group(4))
-        i = int(match_filename.group(5))
+        for filepath in folder.glob("*.txt"):
+            match_filename = filename_regex.match(filepath.name)
+            if not match_filename:
+                continue
+                
+            prefix = match_filename.group(1)  # 'qsa' o 'sa'
+            n = int(match_filename.group(2))
+            m = int(match_filename.group(3))
+            sweep = int(match_filename.group(4))
+            i = int(match_filename.group(5))
 
-        solver = "quantum" if prefix == "qsa" else "classical"
+            solver = "quantum" if prefix == "qsa" else "classical"
 
-        with open(filepath, "r", encoding="utf-8") as f:
-            content = f.read()
+            with open(filepath, "r", encoding="utf-8") as f:
+                content = f.read()
 
-        match_reads = reads_regex.search(content)
-        reads = int(match_reads.group(1)) if match_reads else 0
+            match_reads = reads_regex.search(content)
+            reads = int(match_reads.group(1)) if match_reads else 0
 
-        match_vars = variables_regex.search(content)
-        variables = int(match_vars.group(1)) if match_vars else None
+            match_vars = variables_regex.search(content)
+            variables = int(match_vars.group(1)) if match_vars else None
 
-        energies = [float(e) for e in energy_regex.findall(content)]
+            match_time = time_regex.search(content)
+            execution_time = float(match_time.group(1)) if match_time else None
 
-        match_valid = valid_solutions_regex.search(content)
-        if match_valid:
-            valid_solutions = int(match_valid.group(1))
-        else:
-            valid_solutions = content.count("The solution is correct: True")
+            energies = [float(e) for e in energy_regex.findall(content)]
 
-        # Calculate energy statistics
-        if energies:
-            energy_avg = sum(energies) / len(energies)
-            energy_min = min(energies)
-            energy_max = max(energies)
-        else:
-            energy_avg = energy_min = energy_max = None
+            match_valid = valid_solutions_regex.search(content)
+            if match_valid:
+                valid_solutions = int(match_valid.group(1))
+            else:
+                valid_solutions = content.count("The solution is correct: True")
 
-        # Build dictionary for the current file
-        file_data = {
-            "n": n,
-            "m": m,
-            "sweep": sweep,
-            "i": i,
-            "reads": reads,
-            "variables": variables,
-            "solver": solver,
-            "valid_solutions": valid_solutions,
-            "energies": energies,
-            "energy_avg": energy_avg,
-            "energy_min": energy_min,
-            "energy_max": energy_max
-        }
+            # Calculate energy statistics
+            if energies:
+                energy_avg = sum(energies) / len(energies)
+                energy_min = min(energies)
+                energy_max = max(energies)
+            else:
+                energy_avg = energy_min = energy_max = None
 
-        results.append(file_data)
+            # Build dictionary for the current file
+            results.append({
+                "n": n,
+                "m": m,
+                "sweep": sweep,
+                "i": i,
+                "reads": reads,
+                "variables": variables,
+                "solver": solver,
+                "execution_time": execution_time,
+                "valid_solutions": valid_solutions,
+                "energies": energies,
+                "energy_avg": energy_avg,
+                "energy_min": energy_min,
+                "energy_max": energy_max
+            })
 
-    return results
+    return pd.DataFrame(results)
 
 if __name__ == "__main__":
 
-    folder_path = "./output/annealing/quantum"   
-    analysis_data = parse_results_folder(folder_path)
+    df = parse_results(["./output/annealing/quantum", "./output/annealing/classical"])
     
-    # Print sorted data
-    sorted_data = sorted(
-        analysis_data, 
-        key=lambda x: (x["variables"] if x["variables"] is not None else float("inf"), x["sweep"])
-    )
-    for item in sorted_data:
-        print(
-            f"n: {item['n']} | "
-            f"m: {item['m']} | "
-            f"variables: {item['variables']} | "
-            f"sweep: {item['sweep']} | "
-            f"i: {item['i']} | "
-            f"valid_solutions: {item['valid_solutions']}"
-        )
+    df_sorted = df.sort_values(by=["solver", "variables", "sweep", "i"])
+    cols_to_show = ["solver", "variables", "n", "m", "sweep", "i", "execution_time", "valid_solutions"]
+    print(df_sorted[cols_to_show].to_string(index=False))
 
-    # 3. Generate and save PDF plots
-    generate_lineplot_pdf(sorted_data, "lineplot.pdf")
+    # Print quantum & classical plot "number of solutions vs sweep"
+    # solutions_vs_sweep_plot(analysis_data)
