@@ -1,6 +1,6 @@
 #!/bin/bash
 
-param_file="output/gurobi_test/test1-parameters.csv"
+param_file="output/annealing/parameters.csv"
 config_file="config.yaml"
 
 while IFS=";" read -r n m def1 def2 def3 sweeps; do
@@ -12,7 +12,7 @@ while IFS=";" read -r n m def1 def2 def3 sweeps; do
     default=($def1 $def2 $def3)
 
     for run in {0..2}; do
-        config_copy="output/gurobi_test/config_${n}_${m}_run${run}.yaml"
+        config_copy="output/annealing/classical/config_${n}_${m}_run${run}.yaml"
         cp "$config_file" "$config_copy"
         
         # compute hyperparameters
@@ -27,11 +27,11 @@ while IFS=";" read -r n m def1 def2 def3 sweeps; do
 
         # run script
         echo "n: $n, m: $m, run $((run+1)), default=${default[run]}"
-        python cost_function.py "$config_copy" > "output/gurobi_test/test01_${n}_${m}_run${run}.txt" 2>&1 &
+        python cost_function.py "$config_copy" > "output/annealing/classical/sa_01_${n}_${m}_${sweeps}_run${run}.txt" 2>&1 &
 
     done
     wait
 
 done < "$param_file"
 
-rm -f output/gurobi_test/config_*_run*.yaml
+rm -f output/annealing/classical/config_*_run*.yaml
