@@ -421,6 +421,12 @@ def main():
             'min_thr': '(n//m)*0.2',
             'max_thr': '(n//m)*0.2'
         }
+        print('\nValues of mu:')   
+        mu = {}
+        for name, formula in mu_formulas.items():
+            value = eval(formula)
+            mu[name] = value
+            print(f"{name:20s} = {formula:20s} -> {value}")
     
     elif config['mu_table'] == 'medium':
         mu_formulas = {
@@ -433,7 +439,13 @@ def main():
             'min_thr': '(n//m)*0.1',
             'max_thr': '(n//m)*0.1'
         }
-    
+        print('\nValues of mu:')   
+        mu = {}
+        for name, formula in mu_formulas.items():
+            value = eval(formula)
+            mu[name] = value
+            print(f"{name:20s} = {formula:20s} -> {value}")
+
     elif config['mu_table'] == 'generated':
         mu_formulas = {
             'one_class': 'int(n*m*0.45)',
@@ -446,12 +458,12 @@ def main():
             'max_thr': '(n//m)*0.01'
         }
     
-    print('\nValues of mu:')   
-    mu = {}
-    for name, formula in mu_formulas.items():
-        value = eval(formula)
-        mu[name] = value
-        print(f"{name:20s} = {formula:20s} -> {value}")
+        print('\nValues of mu:')   
+        mu = {}
+        for name, formula in mu_formulas.items():
+            value = eval(formula)
+            mu[name] = value
+            print(f"{name:20s} = {formula:20s} -> {value}")
 
     #-------------------------------
 
