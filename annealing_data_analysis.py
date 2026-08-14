@@ -5,34 +5,44 @@ import seaborn as sns
 from pathlib import Path
 import matplotlib.pyplot as plt
 
-def solutions_vs_sweep_plot(analysis_data):
+def solutions_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
     analysis_data = pd.DataFrame(analysis_data)
 
     sns.set_theme(style="whitegrid")
-    plt.figure(figsize=(9, 6))
 
-    sns.lineplot(
-        data=analysis_data,
-        x="sweep",
-        y="valid_solutions",
-        hue="variables",
-        marker="o",
-        palette="viridis",
-        linewidth=2,
-        markersize=8
-    )
+    for solver in ["classical", "quantum"]:
+        df_solver = analysis_data[analysis_data["solver"] == solver]
 
-    plt.title("Scaling of Valid Solutions vs. Sweeps across Problem Sizes", fontsize=14, pad=12)
-    plt.xlabel("Number of Sweeps (Log Scale)", fontsize=12)
-    plt.ylabel("Valid Solutions Found", fontsize=12)
-    plt.xscale("log")  # Logarithmic scale for sweep values
-    plt.grid(True, which="both", linestyle="--", alpha=0.5)
-    plt.legend(title="QUBO Variables", frameon=True)
-    plt.tight_layout()
+        fig, ax = plt.subplots(figsize=(10, 6))
+        
+        sns.lineplot(
+            data=df_solver,
+            x="sweep",
+            y="valid_solutions",
+            hue="variables",
+            marker="o",
+            palette="colorblind",
+            linewidth=2,
+            markersize=8,
+            ax=ax
+        )
 
-    plt.savefig("output/annealing/lineplots.pdf", format="pdf", bbox_inches="tight")
-    plt.close()
-    print(f"Line plot saved to '{output_filename}'")
+        solver_title = "Classical Annealing (SA)" if solver == "classical" else "Quantum Annealing (QSA)"
+
+        ax.set_title(f"Valid Solutions vs. Sweeps - {solver_title}", fontsize=14, pad=12)
+        ax.set_xlabel("Sweeps", fontsize=12)
+        ax.set_xscale("log")
+        ax.set_ylabel("Valid Solutions (average on 50 trials)", fontsize=12)
+        ax.grid(True, which="both", linestyle="--", alpha=0.5)
+        
+        sns.move_legend(ax,loc="upper left",bbox_to_anchor=(1.02, 1),title="QUBO Variables",frameon=True)
+        plt.tight_layout()
+
+        output_filename = os.path.join(output_dir, f"lineplots_{solver}.pdf")
+        plt.savefig(output_filename, format="pdf", bbox_inches="tight")
+        plt.close(fig)
+
+        print(f"Line plot for {solver.capitalize()} saved to '{output_filename}'")
 
 def parse_results(folder_paths):
     results = []
@@ -122,5 +132,5 @@ if __name__ == "__main__":
     cols_to_show = ["solver", "variables", "n", "m", "sweep", "i", "execution_time", "valid_solutions"]
     print(df_sorted[cols_to_show].to_string(index=False))
 
-    # Print quantum & classical plot "number of solutions vs sweep"
-    # solutions_vs_sweep_plot(analysis_data)
+    # Quantum & classical plot: "number of solutions vs sweep"
+    solutions_vs_sweep_plot(df)
