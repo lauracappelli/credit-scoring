@@ -57,7 +57,7 @@ while IFS=";" read -r n m def1 def2 def3 sweeps ann_type mu_type mu1 mu2 mu3 mu4
 
         # run script
         echo "n: $n, m: $m, run $((run+1)), default=${default[run]}"
-        python cost_function.py "$config_copy" > "output/annealing/${output_folder}/${file_tag}_05_${n}_${m}_${sweeps}_run${run}.txt" 2>&1 &
+        python cost_function.py "$config_copy" > "output/annealing/${output_folder}/${file_tag}_01_${n}_${m}_${sweeps}_run${run}.txt" 2>&1 &
 
     done
     wait
