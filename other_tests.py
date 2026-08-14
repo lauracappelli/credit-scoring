@@ -277,7 +277,6 @@ def find_sol_annealing(config, default, n, m, mu):
     partial_samplesets = [f.result() for f in futures]
     merged_samples = dimod.concatenate(partial_samplesets)
 
-    sample_set = annealing_result.samples
     min_energy = merged_samples.first.energy
     min_energy_mask = np.isclose(merged_samples.record.energy, min_energy, atol=1e-6)
     num_min_energy_solutions = int(np.sum(merged_samples.record.num_occurrences[min_energy_mask]))
