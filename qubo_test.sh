@@ -1,6 +1,6 @@
 #!/bin/bash
 
-param_file="output/annealing/parameters.csv"
+param_file=$1
 config_file="config.yaml"
 
 while IFS=";" read -r n m def1 def2 def3 sweeps ann_type mu_type mu1 mu2 mu3 mu4 mu5 mu6 mu7; do
