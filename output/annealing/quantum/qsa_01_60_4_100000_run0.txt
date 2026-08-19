@@ -1,0 +1,807 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 60
+ - grades: 4
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [16, 40, 37, 59, 53, 51, 50]
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': False, 'gurobi': False, 'quantum_annealing': True}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': True, 'logic': True, 'monotonicity': True, 'concentration': True, 'min_thr': True, 'max_thr': True}
+ - mu_table: static
+ - mu: {'one_class': 35, 'first_last_class': 0.8, 'column_one': 15, 'change_class': 15, 'subm_1000': 1, 'subm_0001': 1, 'subm_0110': 1, 'restart': 1, 'monotonicity': 0.2, 'concentration': 0.1, 'min_thr': 0.05, 'max_thr': 0.05}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 100000
+ - reads: 50
+ - num_trotters: 32
+ - gurobi_n_sol: 10
+ - gurobi_fidelity: 1
+
+SELECTED INSTANCE:
+Number of counterparts:  60
+Number of grades:  4
+The number of defaults is 7
+
+Dataset:
+    counterpart_id     score  default
+0               46 -7.450551        0
+1               30 -6.910969        0
+2                9 -6.237351        0
+3               51 -6.201300        0
+4               35 -6.187747        0
+5               52 -5.965084        0
+6                1 -5.854780        0
+7               44 -5.811998        0
+8                6 -5.648120        0
+9               11 -5.428354        0
+10              60 -5.345752        0
+11              41 -5.257193        0
+12              48 -5.126238        0
+13               3 -5.112145        0
+14               8 -5.019222        0
+15              50 -4.886369        0
+16              32 -4.853473        1
+17              55 -4.819150        0
+18              26 -4.700123        0
+19              53 -4.695421        0
+20              21 -4.524124        0
+21              59 -4.499084        0
+22              28 -4.439894        0
+23              22 -4.435859        0
+24              23 -4.332926        0
+25               5 -4.263327        0
+26              36 -4.171462        0
+27              20 -4.164839        0
+28              16 -4.081744        0
+29              14 -4.038813        0
+30              25 -3.941873        0
+31              38 -3.918863        0
+32              43 -3.819382        0
+33              31 -3.794853        0
+34              18 -3.763623        0
+35               2 -3.757370        0
+36              39 -3.557533        0
+37              49 -3.531298        1
+38              27 -3.507962        0
+39              54 -3.465887        0
+40              10 -3.417123        1
+41              29 -3.374918        0
+42              17 -3.301218        0
+43              56 -3.294960        0
+44              47 -3.240296        0
+45              37 -3.100629        0
+46              24 -3.096968        0
+47              34 -3.026525        0
+48              15 -3.008222        0
+49              19 -2.935474        0
+50               7 -2.906544        1
+51              40 -2.812135        1
+52              33 -2.737460        0
+53              12 -2.576241        1
+54              45 -2.462411        0
+55              57 -2.412150        0
+56              58 -2.375370        0
+57              42 -2.320206        0
+58              13 -2.154475        0
+59               4 -0.476593        1
+
+The QUBO problem has 288 variables
+Time spent for the generation: 0.058723554 s
+
+Computing using 10 core...
+
+RESULTS OBTAINED THROUGH THE QUANTUM SIMULATING ANNEALER SOLVER
+
+Time to compute the solution: 458.540006211 s
+
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005488566 s
+Solution 1:
+Energy: -261.631592593234
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 32
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005384587 s
+Solution 2:
+Energy: -267.3328148154287
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the first counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005376747 s
+Solution 3:
+Energy: -231.93281481542363
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005313828 s
+Solution 4:
+Energy: -236.83100000061495
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005362117 s
+Solution 5:
+Energy: -252.83092592655157
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005259269 s
+Solution 6:
+Energy: -235.23166666729958
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005181449 s
+Solution 7:
+Energy: -218.43114814877117
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 20
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005266918 s
+Solution 8:
+Energy: -256.5328148154458
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005397786 s
+Solution 9:
+Energy: -267.18029629687953
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005280148 s
+Solution 10:
+Energy: -244.92377777844922
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 18
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005310778 s
+Solution 11:
+Energy: -272.1331111117306
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005369957 s
+Solution 12:
+Energy: -260.0804814820949
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005284177 s
+Solution 13:
+Energy: -235.62870370431483
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005336707 s
+Solution 14:
+Energy: -238.27959259314775
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005487516 s
+Solution 15:
+Energy: -230.02366666730632
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005317587 s
+Solution 16:
+Energy: -246.38029629687298
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 24
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005355977 s
+Solution 17:
+Energy: -248.93170370434927
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005352867 s
+Solution 18:
+Energy: -249.32985185247344
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005335117 s
+Solution 19:
+Energy: -237.2317407413375
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005289348 s
+Solution 20:
+Energy: -257.1291111117371
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the first counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005374137 s
+Solution 21:
+Energy: -263.13222222285367
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005413207 s
+Solution 22:
+Energy: -235.4804444450383
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 22
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005305418 s
+Solution 23:
+Energy: -240.3322222228653
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005284408 s
+Solution 24:
+Energy: -234.12762963022033
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 19
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005263378 s
+Solution 25:
+Energy: -242.5316296302717
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 21
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005350168 s
+Solution 26:
+Energy: -248.33192592653904
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005394827 s
+Solution 27:
+Energy: -239.47781481541642
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005278298 s
+Solution 28:
+Energy: -254.6297407413058
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005347218 s
+Solution 29:
+Energy: -230.27714814876526
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005392337 s
+Solution 30:
+Energy: -239.3805555561794
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	x Error: concentration constraint not fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005366228 s
+Solution 31:
+Energy: -242.22788888958166
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 19
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005366127 s
+Solution 32:
+Energy: -259.1305185191886
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005331828 s
+Solution 33:
+Energy: -249.1283703709396
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the first counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005327488 s
+Solution 34:
+Energy: -237.93251851914283
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005367127 s
+Solution 35:
+Energy: -248.5803703709371
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 7
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005342137 s
+Solution 36:
+Energy: -237.5331111117339
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005363307 s
+Solution 37:
+Energy: -253.78166666725883
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005229328 s
+Solution 38:
+Energy: -229.1795185190931
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005398487 s
+Solution 39:
+Energy: -231.13000000063948
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 20
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005402877 s
+Solution 40:
+Energy: -260.1292592599584
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005304008 s
+Solution 41:
+Energy: -239.18000000055144
+The solution is correct: False
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005399147 s
+Solution 42:
+Energy: -281.28296296356893
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1           13         0      0.000000
+1         2           17         1      0.058824
+2         3           16         2      0.125000
+3         4           14         4      0.285714
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 26
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005345597 s
+Solution 43:
+Energy: -266.53170370436965
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005285498 s
+Solution 44:
+Energy: -266.03100000065024
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 18
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005332347 s
+Solution 45:
+Energy: -272.53200000063407
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 19
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005331947 s
+Solution 46:
+Energy: -256.08103703763663
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005309158 s
+Solution 47:
+Energy: -248.78066666722953
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005284748 s
+Solution 48:
+Energy: -235.13000000057036
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 11
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005336867 s
+Solution 49:
+Energy: -263.7326666672925
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		More or less than one class per counterpart
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.005286678 s
+Solution 50:
+Energy: -252.57996296359488
+The solution is correct: False
+--------------
+
+Valid solutions found: 1/50
