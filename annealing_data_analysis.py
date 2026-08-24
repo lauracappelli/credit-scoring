@@ -5,6 +5,44 @@ import seaborn as sns
 from pathlib import Path
 import matplotlib.pyplot as plt
 
+def time_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
+
+    sns.set_theme(style="whitegrid")
+
+    for solver in ["classical", "quantum"]:
+        df_solver = analysis_data[analysis_data["solver"] == solver]
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        
+        sns.lineplot(
+            data=df_solver,
+            x="sweep",
+            y="execution_time",
+            hue="variables",
+            marker="o",
+            palette="colorblind",
+            linewidth=2,
+            markersize=8,
+            ax=ax
+        )
+
+        solver_title = "Classical Annealing (SA)" if solver == "classical" else "Quantum Annealing (QSA)"
+
+        ax.set_title(f"Time to solution vs. Sweeps - {solver_title}", fontsize=14, pad=12)
+        ax.set_xlabel("Sweeps", fontsize=12)
+        ax.set_xscale("log")
+        ax.set_ylabel("Time to solution (seconds)", fontsize=12)
+        ax.grid(True, which="both", linestyle="--", alpha=0.5)
+        ax.legend(loc="upper left", title="QUBO Variables", frameon=True)
+
+        plt.tight_layout()
+
+        output_filename = os.path.join(output_dir, f"time_lineplots_{solver}.pdf")
+        plt.savefig(output_filename, format="pdf", bbox_inches="tight")
+        plt.close(fig)
+
+        print(f"Time line plot for {solver.capitalize()} saved to '{output_filename}'")
+
 def solutions_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
 
     sns.set_theme(style="whitegrid")
@@ -43,6 +81,59 @@ def solutions_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
 
         print(f"Line plot for {solver.capitalize()} saved to '{output_filename}'")
 
+def time_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/time_lineplots_SAvsQSA.pdf"):
+
+    sns.set_theme(style="whitegrid")
+    
+    grouped = analysis_data.groupby(["variables", "solver", "sweep"])["execution_time"].mean().reset_index()
+    unique_vars = sorted(grouped["variables"].unique())
+    num_vars = len(unique_vars)
+
+    fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(15, 9), sharex=True, sharey=True)
+    axes = axes.flatten()
+
+    for i, v in enumerate(unique_vars):
+        ax = axes[i]
+        for solver in ["classical", "quantum"]:
+            sub = grouped[(grouped["variables"] == v) & (grouped["solver"] == solver)]
+            if sub.empty:
+                continue
+
+            linestyle = "-" if solver == "quantum" else "--"
+            marker = "o" if solver == "quantum" else "s"
+            color = "#0d47a1" if solver == "quantum" else "#d84315"
+
+            ax.plot(
+                sub["sweep"],
+                sub["execution_time"],
+                label=solver.capitalize(),
+                color=color,
+                linestyle=linestyle,
+                marker=marker,
+                linewidth=2,
+                markersize=6
+            )
+
+        ax.set_title(f"Variables: {v}", fontsize=12, fontweight="bold")
+        ax.set_xscale("log")
+        ax.grid(True, which="both", linestyle="--", alpha=0.5)
+
+    fig.supxlabel("Number of Sweeps", fontsize=13)
+    fig.supylabel("Time to solution (seconds)", fontsize=13)
+    fig.suptitle("Time to solution: SA vs. QSA", fontsize=15, y=0.98, fontweight="bold")
+
+    for j in range(num_vars, len(axes)):
+        fig.delaxes(axes[j])
+
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="center left", bbox_to_anchor=(0.98, 0.5), title="Solver Type", frameon=True, fontsize=11, title_fontsize=12)
+
+    plt.tight_layout(rect=[0, 0, 0.97, 0.96])
+
+    plt.savefig(output_filename, format="pdf", bbox_inches="tight")
+    plt.close(fig)
+    print(f"Comparative subplots saved to '{output_filename}'")
+    
 def sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/lineplots_SAvsQSA.pdf"):
 
     sns.set_theme(style="whitegrid")
@@ -187,3 +278,6 @@ if __name__ == "__main__":
     # Quantum & classical plot: "number of solutions vs sweep"
     solutions_vs_sweep_plot(df)
     sa_vs_qsa_plot(df)
+
+    time_vs_sweep_plot(df)
+    time_sa_vs_qsa_plot(df)
