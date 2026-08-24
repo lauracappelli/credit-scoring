@@ -275,7 +275,7 @@ def print_annealing_result(all_ann_bsm, config, n, m, default, dataset, verbose)
     # print("\nRating scale:")
     # print(dataset.to_string(index=False))
     
-def run_sa_chunk(bqm, Q_size, num_reads, num_sweeps, seed, state):
+def run_sa_chunk(num_reads, num_sweeps, seed, state):
     np.random.seed(seed)
     random.seed(seed)
     sampler = hybrid.SimulatedAnnealingProblemSampler(num_reads=num_reads, num_sweeps=num_sweeps)
@@ -310,7 +310,7 @@ def annealer_solver(config, n, m, default, dataset, Q_size, bqm, verbose):
     with ProcessPoolExecutor(max_workers=len(chunks)) as executor:
         for idx, chunk_reads in enumerate(chunks):
             chunk_seed = idx
-            f = executor.submit(run_sa_chunk, bqm, Q_size, chunk_reads, config["shots"], chunk_seed, state)
+            f = executor.submit(run_sa_chunk, chunk_reads, config["shots"], chunk_seed, state)
             futures.append(f)
 
     partial_samplesets = [f.result() for f in futures]
