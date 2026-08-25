@@ -39,6 +39,8 @@ def time_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
 
         output_filename = os.path.join(output_dir, f"time_lineplots_{solver}.pdf")
         plt.savefig(output_filename, format="pdf", bbox_inches="tight")
+        output_filename = os.path.join(output_dir, f"time_lineplots_{solver}.png")
+        plt.savefig(output_filename, format="png", bbox_inches="tight", dpi=300)
         plt.close(fig)
 
         print(f"Time line plot for {solver.capitalize()} saved to '{output_filename}'")
@@ -77,6 +79,8 @@ def solutions_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
 
         output_filename = os.path.join(output_dir, f"lineplots_{solver}.pdf")
         plt.savefig(output_filename, format="pdf", bbox_inches="tight")
+        output_filename = os.path.join(output_dir, f"lineplots_{solver}.png")
+        plt.savefig(output_filename, format="png", bbox_inches="tight", dpi=300)
         plt.close(fig)
 
         print(f"Line plot for {solver.capitalize()} saved to '{output_filename}'")
@@ -131,6 +135,7 @@ def time_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/time_li
     plt.tight_layout(rect=[0, 0, 0.97, 0.96])
 
     plt.savefig(output_filename, format="pdf", bbox_inches="tight")
+    plt.savefig("output/annealing/time_lineplots_SAvsQSA.png", format="png", bbox_inches="tight", dpi=300)
     plt.close(fig)
     print(f"Comparative subplots saved to '{output_filename}'")
     
@@ -184,6 +189,7 @@ def sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/lineplots_SA
     plt.tight_layout(rect=[0, 0, 0.97, 0.96])
 
     plt.savefig(output_filename, format="pdf", bbox_inches="tight")
+    plt.savefig("output/annealing/lineplots_SAvsQSA.png", format="png", bbox_inches="tight", dpi=300)
     plt.close(fig)
     print(f"Comparative subplots saved to '{output_filename}'")
 
