@@ -373,12 +373,12 @@ if __name__ == "__main__":
     print(df_sorted[cols_to_show].to_string(index=False))
 
     # Quantum & classical plot: "number of solutions vs sweep"
-    # solutions_vs_sweep_plot(df)
-    # sa_vs_qsa_plot(df)
+    solutions_vs_sweep_plot(df)
+    sa_vs_qsa_plot(df)
 
     # Quantum & classical plot: "time vs sweep"
-    # time_vs_sweep_plot(df)
-    # time_sa_vs_qsa_plot(df)
+    time_vs_sweep_plot(df)
+    time_sa_vs_qsa_plot(df)
 
     # Quantum & classical plot: "unique solutions vs sweep"
     overlay_sa_vs_qsa_plot(df)
