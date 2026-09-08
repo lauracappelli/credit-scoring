@@ -13,7 +13,7 @@ def time_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
     for solver in ["classical", "quantum"]:
         df_solver = analysis_data[analysis_data["solver"] == solver]
 
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(11, 6))
         
         sns.lineplot(
             data=df_solver,
@@ -36,7 +36,7 @@ def time_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
         ax.grid(True, which="both", linestyle="--", alpha=0.5)
         ax.tick_params(axis="both", which="major", labelsize=14)
 
-        ax.legend(loc="upper left", title="QUBO Variables", frameon=True, fontsize=13, title_fontsize=14)
+        ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), borderaxespad=0, title="QUBO Variables", frameon=True, fontsize=13, title_fontsize=14)
         plt.tight_layout()
 
         plt.savefig(os.path.join(output_dir, f"time_lineplots_{solver}.pdf"), format="pdf", bbox_inches="tight")
@@ -52,7 +52,7 @@ def solutions_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
     for solver in ["classical", "quantum"]:
         df_solver = analysis_data[analysis_data["solver"] == solver]
 
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(11, 6))
         
         sns.lineplot(
             data=df_solver,
@@ -74,7 +74,7 @@ def solutions_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
         ax.grid(True, which="both", linestyle="--", alpha=0.5)
         ax.tick_params(axis="both", which="major", labelsize=14)
 
-        ax.legend(loc="upper left", title="QUBO Variables", frameon=True, fontsize=13, title_fontsize=14)
+        ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), borderaxespad=0, title="QUBO Variables", frameon=True, fontsize=13, title_fontsize=14)
         plt.tight_layout()
 
         plt.savefig(os.path.join(output_dir, f"lineplots_{solver}.pdf"), format="pdf", bbox_inches="tight")
@@ -374,11 +374,11 @@ if __name__ == "__main__":
 
     # Quantum & classical plot: "number of solutions vs sweep"
     solutions_vs_sweep_plot(df)
-    sa_vs_qsa_plot(df)
+    # sa_vs_qsa_plot(df)
 
     # Quantum & classical plot: "time vs sweep"
     time_vs_sweep_plot(df)
-    time_sa_vs_qsa_plot(df)
+    # time_sa_vs_qsa_plot(df)
 
     # Quantum & classical plot: "unique solutions vs sweep"
-    overlay_sa_vs_qsa_plot(df)
+    # overlay_sa_vs_qsa_plot(df)
