@@ -12,7 +12,7 @@ PRINTING ALL THE CONFIGURATIONS:
  - alpha_heterogeneity: 0.01
  - alpha_homogeneity: 0.05
  - constraints: {'one_class': True, 'logic': True, 'monotonicity': True, 'concentration': True, 'min_thr': True, 'max_thr': True}
- - mu_table: generated
+ - mu_table: medium
  - mu: {'one_class': 576, 'first_last_class': 120, 'column_one': 960, 'change_class': 960, 'subm_1000': 1, 'subm_0001': 1, 'subm_0110': 1, 'restart': 1, 'monotonicity': 10, 'concentration': 20, 'min_thr': 10, 'max_thr': 10}
  - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
  - shots: 1000000
@@ -28,31 +28,31 @@ The number of defaults is 2
 
 Dataset:
     counterpart_id     score  default
-0                3 -6.599489        0
-1               24 -5.769066        0
-2                5 -4.609625        0
-3               25 -4.457398        0
-4               13 -4.411838        0
-5                8 -4.401506        0
-6               18 -4.128646        0
-7                2 -3.939860        0
-8               11 -3.882937        0
-9                1 -3.868061        0
-10              10 -3.793541        0
-11               9 -3.647067        0
-12              16 -3.535010        0
-13              12 -3.502156        0
-14              22 -3.482417        0
-15              23 -3.463920        0
-16              21 -3.384041        0
-17               4 -3.085057        0
-18              19 -3.009919        0
-19              14 -2.947553        1
-20               7 -2.939027        0
-21              15 -2.881225        0
-22              17 -1.549572        0
-23              20 -0.869328        0
-24               6 -0.417936        1
+0                1 -6.072036        0
+1                9 -5.817826        0
+2                6 -5.702799        0
+3               18 -4.751986        0
+4                8 -4.418539        0
+5               23 -4.352353        0
+6               22 -4.351324        0
+7               10 -3.907627        0
+8               16 -3.837997        0
+9               13 -3.697786        0
+10              19 -3.658759        0
+11              25 -3.643168        0
+12              24 -3.435399        0
+13              15 -3.291260        0
+14              21 -3.267868        0
+15               5 -2.961844        0
+16               2 -2.886996        0
+17              14 -2.721445        0
+18               3 -2.624802        0
+19               7 -2.424578        1
+20              20 -2.129914        0
+21               4 -2.107732        0
+22              11 -1.453137        0
+23              17 -1.248777        0
+24              12 -0.536503        1
 
 Values of mu:
 one_class            = n*m*0.6              -> 60.0
@@ -65,13 +65,13 @@ min_thr              = (n//m)*0.1           -> 0.6000000000000001
 max_thr              = (n//m)*0.1           -> 0.6000000000000001
 
 The QUBO problem has 140 variables
-Time spent for the generation: 0.010276389 s
+Time spent for the generation: 0.010227696 s
 
-Computing using 50 core...
+Computing using 10 core...
 
 RESULTS OBTAINED THROUGH THE SIMULATING ANNEALER SOLVER
 
-Time to compute the solution: 22.532244584 s
+Time to compute the solution: 21.564936975 s
 
 Checking the constraints...
 	✓ Logical constraint fulfilled
@@ -81,7 +81,7 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.001196542 s
+Test time: 0.001019141 s
 Solution 1:
 Energy: 221.00192000058632
 The solution is correct: True
@@ -91,32 +91,20 @@ Statistics:
 1         2            7         0      0.000000
 2         3            6         0      0.000000
 3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 14
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000991931 s
+Solution 2:
+Energy: 240.4019200005805
+The solution is correct: False
 --------------
 Checking the constraints...
 	✓ Logical constraint fulfilled
@@ -126,82 +114,35 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000989184 s
-Solution 2:
-Energy: 221.00192000058632
+Test time: 0.001013521 s
+Solution 3:
+Energy: 220.4019200005805
 The solution is correct: True
 Statistics:
    Grade ID  Cardinality  Defaults  Default rate
 0         1            6         0      0.000000
-1         2            7         0      0.000000
-2         3            6         0      0.000000
+1         2            6         0      0.000000
+2         3            7         0      0.000000
 3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
 --------------
 Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 8
+	✓ Logical constraint fulfilled
 	✓ Monotonicity constraint fulfilled
 	✓ Concentration constraint fulfilled
 	✓ Upper threshold constraint fulfilled
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000991403 s
-Solution 3:
-Energy: 240.40192000057868
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
+Test time: 0.000976101 s
+Solution 4:
+Energy: 220.4019200005805
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            6         0      0.000000
+2         3            7         0      0.000000
+3         4            6         2      0.333333
 --------------
 Checking the constraints...
 	x Error: logical constraint not fulfilled
@@ -212,161 +153,10 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.001009943 s
-Solution 4:
-Energy: 243.10192000056486
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000978873 s
+Test time: 0.000987131 s
 Solution 5:
-Energy: 220.4019200005805
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            7         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 10
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.001019963 s
-Solution 6:
-Energy: 241.00192000057723
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 14
-	x Error: monotonicity constraint not fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000984414 s
-Solution 7:
 Energy: 242.80192000056013
 The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]]
 --------------
 Checking the constraints...
 	✓ Logical constraint fulfilled
@@ -376,122 +166,54 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.001007603 s
-Solution 8:
-Energy: 222.8070400005763
+Test time: 0.00099814 s
+Solution 6:
+Energy: 221.00192000058632
 The solution is correct: True
 Statistics:
    Grade ID  Cardinality  Defaults  Default rate
 0         1            6         0      0.000000
-1         2            5         0      0.000000
-2         3            7         0      0.000000
-3         4            7         2      0.285714
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
+1         2            7         0      0.000000
+2         3            6         0      0.000000
+3         4            6         2      0.333333
 --------------
 Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 12
-	x Error: monotonicity constraint not fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000981683 s
-Solution 9:
-Energy: 242.8019200005656
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 12
+	✓ Logical constraint fulfilled
 	✓ Monotonicity constraint fulfilled
 	✓ Concentration constraint fulfilled
 	✓ Upper threshold constraint fulfilled
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000991023 s
-Solution 10:
-Energy: 243.4070400005785
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
+Test time: 0.00099451 s
+Solution 7:
+Energy: 221.00192000058814
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            7         0      0.000000
+1         2            6         0      0.000000
+2         3            6         0      0.000000
+3         4            6         2      0.333333
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.00101186 s
+Solution 8:
+Energy: 221.00192000058632
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            7         0      0.000000
+2         3            6         0      0.000000
+3         4            6         2      0.333333
 --------------
 Checking the constraints...
 	x Error: logical constraint not fulfilled
@@ -502,576 +224,10 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000977373 s
-Solution 11:
-Energy: 242.5019200005645
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 17
-	x Error: monotonicity constraint not fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000975004 s
-Solution 12:
-Energy: 243.10192000056486
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 16
-	x Error: monotonicity constraint not fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000986543 s
-Solution 13:
+Test time: 0.00100931 s
+Solution 9:
 Energy: 242.80192000056923
 The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 10
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000988153 s
-Solution 14:
-Energy: 241.00192000057905
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000992783 s
-Solution 15:
-Energy: 221.00192000058632
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            7         0      0.000000
-2         3            6         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.001023503 s
-Solution 16:
-Energy: 221.00192000058632
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            7         0      0.000000
-2         3            6         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the first counterpart
-	x Error: monotonicity constraint not fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000979423 s
-Solution 17:
-Energy: 247.8019200005583
-The solution is correct: False
-Result matrix: 
-[[0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 8
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000994313 s
-Solution 18:
-Energy: 261.00192000057905
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000966423 s
-Solution 19:
-Energy: 220.4019200005805
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            7         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 14
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.001001923 s
-Solution 20:
-Energy: 242.5019200005645
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000994453 s
-Solution 21:
-Energy: 220.4019200005805
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            7         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the first counterpart
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000983063 s
-Solution 22:
-Energy: 266.0019200005845
-The solution is correct: False
-Result matrix: 
-[[0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 11
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000983043 s
-Solution 23:
-Energy: 241.00192000057723
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 14
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000981403 s
-Solution 24:
-Energy: 241.00192000057905
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
 --------------
 Checking the constraints...
 	x Error: logical constraint not fulfilled
@@ -1082,76 +238,38 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000996673 s
-Solution 25:
-Energy: 242.50192000056268
+Test time: 0.000977532 s
+Solution 10:
+Energy: 242.5019200005645
 The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]]
 --------------
 Checking the constraints...
 	x Error: logical constraint not fulfilled
-		Error in the counterpart 12
+		Error in the counterpart 8
 	✓ Monotonicity constraint fulfilled
 	✓ Concentration constraint fulfilled
 	✓ Upper threshold constraint fulfilled
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000978543 s
-Solution 26:
+Test time: 0.000988201 s
+Solution 11:
+Energy: 240.40192000057868
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 10
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000984701 s
+Solution 12:
 Energy: 241.00192000057905
 The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
 --------------
 Checking the constraints...
 	x Error: logical constraint not fulfilled
@@ -1162,36 +280,10 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000966333 s
-Solution 27:
-Energy: 242.50192000056268
+Test time: 0.000974581 s
+Solution 13:
+Energy: 241.00192000057723
 The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
 --------------
 Checking the constraints...
 	✓ Logical constraint fulfilled
@@ -1201,42 +293,171 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000984473 s
-Solution 28:
-Energy: 221.00192000058814
+Test time: 0.00099059 s
+Solution 14:
+Energy: 220.4019200005805
 The solution is correct: True
 Statistics:
    Grade ID  Cardinality  Defaults  Default rate
-0         1            7         0      0.000000
+0         1            6         0      0.000000
 1         2            6         0      0.000000
+2         3            7         0      0.000000
+3         4            6         2      0.333333
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 8
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.00099644 s
+Solution 15:
+Energy: 242.50192000056268
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 16
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.00100687 s
+Solution 16:
+Energy: 243.10192000056486
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 16
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001014391 s
+Solution 17:
+Energy: 242.50192000056632
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 15
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001004321 s
+Solution 18:
+Energy: 242.80192000056923
+The solution is correct: False
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001003251 s
+Solution 19:
+Energy: 221.00192000058632
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            7         0      0.000000
 2         3            6         0      0.000000
 3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 19
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001007281 s
+Solution 20:
+Energy: 242.50192000056813
+The solution is correct: False
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001000041 s
+Solution 21:
+Energy: 220.4019200005805
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            6         0      0.000000
+2         3            7         0      0.000000
+3         4            6         2      0.333333
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001004481 s
+Solution 22:
+Energy: 221.00192000057905
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            6         0      0.000000
+2         3            6         0      0.000000
+3         4            7         2      0.285714
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 9
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000996811 s
+Solution 23:
+Energy: 241.00192000057905
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 14
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000990721 s
+Solution 24:
+Energy: 242.80192000056013
+The solution is correct: False
 --------------
 Checking the constraints...
 	x Error: logical constraint not fulfilled
@@ -1247,36 +468,283 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000986504 s
-Solution 29:
+Test time: 0.001002251 s
+Solution 25:
+Energy: 240.4019200005805
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 10
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000991951 s
+Solution 26:
 Energy: 241.00192000057723
 The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 13
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001012401 s
+Solution 27:
+Energy: 242.50192000056813
+The solution is correct: False
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0010177 s
+Solution 28:
+Energy: 221.00192000057905
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            6         0      0.000000
+2         3            6         0      0.000000
+3         4            7         2      0.285714
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.0010093 s
+Solution 29:
+Energy: 221.00192000057905
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            6         0      0.000000
+2         3            6         0      0.000000
+3         4            7         2      0.285714
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 9
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000997921 s
+Solution 30:
+Energy: 241.00192000058814
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 14
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000982131 s
+Solution 31:
+Energy: 242.80192000056013
+The solution is correct: False
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000989471 s
+Solution 32:
+Energy: 221.00192000058814
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            7         0      0.000000
+1         2            6         0      0.000000
+2         3            6         0      0.000000
+3         4            6         2      0.333333
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001014231 s
+Solution 33:
+Energy: 220.4019200005805
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            6         0      0.000000
+2         3            7         0      0.000000
+3         4            6         2      0.333333
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.00103355 s
+Solution 34:
+Energy: 222.80704000057267
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            5         0      0.000000
+1         2            6         0      0.000000
+2         3            7         0      0.000000
+3         4            7         2      0.285714
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 15
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.00103144 s
+Solution 35:
+Energy: 242.80192000056013
+The solution is correct: False
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000985801 s
+Solution 36:
+Energy: 222.8070400005763
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            5         0      0.000000
+2         3            7         0      0.000000
+3         4            7         2      0.285714
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 13
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.00100971 s
+Solution 37:
+Energy: 242.50192000056813
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 15
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000972711 s
+Solution 38:
+Energy: 242.8019200005674
+The solution is correct: False
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000964792 s
+Solution 39:
+Energy: 221.00192000058632
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            7         0      0.000000
+2         3            6         0      0.000000
+3         4            6         2      0.333333
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 16
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000997231 s
+Solution 40:
+Energy: 242.80192000057104
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 12
+	x Error: monotonicity constraint not fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000995531 s
+Solution 41:
+Energy: 242.8019200005656
+The solution is correct: False
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 8
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000988441 s
+Solution 42:
+Energy: 241.00192000057723
+The solution is correct: False
 --------------
 Checking the constraints...
 	x Error: logical constraint not fulfilled
@@ -1287,841 +755,24 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000983543 s
-Solution 30:
-Energy: 242.80192000056923
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 11
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000992463 s
-Solution 31:
-Energy: 241.00192000057723
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 9
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000971224 s
-Solution 32:
-Energy: 242.80192000056923
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000975323 s
-Solution 33:
-Energy: 220.4019200005805
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            7         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000995203 s
-Solution 34:
-Energy: 221.00192000057905
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            6         0      0.000000
-3         4            7         2      0.285714
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.001010253 s
-Solution 35:
-Energy: 221.00192000057905
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            6         0      0.000000
-3         4            7         2      0.285714
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 17
-	x Error: monotonicity constraint not fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000995413 s
-Solution 36:
-Energy: 243.10192000056304
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 16
-	x Error: monotonicity constraint not fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000974163 s
-Solution 37:
-Energy: 244.90704000056576
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 13
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000987793 s
-Solution 38:
-Energy: 240.4019200005805
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000981533 s
-Solution 39:
-Energy: 220.4019200005805
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            7         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 10
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000983503 s
-Solution 40:
-Energy: 241.00192000057723
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000979273 s
-Solution 41:
-Energy: 221.00192000058632
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            7         0      0.000000
-2         3            6         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.001008613 s
-Solution 42:
-Energy: 220.4019200005805
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            7         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 9
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000985983 s
+Test time: 0.000998271 s
 Solution 43:
-Energy: 240.40192000057868
+Energy: 242.5019200005645
 The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
 --------------
 Checking the constraints...
 	x Error: logical constraint not fulfilled
-		Error in the counterpart 12
+		Error in the counterpart 15
 	✓ Monotonicity constraint fulfilled
 	✓ Concentration constraint fulfilled
 	✓ Upper threshold constraint fulfilled
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000990983 s
+Test time: 0.000967151 s
 Solution 44:
-Energy: 241.00192000057905
+Energy: 242.5019200005645
 The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.001007923 s
-Solution 45:
-Energy: 220.4019200005805
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            7         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 12
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000969033 s
-Solution 46:
-Energy: 241.00192000057723
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	x Error: logical constraint not fulfilled
-		Error in the counterpart 9
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000979093 s
-Solution 47:
-Energy: 262.5019200005645
-The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000983883 s
-Solution 48:
-Energy: 220.4019200005805
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            7         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
---------------
-Checking the constraints...
-	✓ Logical constraint fulfilled
-	✓ Monotonicity constraint fulfilled
-	✓ Concentration constraint fulfilled
-	✓ Upper threshold constraint fulfilled
-	✓ Lower threshold constraint fulfilled
-	- Skip Heterogeneity constraint: number of counterpars not sufficient
-	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000988943 s
-Solution 49:
-Energy: 220.4019200005805
-The solution is correct: True
-Statistics:
-   Grade ID  Cardinality  Defaults  Default rate
-0         1            6         0      0.000000
-1         2            6         0      0.000000
-2         3            7         0      0.000000
-3         4            6         2      0.333333
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
 --------------
 Checking the constraints...
 	x Error: logical constraint not fulfilled
@@ -2132,36 +783,95 @@ Checking the constraints...
 	✓ Lower threshold constraint fulfilled
 	- Skip Heterogeneity constraint: number of counterpars not sufficient
 	- Skip Homogeneity constraint: number of counterpars not sufficient
-Test time: 0.000999833 s
-Solution 50:
-Energy: 242.8070400005745
+Test time: 0.000984161 s
+Solution 45:
+Energy: 242.50192000056268
 The solution is correct: False
-Result matrix: 
-[[1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [1 0 0 0]
- [1 0 0 0]
- [1 0 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 1 0 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 1 0]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]
- [0 0 0 1]]
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 12
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000984181 s
+Solution 46:
+Energy: 243.4070400005785
+The solution is correct: False
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000969801 s
+Solution 47:
+Energy: 220.4019200005805
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            6         0      0.000000
+2         3            7         0      0.000000
+3         4            6         2      0.333333
+--------------
+Checking the constraints...
+	x Error: logical constraint not fulfilled
+		Error in the counterpart 7
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.00102779 s
+Solution 48:
+Energy: 241.00192000058814
+The solution is correct: False
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.00098141 s
+Solution 49:
+Energy: 221.00192000057905
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            6         0      0.000000
+1         2            6         0      0.000000
+2         3            6         0      0.000000
+3         4            7         2      0.285714
+--------------
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001012851 s
+Solution 50:
+Energy: 221.00192000058814
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            7         0      0.000000
+1         2            6         0      0.000000
+2         3            6         0      0.000000
+3         4            6         2      0.333333
 --------------
 
-Valid solutions found: 18/50
+Valid solutions found: 20/50

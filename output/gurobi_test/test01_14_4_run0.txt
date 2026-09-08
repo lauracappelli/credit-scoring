@@ -1,0 +1,96 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 14
+ - grades: 4
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [13]
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': False, 'gurobi': True, 'quantum_annealing': False}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': True, 'logic': True, 'monotonicity': True, 'concentration': True, 'min_thr': True, 'max_thr': True}
+ - mu_table: generated
+ - mu: {'one_class': 576, 'first_last_class': 120, 'column_one': 960, 'change_class': 960, 'subm_1000': 1, 'subm_0001': 1, 'subm_0110': 1, 'restart': 1, 'monotonicity': 10, 'concentration': 20, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 1000000
+ - reads: 15
+ - num_trotters: 32
+ - gurobi_n_sol: 10
+ - gurobi_fidelity: 1
+
+SELECTED INSTANCE:
+Number of counterparts:  14
+Number of grades:  4
+The number of defaults is 1
+Dataset:
+    counterpart_id     score  default
+0               13 -6.657205        0
+1                2 -5.577013        0
+2               14 -4.988297        0
+3                9 -4.910647        0
+4                7 -4.723646        0
+5               12 -4.168721        0
+6                1 -4.146216        0
+7                3 -3.580061        0
+8                5 -3.476594        0
+9               10 -3.088705        0
+10               4 -2.915159        0
+11               6 -2.602936        0
+12              11 -2.571518        0
+13               8 -1.832758        1
+
+Values of mu:
+one_class                 = 42.0
+first_last_class          = 2.8000000000000003
+column_one                = 11.200000000000001
+change_class              = 11.200000000000001
+monotonicity              = 0.3
+concentration             = 0.6000000000000001
+min_thr                   = 0.6000000000000001
+max_thr                   = 0.6000000000000001
+
+The QUBO problem has 88 variables
+Time spent for the generation: 0.003548466 s
+
+RESULTS OBTAINED THROUGH THE GUROBI SOLVER
+New QUBO solution found with objective 0.0
+New QUBO solution found with objective -859.3959183673469
+New QUBO solution found with objective -870.5959183673469
+New QUBO solution found with objective -881.795918367347
+
+Time to compute the solution: 0.257591911 s
+Energy: -881.795918367347
+Result matrix: 
+[[1 0 0 0]
+ [1 0 0 0]
+ [1 0 0 0]
+ [1 0 0 0]
+ [0 1 0 0]
+ [0 1 0 0]
+ [0 1 0 0]
+ [0 0 1 0]
+ [0 0 1 0]
+ [0 0 1 0]
+ [0 0 1 0]
+ [0 0 0 1]
+ [0 0 0 1]
+ [0 0 0 1]]
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.000482915 s
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            4         0      0.000000
+1         2            3         0      0.000000
+2         3            4         0      0.000000
+3         4            3         1      0.333333

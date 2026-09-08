@@ -1,0 +1,132 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 25
+ - grades: 5
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [23]
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': False, 'gurobi': True, 'quantum_annealing': False}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': True, 'logic': True, 'monotonicity': True, 'concentration': True, 'min_thr': True, 'max_thr': True}
+ - mu_table: generated
+ - mu: {'one_class': 576, 'first_last_class': 120, 'column_one': 960, 'change_class': 960, 'subm_1000': 1, 'subm_0001': 1, 'subm_0110': 1, 'restart': 1, 'monotonicity': 10, 'concentration': 20, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 1000000
+ - reads: 15
+ - num_trotters: 32
+ - gurobi_n_sol: 10
+ - gurobi_fidelity: 1
+
+SELECTED INSTANCE:
+Number of counterparts:  25
+Number of grades:  5
+The number of defaults is 1
+Dataset:
+    counterpart_id     score  default
+0               16 -5.738122        0
+1               12 -5.559408        0
+2                7 -5.525523        0
+3               15 -5.353816        0
+4               10 -5.260201        0
+5               19 -4.899285        0
+6               25 -4.870996        0
+7                8 -4.642011        0
+8                9 -4.354432        0
+9                1 -4.089346        0
+10               5 -4.081490        0
+11              20 -3.638458        0
+12               6 -3.621392        0
+13              21 -3.426781        0
+14              22 -3.373422        0
+15              14 -3.279550        0
+16               4 -3.197535        0
+17               3 -3.196520        0
+18              11 -2.952212        0
+19              23 -2.726949        0
+20              24 -1.792862        0
+21              18 -1.565554        0
+22              17 -1.235606        0
+23               2 -0.786762        1
+24              13 -0.737489        0
+
+Values of mu:
+one_class                 = 93.75
+first_last_class          = 6.25
+column_one                = 25.0
+change_class              = 25.0
+monotonicity              = 0.3
+concentration             = 1.0
+min_thr                   = 1.0
+max_thr                   = 1.0
+
+The QUBO problem has 175 variables
+Time spent for the generation: 0.012947375 s
+
+RESULTS OBTAINED THROUGH THE GUROBI SOLVER
+New QUBO solution found with objective 0.0
+New QUBO solution found with objective -3757.5
+New QUBO solution found with objective -3782.5
+Time: 5s, best objective: -3782.50, best bound: -3913.70, gap: 3.47% (use Ctrl+C to interrupt)
+Time: 10s, best objective: -3782.50, best bound: -3900.20, gap: 3.11% (use Ctrl+C to interrupt)
+Time: 15s, best objective: -3782.50, best bound: -3836.51, gap: 1.43% (use Ctrl+C to interrupt)
+Time: 20s, best objective: -3782.50, best bound: -3827.76, gap: 1.20% (use Ctrl+C to interrupt)
+Time: 25s, best objective: -3782.50, best bound: -3822.66, gap: 1.06% (use Ctrl+C to interrupt)
+Time: 30s, best objective: -3782.50, best bound: -3820.42, gap: 1.00% (use Ctrl+C to interrupt)
+Time: 35s, best objective: -3782.50, best bound: -3818.47, gap: 0.95% (use Ctrl+C to interrupt)
+New QUBO solution found with objective -3795.187999999999
+Time: 40s, best objective: -3795.19, best bound: -3817.15, gap: 0.58% (use Ctrl+C to interrupt)
+New QUBO solution found with objective -3807.499999996434
+Time: 45s, best objective: -3807.50, best bound: -3815.23, gap: 0.20% (use Ctrl+C to interrupt)
+Time: 51s, best objective: -3807.50, best bound: -3813.23, gap: 0.15% (use Ctrl+C to interrupt)
+Time: 56s, best objective: -3807.50, best bound: -3813.23, gap: 0.15% (use Ctrl+C to interrupt)
+New QUBO solution found with objective -3807.499999999999
+
+Time to compute the solution: 60.064595002 s
+Energy: -3807.499999999999
+Result matrix: 
+[[1 0 0 0 0]
+ [1 0 0 0 0]
+ [1 0 0 0 0]
+ [1 0 0 0 0]
+ [1 0 0 0 0]
+ [0 1 0 0 0]
+ [0 1 0 0 0]
+ [0 1 0 0 0]
+ [0 1 0 0 0]
+ [0 1 0 0 0]
+ [0 0 1 0 0]
+ [0 0 1 0 0]
+ [0 0 1 0 0]
+ [0 0 1 0 0]
+ [0 0 1 0 0]
+ [0 0 0 1 0]
+ [0 0 0 1 0]
+ [0 0 0 1 0]
+ [0 0 0 1 0]
+ [0 0 0 1 0]
+ [0 0 0 0 1]
+ [0 0 0 0 1]
+ [0 0 0 0 1]
+ [0 0 0 0 1]
+ [0 0 0 0 1]]
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.001324867 s
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            5         0           0.0
+1         2            5         0           0.0
+2         3            5         0           0.0
+3         4            5         0           0.0
+4         5            5         1           0.2

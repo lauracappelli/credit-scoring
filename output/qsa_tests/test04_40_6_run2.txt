@@ -1,0 +1,85 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 40
+ - grades: 6
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [27, 36, 39]
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': False, 'gurobi': False, 'quantum_annealing': True}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': True, 'logic': True, 'monotonicity': True, 'concentration': True, 'min_thr': True, 'max_thr': True}
+ - mu_table: generated
+ - mu: {'one_class': 576, 'first_last_class': 120, 'column_one': 960, 'change_class': 960, 'subm_1000': 1, 'subm_0001': 1, 'subm_0110': 1, 'restart': 1, 'monotonicity': 10, 'concentration': 20, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 5000000
+ - reads: 10
+ - num_trotters: 32
+ - gurobi_n_sol: 10
+ - gurobi_fidelity: 1
+
+SELECTED INSTANCE:
+Number of counterparts:  40
+Number of grades:  6
+The number of defaults is 3
+
+Dataset:
+    counterpart_id     score  default
+0               10 -7.073934        0
+1               18 -6.824087        0
+2                4 -6.673516        0
+3               29 -6.057266        0
+4               34 -5.740506        0
+5               15 -5.701948        0
+6               17 -5.600447        0
+7               20 -5.222318        0
+8               30 -5.145297        0
+9               32 -5.057516        0
+10              21 -4.775910        0
+11              35 -4.658699        0
+12              38 -4.454287        0
+13              13 -4.246908        0
+14              11 -4.245482        0
+15              39 -4.143141        0
+16               1 -3.990142        0
+17               2 -3.936500        0
+18              27 -3.817831        0
+19              24 -3.668769        0
+20              16 -3.534052        0
+21              36 -3.508914        0
+22              22 -3.468556        0
+23               7 -3.421512        0
+24               6 -3.252919        0
+25              31 -3.221786        0
+26              33 -3.132717        0
+27              12 -3.121779        1
+28              28 -2.969274        0
+29               8 -2.885283        0
+30              40 -2.842613        0
+31              25 -2.832725        0
+32              19 -2.588563        0
+33              37 -2.565449        0
+34               5 -2.531334        0
+35               9 -2.516553        0
+36               3 -2.040100        1
+37              23 -1.743324        0
+38              14 -1.463336        0
+39              26  0.578841        1
+
+Values of mu:
+one_class            = math.log(n*m)*10     -> 54.806389233419914
+first_last_class     = math.log(n*m*0.05)*3 -> 7.4547199493640015
+column_one           = math.log(n*m*0.2)*6  -> 23.227206065447348
+change_class         = math.log(n*m*0.2)*6  -> 23.227206065447348
+monotonicity         = num_of_default       -> 3
+concentration        = (n//m)*0.1           -> 0.6000000000000001
+min_thr              = (n//m)*0.1           -> 0.6000000000000001
+max_thr              = (n//m)*0.1           -> 0.6000000000000001
+
+The QUBO problem has 312 variables
+Time spent for the generation: 0.040329281 s
+
+Computing using 10 core...

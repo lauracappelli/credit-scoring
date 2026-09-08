@@ -1,0 +1,115 @@
+PRINTING ALL THE CONFIGURATIONS: 
+ - data_source: d_conf_input
+ - n_counterpart: 20
+ - grades: 5
+ - default_prob: 0.1
+ - default_module: 1
+ - one_indices: [18]
+ - data_path: data/dataset-ispq.csv
+ - attributes: {'years': [2012, 2015], 'sector': 'no', 'revenue': 'no', 'geo_area': 'no'}
+ - solvers: {'brute_force': False, 'dwave_exact': False, 'annealing': False, 'gurobi': True, 'quantum_annealing': False}
+ - alpha_concentration: 0.05
+ - alpha_heterogeneity: 0.01
+ - alpha_homogeneity: 0.05
+ - constraints: {'one_class': True, 'logic': True, 'monotonicity': True, 'concentration': True, 'min_thr': True, 'max_thr': True}
+ - mu_table: generated
+ - mu: {'one_class': 576, 'first_last_class': 120, 'column_one': 960, 'change_class': 960, 'subm_1000': 1, 'subm_0001': 1, 'subm_0110': 1, 'restart': 1, 'monotonicity': 10, 'concentration': 20, 'min_thr': 10, 'max_thr': 10}
+ - test: {'logic': True, 'monotonicity': True, 'heterogeneity': True, 'concentration': True, 'min_thr': True, 'max_thr': True, 'homogeneity': True}
+ - shots: 1000000
+ - reads: 15
+ - num_trotters: 32
+ - gurobi_n_sol: 10
+ - gurobi_fidelity: 1
+
+SELECTED INSTANCE:
+Number of counterparts:  20
+Number of grades:  5
+The number of defaults is 1
+Dataset:
+    counterpart_id     score  default
+0               16 -6.824309        0
+1                6 -6.105010        0
+2               17 -5.092033        0
+3               10 -4.407851        0
+4               15 -4.395995        0
+5               13 -4.189521        0
+6               11 -4.013618        0
+7                5 -3.854374        0
+8               14 -3.763181        0
+9                2 -3.739725        0
+10               4 -3.649356        0
+11              18 -3.648479        0
+12              19 -3.577738        0
+13               8 -3.318218        0
+14               3 -3.098975        0
+15               9 -2.838941        0
+16              20 -2.329054        0
+17              12 -2.088529        0
+18               1 -1.772610        1
+19               7 -1.647394        0
+
+Values of mu:
+one_class                 = 75.0
+first_last_class          = 5.0
+column_one                = 20.0
+change_class              = 20.0
+monotonicity              = 0.3
+concentration             = 0.8
+min_thr                   = 0.8
+max_thr                   = 0.8
+
+The QUBO problem has 150 variables
+Time spent for the generation: 0.008875464 s
+
+RESULTS OBTAINED THROUGH THE GUROBI SOLVER
+New QUBO solution found with objective 0.0
+New QUBO solution found with objective -2246.9999999999995
+New QUBO solution found with objective -2266.9999999999995
+New QUBO solution found with objective -2280.7999999999997
+New QUBO solution found with objective -2280.8
+New QUBO solution found with objective -2284.0950000000003
+New QUBO solution found with objective -2287.0000000000014
+New QUBO solution found with objective -2300.8900000000003
+New QUBO solution found with objective -2304.095
+New QUBO solution found with objective -2307.0
+
+Time to compute the solution: 2.025381847 s
+Energy: -2307.0
+Result matrix: 
+[[1 0 0 0 0]
+ [1 0 0 0 0]
+ [1 0 0 0 0]
+ [1 0 0 0 0]
+ [0 1 0 0 0]
+ [0 1 0 0 0]
+ [0 1 0 0 0]
+ [0 1 0 0 0]
+ [0 0 1 0 0]
+ [0 0 1 0 0]
+ [0 0 1 0 0]
+ [0 0 1 0 0]
+ [0 0 0 1 0]
+ [0 0 0 1 0]
+ [0 0 0 1 0]
+ [0 0 0 1 0]
+ [0 0 0 0 1]
+ [0 0 0 0 1]
+ [0 0 0 0 1]
+ [0 0 0 0 1]]
+Checking the constraints...
+	✓ Logical constraint fulfilled
+	✓ Monotonicity constraint fulfilled
+	✓ Concentration constraint fulfilled
+	✓ Upper threshold constraint fulfilled
+	✓ Lower threshold constraint fulfilled
+	- Skip Heterogeneity constraint: number of counterpars not sufficient
+	- Skip Homogeneity constraint: number of counterpars not sufficient
+Test time: 0.00305479 s
+The solution is correct: True
+Statistics:
+   Grade ID  Cardinality  Defaults  Default rate
+0         1            4         0          0.00
+1         2            4         0          0.00
+2         3            4         0          0.00
+3         4            4         0          0.00
+4         5            4         1          0.25
