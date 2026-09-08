@@ -31,6 +31,7 @@ def time_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
         ax.set_title(f"Time to solution vs. Sweeps - {solver_title}", fontsize=14, pad=12)
         ax.set_xlabel("Sweeps", fontsize=12)
         ax.set_xscale("log")
+        ax.set_yscale("log")
         ax.set_ylabel("Time to solution (seconds)", fontsize=12)
         ax.grid(True, which="both", linestyle="--", alpha=0.5)
         ax.legend(loc="upper left", title="QUBO Variables", frameon=True)
@@ -120,6 +121,7 @@ def time_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/time_li
 
         ax.set_title(f"Variables: {v}", fontsize=12, fontweight="bold")
         ax.set_xscale("log")
+        ax.set_yscale("log")
         ax.grid(True, which="both", linestyle="--", alpha=0.5)
 
     fig.supxlabel("Number of Sweeps", fontsize=13)
