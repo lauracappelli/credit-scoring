@@ -27,25 +27,23 @@ def time_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
             ax=ax
         )
 
-        solver_title = "Classical Annealing (SA)" if solver == "classical" else "Quantum Annealing (QSA)"
-
-        ax.set_title(f"Time to solution vs. Sweeps - {solver_title}", fontsize=14, pad=12)
-        ax.set_xlabel("Sweeps", fontsize=12)
+        # solver_title = "Classical Annealing (SA)" if solver == "classical" else "Quantum Annealing (QSA)"
+        # ax.set_title(f"Time to solution vs. Sweeps - {solver_title}", fontsize=14, pad=12)
+        ax.set_xlabel("Sweeps", fontsize=18)
         ax.set_xscale("log")
         ax.set_yscale("log")
-        ax.set_ylabel("Time to solution (seconds)", fontsize=12)
+        ax.set_ylabel("Time to solution (seconds)", fontsize=18)
         ax.grid(True, which="both", linestyle="--", alpha=0.5)
-        ax.legend(loc="upper left", title="QUBO Variables", frameon=True)
+        ax.tick_params(axis="both", which="major", labelsize=14)
 
+        ax.legend(loc="upper left", title="QUBO Variables", frameon=True, fontsize=13, title_fontsize=14)
         plt.tight_layout()
 
-        output_filename = os.path.join(output_dir, f"time_lineplots_{solver}.pdf")
-        plt.savefig(output_filename, format="pdf", bbox_inches="tight")
-        output_filename = os.path.join(output_dir, f"time_lineplots_{solver}.png")
-        plt.savefig(output_filename, format="png", bbox_inches="tight", dpi=300)
+        plt.savefig(os.path.join(output_dir, f"time_lineplots_{solver}.pdf"), format="pdf", bbox_inches="tight")
+        plt.savefig(os.path.join(output_dir, f"time_lineplots_{solver}.png"), format="png", bbox_inches="tight", dpi=600)
         plt.close(fig)
 
-        print(f"Time line plot for {solver.capitalize()} saved to '{output_filename}'")
+        print(f"Time line plot for {solver.capitalize()} saved")
 
 def solutions_vs_sweep_plot(analysis_data, output_dir="output/annealing"):
 
@@ -91,7 +89,6 @@ def time_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/time_li
     
     grouped = analysis_data.groupby(["variables", "solver", "sweep"])["execution_time"].mean().reset_index()
     unique_vars = sorted(grouped["variables"].unique())
-    num_vars = len(unique_vars)
 
     fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(15, 9), sharex=True, sharey=True)
     axes = axes.flatten()
@@ -118,22 +115,24 @@ def time_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/time_li
                 markersize=6
             )
 
-        ax.set_title(f"Variables: {v}", fontsize=12, fontweight="bold")
+        ax.set_title(f"Variables: {v}", fontsize=14, fontweight="bold")
         ax.set_xscale("log")
         ax.set_yscale("log")
         ax.grid(True, which="both", linestyle="--", alpha=0.5)
 
-    fig.supxlabel("Number of Sweeps", fontsize=13)
-    fig.supylabel("Time to solution (seconds)", fontsize=13)
-    fig.suptitle("Time to solution: SA vs. QSA", fontsize=15, y=0.98, fontweight="bold")
+        ax.tick_params(axis="both", which="both", labelbottom=True, labelleft=True, labelsize=12)
 
-    for j in range(num_vars, len(axes)):
-        fig.delaxes(axes[j])
+    fig.delaxes(axes[5])
 
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="center left", bbox_to_anchor=(0.98, 0.5), title="Solver Type", frameon=True, fontsize=11, title_fontsize=12)
+    leg = fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 0.99),ncol=2, title="Solver Type", frameon=True, fontsize=16, title_fontsize=16)
+    title_box, handle_box = leg._legend_box.get_children()
+    leg._legend_box._children = [HPacker(pad=0, sep=10, children=[title_box, handle_box], align="center")]
 
-    plt.tight_layout(rect=[0, 0, 0.97, 0.96])
+    fig.supxlabel("Number of Sweeps", fontsize=18)
+    fig.supylabel("Time to solution (seconds)", fontsize=18)
+
+    plt.tight_layout(rect=[0, 0, 1, 0.91])
 
     plt.savefig(output_filename, format="pdf", bbox_inches="tight")
     plt.savefig("output/annealing/time_lineplots_SAvsQSA.png", format="png", bbox_inches="tight", dpi=300)
@@ -199,12 +198,8 @@ def overlay_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/over
     
     sns.set_theme(style="whitegrid")
 
-    grouped = df.groupby(["variables", "solver", "sweep"])[
-        ["valid_solutions", "unique_valid_solutions"]
-    ].mean().reset_index()
-
+    grouped = df.groupby(["variables", "solver", "sweep"])[["valid_solutions", "unique_valid_solutions"]].mean().reset_index()
     unique_vars = sorted(grouped["variables"].unique())
-    num_vars = len(unique_vars)
 
     fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(15, 9), sharex=True, sharey=True)
     axes = axes.flatten()
@@ -254,34 +249,28 @@ def overlay_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/over
                 markersize=6
             )
 
-        ax.set_title(f"Variables: {v}", fontsize=12, fontweight="bold")
+        ax.set_title(f"Variables: {v}", fontsize=14, fontweight="bold")
         ax.set_xscale("log")
         ax.grid(True, which="both", linestyle="--", alpha=0.5)
+        ax.tick_params(axis="both", which="both", labelbottom=True, labelleft=True, labelsize=12)
 
-    fig.supxlabel("Number of Sweeps", fontsize=13)
-    fig.supylabel("Mean Solutions Found", fontsize=13)
-    fig.suptitle("Unique vs. Total Valid Solutions: SA vs. QSA", fontsize=15, y=0.98, fontweight="bold")
+    fig.delaxes(axes[5])
 
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(
-        handles, 
-        labels, 
-        loc="center left", 
-        bbox_to_anchor=(0.98, 0.5), 
-        title="Metric & Solver", 
-        frameon=True, 
-        fontsize=10, 
-        title_fontsize=11
-    )
-    
-    plt.tight_layout(rect=[0, 0, 0.97, 0.96])
+    leg = fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 0.99),ncol=4, title="Solver Type", frameon=True, fontsize=16, title_fontsize=16)
+    title_box, handle_box = leg._legend_box.get_children()
+    leg._legend_box._children = [HPacker(pad=0, sep=10, children=[title_box, handle_box], align="center")]
 
-    png_filename = output_filename.rsplit('.', 1)[0] + ".png"
+    fig.supxlabel("Number of Sweeps", fontsize=18)
+    fig.supylabel("Valid Solutions", fontsize=18)
+    
+    plt.tight_layout(rect=[0, 0, 1, 0.92])
+
     plt.savefig(output_filename, format="pdf", bbox_inches="tight")
-    plt.savefig(png_filename, format="png", bbox_inches="tight", dpi=300)
+    plt.savefig("output/annealing/overlay_lineplots_SAvsQSA.png", format="png", bbox_inches="tight", dpi=600)
     plt.close(fig)
     
-    print(f"Overlay plot saved to '{output_filename}' and '{png_filename}'")
+    print(f"Overlay plot saved")
 
 def parse_results(folder_paths):
     results = []
@@ -384,12 +373,12 @@ if __name__ == "__main__":
     print(df_sorted[cols_to_show].to_string(index=False))
 
     # Quantum & classical plot: "number of solutions vs sweep"
-    solutions_vs_sweep_plot(df)
-    sa_vs_qsa_plot(df)
+    # solutions_vs_sweep_plot(df)
+    # sa_vs_qsa_plot(df)
 
     # Quantum & classical plot: "time vs sweep"
     # time_vs_sweep_plot(df)
     # time_sa_vs_qsa_plot(df)
 
     # Quantum & classical plot: "unique solutions vs sweep"
-    # overlay_sa_vs_qsa_plot(df)
+    overlay_sa_vs_qsa_plot(df)
