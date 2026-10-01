@@ -93,6 +93,8 @@ def time_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/time_li
     fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(15, 9), sharex=True, sharey=True)
     axes = axes.flatten()
 
+    solver_labels = {"classical": "SA", "quantum": "SQA"}
+
     for i, v in enumerate(unique_vars):
         ax = axes[i]
         for solver in ["classical", "quantum"]:
@@ -107,7 +109,7 @@ def time_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/time_li
             ax.plot(
                 sub["sweep"],
                 sub["execution_time"],
-                label=solver.capitalize(),
+                label=solver_labels[solver],
                 color=color,
                 linestyle=linestyle,
                 marker=marker,
@@ -149,6 +151,8 @@ def sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/lineplots_SA
     fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(15, 9), sharex=True, sharey=True)
     axes = axes.flatten()
 
+    solver_labels = {"classical": "SA", "quantum": "SQA"}
+
     for i, v in enumerate(unique_vars):
         ax = axes[i]
         for solver in ["classical", "quantum"]:
@@ -163,7 +167,7 @@ def sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/lineplots_SA
             ax.plot(
                 sub["sweep"],
                 sub["valid_solutions"],
-                label=solver.capitalize(),
+                label=solver_labels[solver],
                 color=color,
                 linestyle=linestyle,
                 marker=marker,
@@ -204,6 +208,8 @@ def overlay_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/over
     fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(15, 9), sharex=True, sharey=True)
     axes = axes.flatten()
 
+    solver_labels = {"classical": "SA", "quantum": "SQA"}
+
     for i, v in enumerate(unique_vars):
         ax = axes[i]
         
@@ -219,7 +225,7 @@ def overlay_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/over
             ax.plot(
                 sub["sweep"],
                 sub["valid_solutions"],
-                label=f"Valid ({solver.capitalize()}) [Ref]",
+                label=f"Valid ({solver_labels[solver]}) [Ref]",
                 color="#888888",
                 linestyle=linestyle,
                 marker=marker,
@@ -241,7 +247,7 @@ def overlay_sa_vs_qsa_plot(analysis_data, output_filename="output/annealing/over
             ax.plot(
                 sub["sweep"],
                 sub["unique_valid_solutions"],
-                label=f"Unique ({solver.capitalize()})",
+                label=f"Unique ({solver_labels[solver]})",
                 color=color,
                 linestyle=linestyle,
                 marker=marker,
@@ -373,12 +379,12 @@ if __name__ == "__main__":
     print(df_sorted[cols_to_show].to_string(index=False))
 
     # Quantum & classical plot: "number of solutions vs sweep"
-    solutions_vs_sweep_plot(df)
+    # solutions_vs_sweep_plot(df)
     # sa_vs_qsa_plot(df)
 
     # Quantum & classical plot: "time vs sweep"
-    time_vs_sweep_plot(df)
+    # time_vs_sweep_plot(df)
     # time_sa_vs_qsa_plot(df)
 
     # Quantum & classical plot: "unique solutions vs sweep"
-    # overlay_sa_vs_qsa_plot(df)
+    overlay_sa_vs_qsa_plot(df)
